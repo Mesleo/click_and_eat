@@ -1,0 +1,374 @@
+<?php
+
+namespace AppBundle\Entity;
+
+/**
+ * Restaurante
+ */
+class Restaurante
+{
+    /**
+     * @var string
+     */
+    private $nombre;
+
+    /**
+     * @var string
+     */
+    private $nif;
+
+    /**
+     * @var string
+     */
+    private $direccion;
+
+    /**
+     * @var string
+     */
+    private $localidad;
+
+    /**
+     * @var string
+     */
+    private $provincia;
+
+    /**
+     * @var string
+     */
+    private $tipoComida;
+
+    /**
+     * @var string
+     */
+    private $mapa;
+
+    /**
+     * @var \DateTime
+     */
+    private $horarioLocal;
+
+    /**
+     * @var \DateTime
+     */
+    private $horarioDomicilio;
+
+    /**
+     * @var \DateTime
+     */
+    private $fechaAlta;
+
+    /**
+     * @var \DateTime
+     */
+    private $fechaBaja;
+
+    /**
+     * @var float
+     */
+    private $precioEnvio;
+
+    /**
+     * @var integer
+     */
+    private $idrestaurante;
+
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     *
+     * @return Restaurante
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Set nif
+     *
+     * @param string $nif
+     *
+     * @return Restaurante
+     */
+    public function setNif($nif)
+    {
+        $this->nif = $nif;
+
+        return $this;
+    }
+
+    /**
+     * Get nif
+     *
+     * @return string
+     */
+    public function getNif()
+    {
+        return $this->nif;
+    }
+
+    /**
+     * Set direccion
+     *
+     * @param string $direccion
+     *
+     * @return Restaurante
+     */
+    public function setDireccion($direccion)
+    {
+        $this->direccion = $direccion;
+
+        return $this;
+    }
+
+    /**
+     * Get direccion
+     *
+     * @return string
+     */
+    public function getDireccion()
+    {
+        return $this->direccion;
+    }
+
+    /**
+     * Set localidad
+     *
+     * @param string $localidad
+     *
+     * @return Restaurante
+     */
+    public function setLocalidad($localidad)
+    {
+        $this->localidad = $localidad;
+
+        return $this;
+    }
+
+    /**
+     * Get localidad
+     *
+     * @return string
+     */
+    public function getLocalidad()
+    {
+        return $this->localidad;
+    }
+
+    /**
+     * Set provincia
+     *
+     * @param string $provincia
+     *
+     * @return Restaurante
+     */
+    public function setProvincia($provincia)
+    {
+        $this->provincia = $provincia;
+
+        return $this;
+    }
+
+    /**
+     * Get provincia
+     *
+     * @return string
+     */
+    public function getProvincia()
+    {
+        return $this->provincia;
+    }
+
+    /**
+     * Set tipoComida
+     *
+     * @param string $tipoComida
+     *
+     * @return Restaurante
+     */
+    public function setTipoComida($tipoComida)
+    {
+        $this->tipoComida = $tipoComida;
+
+        return $this;
+    }
+
+    /**
+     * Get tipoComida
+     *
+     * @return string
+     */
+    public function getTipoComida()
+    {
+        return $this->tipoComida;
+    }
+
+    /**
+     * Set mapa
+     *
+     * @param string $mapa
+     *
+     * @return Restaurante
+     */
+    public function setMapa($mapa)
+    {
+        $this->mapa = $mapa;
+
+        return $this;
+    }
+
+    /**
+     * Get mapa
+     *
+     * @return string
+     */
+    public function getMapa()
+    {
+        return $this->mapa;
+    }
+
+    /**
+     * Set horarioLocal
+     *
+     * @param \DateTime $horarioLocal
+     *
+     * @return Restaurante
+     */
+    public function setHorarioLocal($horarioLocal)
+    {
+        $this->horarioLocal = $horarioLocal;
+
+        return $this;
+    }
+
+    /**
+     * Get horarioLocal
+     *
+     * @return \DateTime
+     */
+    public function getHorarioLocal()
+    {
+        return $this->horarioLocal;
+    }
+
+    /**
+     * Set horarioDomicilio
+     *
+     * @param \DateTime $horarioDomicilio
+     *
+     * @return Restaurante
+     */
+    public function setHorarioDomicilio($horarioDomicilio)
+    {
+        $this->horarioDomicilio = $horarioDomicilio;
+
+        return $this;
+    }
+
+    /**
+     * Get horarioDomicilio
+     *
+     * @return \DateTime
+     */
+    public function getHorarioDomicilio()
+    {
+        return $this->horarioDomicilio;
+    }
+
+    /**
+     * Set fechaAlta
+     *
+     * @param \DateTime $fechaAlta
+     *
+     * @return Restaurante
+     */
+    public function setFechaAlta($fechaAlta)
+    {
+        $this->fechaAlta = $fechaAlta;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaAlta
+     *
+     * @return \DateTime
+     */
+    public function getFechaAlta()
+    {
+        return $this->fechaAlta;
+    }
+
+    /**
+     * Set fechaBaja
+     *
+     * @param \DateTime $fechaBaja
+     *
+     * @return Restaurante
+     */
+    public function setFechaBaja($fechaBaja)
+    {
+        $this->fechaBaja = $fechaBaja;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaBaja
+     *
+     * @return \DateTime
+     */
+    public function getFechaBaja()
+    {
+        return $this->fechaBaja;
+    }
+
+    /**
+     * Set precioEnvio
+     *
+     * @param float $precioEnvio
+     *
+     * @return Restaurante
+     */
+    public function setPrecioEnvio($precioEnvio)
+    {
+        $this->precioEnvio = $precioEnvio;
+
+        return $this;
+    }
+
+    /**
+     * Get precioEnvio
+     *
+     * @return float
+     */
+    public function getPrecioEnvio()
+    {
+        return $this->precioEnvio;
+    }
+
+    /**
+     * Get idrestaurante
+     *
+     * @return integer
+     */
+    public function getIdrestaurante()
+    {
+        return $this->idrestaurante;
+    }
+}
+
