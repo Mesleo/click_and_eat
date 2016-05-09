@@ -1,47 +1,90 @@
 <?php
-
+// src/AppBundle/Entity/Domicilio.php
 namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Domicilio
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="domicilio")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\DomicilioRepository")
  */
 class Domicilio
 {
     /**
-     * @var string
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $domicilio;
+    protected $id;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="domicilio", type="string", length=255, nullable=false)
      */
-    private $direccionExtra;
+    protected $domicilio;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="direccion_extra", type="string", length=255, nullable=false)
      */
-    private $localidad;
-
-    /**
-     * @var string
-     */
-    private $provincia;
+    protected $direccionExtra;
 
     /**
      * @var integer
+     *
+     * @ORM\Column(name="codigo_postal", type="integer", nullable=false)
      */
-    private $codigoPostal;
+    protected $codigoPostal;
 
     /**
-     * @var integer
+     * @ORM\ManyToOne(targetEntity="Localidad", inversedBy="domicilios")
+     * @ORM\JoinColumn(name="idLocalidad", referencedColumnName="id")
      */
-    private $iddomicilio;
+    protected $localidad;
 
     /**
-     * @var \AppBundle\Entity\Cliente
+     * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="domicilios")
+     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id")
      */
-    private $clientecliente;
+    protected $cliente;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    protected $created_at;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     */
+    protected $updated_at;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="trash", type="boolean", options={"default":0})
+     */
+    protected $trash;
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set domicilio
@@ -92,54 +135,6 @@ class Domicilio
     }
 
     /**
-     * Set localidad
-     *
-     * @param string $localidad
-     *
-     * @return Domicilio
-     */
-    public function setLocalidad($localidad)
-    {
-        $this->localidad = $localidad;
-
-        return $this;
-    }
-
-    /**
-     * Get localidad
-     *
-     * @return string
-     */
-    public function getLocalidad()
-    {
-        return $this->localidad;
-    }
-
-    /**
-     * Set provincia
-     *
-     * @param string $provincia
-     *
-     * @return Domicilio
-     */
-    public function setProvincia($provincia)
-    {
-        $this->provincia = $provincia;
-
-        return $this;
-    }
-
-    /**
-     * Get provincia
-     *
-     * @return string
-     */
-    public function getProvincia()
-    {
-        return $this->provincia;
-    }
-
-    /**
      * Set codigoPostal
      *
      * @param integer $codigoPostal
@@ -164,36 +159,122 @@ class Domicilio
     }
 
     /**
-     * Get iddomicilio
+     * Set localidad
      *
-     * @return integer
-     */
-    public function getIddomicilio()
-    {
-        return $this->iddomicilio;
-    }
-
-    /**
-     * Set clientecliente
-     *
-     * @param \AppBundle\Entity\Cliente $clientecliente
+     * @param \AppBundle\Entity\Localidad $localidad
      *
      * @return Domicilio
      */
-    public function setClientecliente(\AppBundle\Entity\Cliente $clientecliente = null)
+    public function setLocalidad(\AppBundle\Entity\Localidad $localidad = null)
     {
-        $this->clientecliente = $clientecliente;
+        $this->localidad = $localidad;
 
         return $this;
     }
 
     /**
-     * Get clientecliente
+     * Get localidad
+     *
+     * @return \AppBundle\Entity\Localidad
+     */
+    public function getLocalidad()
+    {
+        return $this->localidad;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \AppBundle\Entity\Cliente $cliente
+     *
+     * @return Domicilio
+     */
+    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * Get cliente
      *
      * @return \AppBundle\Entity\Cliente
      */
-    public function getClientecliente()
+    public function getCliente()
     {
-        return $this->clientecliente;
+        return $this->cliente;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Domicilio
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->created_at = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Domicilio
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updated_at = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * Set trash
+     *
+     * @param boolean $trash
+     *
+     * @return Domicilio
+     */
+    public function setTrash($trash)
+    {
+        $this->trash = $trash;
+
+        return $this;
+    }
+
+    /**
+     * Get trash
+     *
+     * @return boolean
+     */
+    public function getTrash()
+    {
+        return $this->trash;
     }
 }

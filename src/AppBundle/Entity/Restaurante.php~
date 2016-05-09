@@ -1,77 +1,193 @@
 <?php
 
+
 namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Restaurante
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="restaurante")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
  */
 class Restaurante
 {
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
      * @var string
+     *
+     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
      */
     private $nombre;
 
-    /**
-     * @var string
-     */
-    private $nif;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="cif", type="string", length=9, nullable=false)
+     */
+    private $cif;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="telefono_1", type="string", nullable=false)
+     */
+    private $telefono1;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="telefono_2", type="string")
+     */
+    private $telefono2;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="direccion", type="string", length=255, nullable=false)
      */
     private $direccion;
 
     /**
-     * @var string
+     * @ORM\ManyToOne(targetEntity="Localidad", inversedBy="localidades")
+     * @ORM\JoinColumn(name="idLocalidad", referencedColumnName="id")
      */
     private $localidad;
 
+
     /**
-     * @var string
+     * @var integer
+     *
+     * @ORM\Column(name="codigo_postal", type="string", length=100, nullable=false)
      */
-    private $provincia;
+    private $codigoPostal;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="coordenadas", type="string", length=100)
      */
-    private $tipoComida;
+    private $coordenadas;
 
     /**
-     * @var string
+     * @ORM\ManyToMany(targetEntity="TipoComida")
+     * @ORM\JoinTable(name="restaurante_tipo_comida",
+     *      joinColumns={@ORM\JoinColumn(name="restaurante_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="tipo_comida_id", referencedColumnName="id")}
+     *      )
+     */
+    private $tipo_comida;
+
+    /**
+     * @var blob
+     *
+     *  @ORM\Column(name="mapa", type="blob", length=100)
      */
     private $mapa;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_alta", type="datetime",  nullable=false)
      */
-    private $horarioLocal;
+    private $fecha_alta;
 
     /**
      * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_baja", type="datetime",  nullable=false)
      */
-    private $horarioDomicilio;
-
-    /**
-     * @var \DateTime
-     */
-    private $fechaAlta;
-
-    /**
-     * @var \DateTime
-     */
-    private $fechaBaja;
+    private $fecha_baja;
 
     /**
      * @var float
+     *
+     * @ORM\Column(name="envio", type="float", nullable=false, options={"default" = "0.0"})
      */
-    private $precioEnvio;
+    private $envio;
 
     /**
-     * @var integer
+     * @ORM\ManyToMany(targetEntity="Horario")
+     * @ORM\JoinTable(name="horario_restaurante",
+     *      joinColumns={@ORM\JoinColumn(name="restaurante_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="horario_id", referencedColumnName="id")}
+     *      )
      */
-    private $idrestaurante;
+    private $horario;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Mesa", mappedBy="idRestaurante")
+     */
+    private $mesas;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Comentario", mappedBy="idRestaurante")
+     */
+    private $comentarios;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Producto", mappedBy="idRestaurante")
+     */
+    private $productos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Trabajador", mappedBy="idRestaurante")
+     */
+    private $trabajadores;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created", type="datetime",  nullable=false)
+     */
+    private $created;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated", type="datetime",  nullable=false)
+     */
+    private $updated;
+
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="trash", type="boolean", options={"default":0})
+     */
+    private $trash;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->fecha_alta = new \DateTime();
+        $this->tipo_comida = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->horario = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set nombre
@@ -98,27 +214,27 @@ class Restaurante
     }
 
     /**
-     * Set nif
+     * Set cif
      *
-     * @param string $nif
+     * @param string $cif
      *
      * @return Restaurante
      */
-    public function setNif($nif)
+    public function setCif($cif)
     {
-        $this->nif = $nif;
+        $this->cif = $cif;
 
         return $this;
     }
 
     /**
-     * Get nif
+     * Get cif
      *
      * @return string
      */
-    public function getNif()
+    public function getCif()
     {
-        return $this->nif;
+        return $this->cif;
     }
 
     /**
@@ -146,78 +262,6 @@ class Restaurante
     }
 
     /**
-     * Set localidad
-     *
-     * @param string $localidad
-     *
-     * @return Restaurante
-     */
-    public function setLocalidad($localidad)
-    {
-        $this->localidad = $localidad;
-
-        return $this;
-    }
-
-    /**
-     * Get localidad
-     *
-     * @return string
-     */
-    public function getLocalidad()
-    {
-        return $this->localidad;
-    }
-
-    /**
-     * Set provincia
-     *
-     * @param string $provincia
-     *
-     * @return Restaurante
-     */
-    public function setProvincia($provincia)
-    {
-        $this->provincia = $provincia;
-
-        return $this;
-    }
-
-    /**
-     * Get provincia
-     *
-     * @return string
-     */
-    public function getProvincia()
-    {
-        return $this->provincia;
-    }
-
-    /**
-     * Set tipoComida
-     *
-     * @param string $tipoComida
-     *
-     * @return Restaurante
-     */
-    public function setTipoComida($tipoComida)
-    {
-        $this->tipoComida = $tipoComida;
-
-        return $this;
-    }
-
-    /**
-     * Get tipoComida
-     *
-     * @return string
-     */
-    public function getTipoComida()
-    {
-        return $this->tipoComida;
-    }
-
-    /**
      * Set mapa
      *
      * @param string $mapa
@@ -242,54 +286,6 @@ class Restaurante
     }
 
     /**
-     * Set horarioLocal
-     *
-     * @param \DateTime $horarioLocal
-     *
-     * @return Restaurante
-     */
-    public function setHorarioLocal($horarioLocal)
-    {
-        $this->horarioLocal = $horarioLocal;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioLocal
-     *
-     * @return \DateTime
-     */
-    public function getHorarioLocal()
-    {
-        return $this->horarioLocal;
-    }
-
-    /**
-     * Set horarioDomicilio
-     *
-     * @param \DateTime $horarioDomicilio
-     *
-     * @return Restaurante
-     */
-    public function setHorarioDomicilio($horarioDomicilio)
-    {
-        $this->horarioDomicilio = $horarioDomicilio;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioDomicilio
-     *
-     * @return \DateTime
-     */
-    public function getHorarioDomicilio()
-    {
-        return $this->horarioDomicilio;
-    }
-
-    /**
      * Set fechaAlta
      *
      * @param \DateTime $fechaAlta
@@ -298,7 +294,7 @@ class Restaurante
      */
     public function setFechaAlta($fechaAlta)
     {
-        $this->fechaAlta = $fechaAlta;
+        $this->fecha_alta = $fechaAlta;
 
         return $this;
     }
@@ -310,7 +306,7 @@ class Restaurante
      */
     public function getFechaAlta()
     {
-        return $this->fechaAlta;
+        return $this->fecha_alta;
     }
 
     /**
@@ -322,7 +318,7 @@ class Restaurante
      */
     public function setFechaBaja($fechaBaja)
     {
-        $this->fechaBaja = $fechaBaja;
+        $this->fecha_baja = $fechaBaja;
 
         return $this;
     }
@@ -334,41 +330,426 @@ class Restaurante
      */
     public function getFechaBaja()
     {
-        return $this->fechaBaja;
+        return $this->fecha_baja;
     }
 
     /**
-     * Set precioEnvio
+     * Set envio
      *
-     * @param float $precioEnvio
+     * @param float $envio
      *
      * @return Restaurante
      */
-    public function setPrecioEnvio($precioEnvio)
+    public function setEnvio($envio)
     {
-        $this->precioEnvio = $precioEnvio;
+        $this->envio = $envio;
 
         return $this;
     }
 
     /**
-     * Get precioEnvio
+     * Get envio
      *
      * @return float
      */
-    public function getPrecioEnvio()
+    public function getEnvio()
     {
-        return $this->precioEnvio;
+        return $this->envio;
     }
 
     /**
-     * Get idrestaurante
+     * Add tipoComida
      *
-     * @return integer
+     * @param \AppBundle\Entity\TipoComida $tipoComida
+     *
+     * @return Restaurante
      */
-    public function getIdrestaurante()
+    public function addTipoComida(\AppBundle\Entity\TipoComida $tipoComida)
     {
-        return $this->idrestaurante;
+        $this->tipo_comida[] = $tipoComida;
+
+        return $this;
+    }
+
+    /**
+     * Remove tipoComida
+     *
+     * @param \AppBundle\Entity\TipoComida $tipoComida
+     */
+    public function removeTipoComida(\AppBundle\Entity\TipoComida $tipoComida)
+    {
+        $this->tipo_comida->removeElement($tipoComida);
+    }
+
+    /**
+     * Get tipoComida
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTipoComida()
+    {
+        return $this->tipo_comida;
+    }
+
+    /**
+     * Add horario
+     *
+     * @param \AppBundle\Entity\Horario $horario
+     *
+     * @return Restaurante
+     */
+    public function addHorario(\AppBundle\Entity\Horario $horario)
+    {
+        $this->horario[] = $horario;
+
+        return $this;
+    }
+
+    /**
+     * Remove horario
+     *
+     * @param \AppBundle\Entity\Horario $horario
+     */
+    public function removeHorario(\AppBundle\Entity\Horario $horario)
+    {
+        $this->horario->removeElement($horario);
+    }
+
+    /**
+     * Get horario
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getHorario()
+    {
+        return $this->horario;
+    }
+
+    /**
+     * Set coordenadas
+     *
+     * @param string $coordenadas
+     *
+     * @return Restaurante
+     */
+    public function setCoordenadas($coordenadas)
+    {
+        $this->coordenadas = $coordenadas;
+
+        return $this;
+    }
+
+    /**
+     * Get coordenadas
+     *
+     * @return string
+     */
+    public function getCoordenadas()
+    {
+        return $this->coordenadas;
+    }
+
+    /**
+     * Set trash
+     *
+     * @param boolean $trash
+     *
+     * @return Restaurante
+     */
+    public function setTrash($trash)
+    {
+        $this->trash = $trash;
+
+        return $this;
+    }
+
+    /**
+     * Get trash
+     *
+     * @return boolean
+     */
+    public function getTrash()
+    {
+        return $this->trash;
+    }
+
+    /**
+     * Add mesa
+     *
+     * @param \AppBundle\Entity\Mesa $mesa
+     *
+     * @return Restaurante
+     */
+    public function addMesa(\AppBundle\Entity\Mesa $mesa)
+    {
+        $this->mesas[] = $mesa;
+
+        return $this;
+    }
+
+    /**
+     * Remove mesa
+     *
+     * @param \AppBundle\Entity\Mesa $mesa
+     */
+    public function removeMesa(\AppBundle\Entity\Mesa $mesa)
+    {
+        $this->mesas->removeElement($mesa);
+    }
+
+    /**
+     * Get mesas
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMesas()
+    {
+        return $this->mesas;
+    }
+
+    /**
+     * Set telefono1
+     *
+     * @param string $telefono1
+     *
+     * @return Restaurante
+     */
+    public function setTelefono1($telefono1)
+    {
+        $this->telefono1 = $telefono1;
+
+        return $this;
+    }
+
+    /**
+     * Get telefono1
+     *
+     * @return string
+     */
+    public function getTelefono1()
+    {
+        return $this->telefono1;
+    }
+
+    /**
+     * Set telefono2
+     *
+     * @param string $telefono2
+     *
+     * @return Restaurante
+     */
+    public function setTelefono2($telefono2)
+    {
+        $this->telefono2 = $telefono2;
+
+        return $this;
+    }
+
+    /**
+     * Get telefono2
+     *
+     * @return string
+     */
+    public function getTelefono2()
+    {
+        return $this->telefono2;
+    }
+
+    /**
+     * Set codigoPostal
+     *
+     * @param string $codigoPostal
+     *
+     * @return Restaurante
+     */
+    public function setCodigoPostal($codigoPostal)
+    {
+        $this->codigoPostal = $codigoPostal;
+
+        return $this;
+    }
+
+    /**
+     * Get codigoPostal
+     *
+     * @return string
+     */
+    public function getCodigoPostal()
+    {
+        return $this->codigoPostal;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     *
+     * @return Restaurante
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     *
+     * @return Restaurante
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * Set localidad
+     *
+     * @param \AppBundle\Entity\Localidad $localidad
+     *
+     * @return Restaurante
+     */
+    public function setLocalidad(\AppBundle\Entity\Localidad $localidad = null)
+    {
+        $this->localidad = $localidad;
+
+        return $this;
+    }
+
+    /**
+     * Get localidad
+     *
+     * @return \AppBundle\Entity\Localidad
+     */
+    public function getLocalidad()
+    {
+        return $this->localidad;
+    }
+
+    /**
+     * Add comentario
+     *
+     * @param \AppBundle\Entity\Comentario $comentario
+     *
+     * @return Restaurante
+     */
+    public function addComentario(\AppBundle\Entity\Comentario $comentario)
+    {
+        $this->comentarios[] = $comentario;
+
+        return $this;
+    }
+
+    /**
+     * Remove comentario
+     *
+     * @param \AppBundle\Entity\Comentario $comentario
+     */
+    public function removeComentario(\AppBundle\Entity\Comentario $comentario)
+    {
+        $this->comentarios->removeElement($comentario);
+    }
+
+    /**
+     * Get comentarios
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getComentarios()
+    {
+        return $this->comentarios;
+    }
+
+    /**
+     * Add producto
+     *
+     * @param \AppBundle\Entity\Producto $producto
+     *
+     * @return Restaurante
+     */
+    public function addProducto(\AppBundle\Entity\Producto $producto)
+    {
+        $this->productos[] = $producto;
+
+        return $this;
+    }
+
+    /**
+     * Remove producto
+     *
+     * @param \AppBundle\Entity\Producto $producto
+     */
+    public function removeProducto(\AppBundle\Entity\Producto $producto)
+    {
+        $this->productos->removeElement($producto);
+    }
+
+    /**
+     * Get productos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getProductos()
+    {
+        return $this->productos;
+    }
+
+    /**
+     * Add trabajadore
+     *
+     * @param \AppBundle\Entity\Trabajador $trabajadore
+     *
+     * @return Restaurante
+     */
+    public function addTrabajadore(\AppBundle\Entity\Trabajador $trabajadore)
+    {
+        $this->trabajadores[] = $trabajadore;
+
+        return $this;
+    }
+
+    /**
+     * Remove trabajadore
+     *
+     * @param \AppBundle\Entity\Trabajador $trabajadore
+     */
+    public function removeTrabajadore(\AppBundle\Entity\Trabajador $trabajadore)
+    {
+        $this->trabajadores->removeElement($trabajadore);
+    }
+
+    /**
+     * Get trabajadores
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTrabajadores()
+    {
+        return $this->trabajadores;
     }
 }
-

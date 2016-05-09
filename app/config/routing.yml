@@ -3,6 +3,6 @@ app:
     type:     annotation
 
 gestion:
-    resource: "@GestionEmpresaBundle/Controller/"
+    resource: "@GestionCompanyBundle/Controller/"
     type: annotation
     prefix: /gestion
