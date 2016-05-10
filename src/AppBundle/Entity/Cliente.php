@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use FOS\UserBundle\Model\User as BaseUser;
 
 /**
  * Cliente
@@ -12,8 +13,15 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Table(name="cliente")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ClienteRepository")
  */
-class Cliente
+class Cliente extends BaseUser
 {
+
+    const QUESTION_1 = 'Nombre de tu primera mascota';
+    const QUESTION_2 = 'Nombre de tu primer colegio';
+    const QUESTION_3 = 'Nombre del mejor amigo de tu infancia';
+    const QUESTION_4 = 'Superhéroe favorito';
+    const QUESTION_5 = 'Tu color favorito';
+
     /**
      * @var integer
      *
@@ -40,23 +48,9 @@ class Cliente
     /**
      * @var string
      *
-     * @ORM\Column(name="usuario", type="string", length=45, nullable=false)
+     * @ORM\Column(name="email_2", type="string", length=100)
      */
-    protected $usuario;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=45, nullable=false)
-     */
-    protected $password;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=100, nullable=false)
-     */
-    protected $email;
+    protected $email_2;
 
     /**
      * @var string
@@ -64,6 +58,27 @@ class Cliente
      * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
      */
     protected $telefono;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_nacimiento", type="datetime")
+     */
+    protected $fechaNacimiento;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="question_security", type="string", nullable=false)
+     */
+    protected $questionSecurity;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="answer_security", type="string", nullable=false)
+     */
+    protected $answerSecurity;
 
     /**
      * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente")
@@ -190,30 +205,6 @@ class Cliente
     public function getUsuario()
     {
         return $this->usuario;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return Cliente
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
     }
 
     /**
@@ -436,5 +427,104 @@ class Cliente
     public function getReservas()
     {
         return $this->reservas;
+    }
+
+    /**
+     * Set fechaNacimiento
+     *
+     * @param \DateTime $fechaNacimiento
+     *
+     * @return Cliente
+     */
+    public function setFechaNacimiento($fechaNacimiento)
+    {
+        $this->fechaNacimiento = $fechaNacimiento;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaNacimiento
+     *
+     * @return \DateTime
+     */
+    public function getFechaNacimiento()
+    {
+        return $this->fechaNacimiento;
+    }
+
+    /**
+     * Set questionSecurity
+     *
+     * @param string $questionSecurity
+     *
+     * @return Cliente
+     */
+    public function setQuestionSecurity($questionSecurity)
+    {
+        if (!in_array($questionSecurity, array(self::QUESTION_1, self::QUESTION_2, self::QUESTION_3, self::QUESTION_4,
+            self::QUESTION_5))) {
+            throw new \InvalidArgumentException("Error en la pregunta");
+        }
+        $this->questionSecurity = $questionSecurity;
+        return $this;
+    }
+
+    /**
+     * Get questionSecurity
+     *
+     * @return string
+     */
+    public function getQuestionSecurity()
+    {
+        return $this->questionSecurity;
+    }
+
+    /**
+     * Set answerSecurity
+     *
+     * @param string $answerSecurity
+     *
+     * @return Cliente
+     */
+    public function setAnswerSecurity($answerSecurity)
+    {
+        $this->answerSecurity = $answerSecurity;
+
+        return $this;
+    }
+
+    /**
+     * Get answerSecurity
+     *
+     * @return string
+     */
+    public function getAnswerSecurity()
+    {
+        return $this->answerSecurity;
+    }
+
+    /**
+     * Set email2
+     *
+     * @param string $email2
+     *
+     * @return Cliente
+     */
+    public function setEmail2($email2)
+    {
+        $this->email_2 = $email2;
+
+        return $this;
+    }
+
+    /**
+     * Get email2
+     *
+     * @return string
+     */
+    public function getEmail2()
+    {
+        return $this->email_2;
     }
 }

@@ -14,6 +14,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Cliente
 {
+
+    const QUESTION_1 = 'Nombre de tu primera mascota';
+    const QUESTION_2 = 'Nombre de tu primer colegio';
+    const QUESTION_3 = 'Nombre del mejor amigo de tu infancia';
+    const QUESTION_4 = 'Superhéroe favorito';
+    const QUESTION_5 = 'Tu color favorito';
+
     /**
      * @var integer
      *
@@ -61,9 +68,44 @@ class Cliente
     /**
      * @var string
      *
+     * @ORM\Column(name="email_2", type="string", length=100)
+     */
+    protected $email_2;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
      */
     protected $telefono;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_nacimiento", type="datetime")
+     */
+    protected $fechaNacimiento;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="last_login", type="datetime")
+     */
+    protected $lastLogin;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="question_security", type="string", nullable=false)
+     */
+    protected $questionSecurity;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="answer_security", type="string", nullable=false)
+     */
+    protected $answerSecurity;
 
     /**
      * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente")
@@ -436,5 +478,104 @@ class Cliente
     public function getReservas()
     {
         return $this->reservas;
+    }
+
+    /**
+     * Set fechaNacimiento
+     *
+     * @param \DateTime $fechaNacimiento
+     *
+     * @return Cliente
+     */
+    public function setFechaNacimiento($fechaNacimiento)
+    {
+        $this->fechaNacimiento = $fechaNacimiento;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaNacimiento
+     *
+     * @return \DateTime
+     */
+    public function getFechaNacimiento()
+    {
+        return $this->fechaNacimiento;
+    }
+
+    /**
+     * Set lastLogin
+     *
+     * @param \DateTime $lastLogin
+     *
+     * @return Cliente
+     */
+    public function setLastLogin($lastLogin)
+    {
+        $this->lastLogin = $lastLogin;
+
+        return $this;
+    }
+
+    /**
+     * Get lastLogin
+     *
+     * @return \DateTime
+     */
+    public function getLastLogin()
+    {
+        return $this->lastLogin;
+    }
+
+    /**
+     * Set questionSecurity
+     *
+     * @param string $questionSecurity
+     *
+     * @return Cliente
+     */
+    public function setQuestionSecurity($questionSecurity)
+    {
+        if (!in_array($questionSecurity, array(self::QUESTION_1, self::QUESTION_2, self::QUESTION_3, self::QUESTION_4,
+            self::QUESTION_5))) {
+            throw new \InvalidArgumentException("Error en la pregunta");
+        }
+        $this->questionSecurity = $questionSecurity;
+        return $this;
+    }
+
+    /**
+     * Get questionSecurity
+     *
+     * @return string
+     */
+    public function getQuestionSecurity()
+    {
+        return $this->questionSecurity;
+    }
+
+    /**
+     * Set answerSecurity
+     *
+     * @param string $answerSecurity
+     *
+     * @return Cliente
+     */
+    public function setAnswerSecurity($answerSecurity)
+    {
+        $this->answerSecurity = $answerSecurity;
+
+        return $this;
+    }
+
+    /**
+     * Get answerSecurity
+     *
+     * @return string
+     */
+    public function getAnswerSecurity()
+    {
+        return $this->answerSecurity;
     }
 }

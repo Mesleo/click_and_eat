@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use FOS\UserBundle\Model\User as BaseUser;
 
 /**
  * Restaurante
@@ -13,8 +14,15 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Table(name="restaurante")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
  */
-class Restaurante
+class Restaurante extends BaseUser
 {
+
+    const QUESTION_1 = 'Nombre de tu primera mascota';
+    const QUESTION_2 = 'Nombre de tu primer colegio';
+    const QUESTION_3 = 'Nombre del mejor amigo de tu infancia';
+    const QUESTION_4 = 'Superhéroe favorito';
+    const QUESTION_5 = 'Tu color favorito';
+
     /**
      * @var integer
      *
@@ -22,49 +30,55 @@ class Restaurante
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
      */
-    private $nombre;
+    protected $nombre;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email_2", type="string", length=100)
+     */
+    protected $email_2;
 
     /**
      * @var string
      *
      * @ORM\Column(name="cif", type="string", length=9, nullable=false)
      */
-    private $cif;
+    protected $cif;
 
     /**
      * @var string
      *
      * @ORM\Column(name="telefono_1", type="string", nullable=false)
      */
-    private $telefono1;
+    protected $telefono1;
 
     /**
      * @var string
      *
      * @ORM\Column(name="telefono_2", type="string")
      */
-    private $telefono2;
+    protected $telefono2;
 
     /**
      * @var string
      *
      * @ORM\Column(name="direccion", type="string", length=255, nullable=false)
      */
-    private $direccion;
+    protected $direccion;
 
     /**
      * @ORM\ManyToOne(targetEntity="Localidad", inversedBy="localidades")
      * @ORM\JoinColumn(name="idLocalidad", referencedColumnName="id")
      */
-    private $localidad;
+    protected $localidad;
 
 
     /**
@@ -72,14 +86,14 @@ class Restaurante
      *
      * @ORM\Column(name="codigo_postal", type="string", length=100, nullable=false)
      */
-    private $codigoPostal;
+    protected $codigoPostal;
 
     /**
      * @var string
      *
      * @ORM\Column(name="coordenadas", type="string", length=100)
      */
-    private $coordenadas;
+    protected $coordenadas;
 
     /**
      * @ORM\ManyToMany(targetEntity="TipoComida")
@@ -88,35 +102,56 @@ class Restaurante
      *      inverseJoinColumns={@ORM\JoinColumn(name="tipo_comida_id", referencedColumnName="id")}
      *      )
      */
-    private $tipo_comida;
+    protected $tipo_comida;
 
     /**
      * @var blob
      *
      *  @ORM\Column(name="mapa", type="blob", length=100)
      */
-    private $mapa;
+    protected $mapa;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="fecha_alta", type="datetime",  nullable=false)
      */
-    private $fecha_alta;
+    protected $fecha_alta;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="fecha_baja", type="datetime",  nullable=false)
      */
-    private $fecha_baja;
+    protected $fecha_baja;
 
     /**
      * @var float
      *
      * @ORM\Column(name="envio", type="float", nullable=false, options={"default" = "0.0"})
      */
-    private $envio;
+    protected $envio;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_nacimiento", type="datetime")
+     */
+    protected $fechaNacimiento;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="question_security", type="string", nullable=false)
+     */
+    protected $questionSecurity;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="answer_security", type="string", nullable=false)
+     */
+    protected $answerSecurity;
 
     /**
      * @ORM\ManyToMany(targetEntity="Horario")
@@ -125,49 +160,48 @@ class Restaurante
      *      inverseJoinColumns={@ORM\JoinColumn(name="horario_id", referencedColumnName="id")}
      *      )
      */
-    private $horario;
+    protected $horario;
 
     /**
      * @ORM\OneToMany(targetEntity="Mesa", mappedBy="idRestaurante")
      */
-    private $mesas;
+    protected $mesas;
 
     /**
      * @ORM\OneToMany(targetEntity="Comentario", mappedBy="idRestaurante")
      */
-    private $comentarios;
+    protected $comentarios;
 
     /**
      * @ORM\OneToMany(targetEntity="Producto", mappedBy="idRestaurante")
      */
-    private $productos;
+    protected $productos;
 
     /**
      * @ORM\OneToMany(targetEntity="Trabajador", mappedBy="idRestaurante")
      */
-    private $trabajadores;
+    protected $trabajadores;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime",  nullable=false)
      */
-    private $created;
+    protected $created;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="updated", type="datetime",  nullable=false)
      */
-    private $updated;
-
+    protected $updated;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
-    private $trash;
+    protected $trash;
 
     /**
      * Constructor
@@ -751,5 +785,101 @@ class Restaurante
     public function getTrabajadores()
     {
         return $this->trabajadores;
+    }
+
+    /**
+     * Set fechaNacimiento
+     *
+     * @param \DateTime $fechaNacimiento
+     *
+     * @return Restaurante
+     */
+    public function setFechaNacimiento($fechaNacimiento)
+    {
+        $this->fechaNacimiento = $fechaNacimiento;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaNacimiento
+     *
+     * @return \DateTime
+     */
+    public function getFechaNacimiento()
+    {
+        return $this->fechaNacimiento;
+    }
+
+    /**
+     * Set questionSecurity
+     *
+     * @param string $questionSecurity
+     *
+     * @return Restaurante
+     */
+    public function setQuestionSecurity($questionSecurity)
+    {
+        $this->questionSecurity = $questionSecurity;
+
+        return $this;
+    }
+
+    /**
+     * Get questionSecurity
+     *
+     * @return string
+     */
+    public function getQuestionSecurity()
+    {
+        return $this->questionSecurity;
+    }
+
+    /**
+     * Set answerSecurity
+     *
+     * @param string $answerSecurity
+     *
+     * @return Restaurante
+     */
+    public function setAnswerSecurity($answerSecurity)
+    {
+        $this->answerSecurity = $answerSecurity;
+
+        return $this;
+    }
+
+    /**
+     * Get answerSecurity
+     *
+     * @return string
+     */
+    public function getAnswerSecurity()
+    {
+        return $this->answerSecurity;
+    }
+
+    /**
+     * Set email2
+     *
+     * @param string $email2
+     *
+     * @return Restaurante
+     */
+    public function setEmail2($email2)
+    {
+        $this->email_2 = $email2;
+
+        return $this;
+    }
+
+    /**
+     * Get email2
+     *
+     * @return string
+     */
+    public function getEmail2()
+    {
+        return $this->email_2;
     }
 }

@@ -15,6 +15,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Restaurante
 {
+
+    const QUESTION_1 = 'Nombre de tu primera mascota';
+    const QUESTION_2 = 'Nombre de tu primer colegio';
+    const QUESTION_3 = 'Nombre del mejor amigo de tu infancia';
+    const QUESTION_4 = 'Superhéroe favorito';
+    const QUESTION_5 = 'Tu color favorito';
+
     /**
      * @var integer
      *
@@ -31,6 +38,33 @@ class Restaurante
      */
     private $nombre;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="usuario", type="string", length=45, nullable=false)
+     */
+    protected $usuario;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=45, nullable=false)
+     */
+    protected $password;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=100, nullable=false)
+     */
+    protected $email;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email_2", type="string", length=100)
+     */
+    protected $email_2;
 
     /**
      * @var string
@@ -119,6 +153,34 @@ class Restaurante
     private $envio;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_nacimiento", type="datetime")
+     */
+    protected $fechaNacimiento;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="last_login", type="datetime")
+     */
+    protected $lastLogin;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="question_security", type="string", nullable=false)
+     */
+    protected $questionSecurity;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="answer_security", type="string", nullable=false)
+     */
+    protected $answerSecurity;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Horario")
      * @ORM\JoinTable(name="horario_restaurante",
      *      joinColumns={@ORM\JoinColumn(name="restaurante_id", referencedColumnName="id")},
@@ -160,7 +222,6 @@ class Restaurante
      * @ORM\Column(name="updated", type="datetime",  nullable=false)
      */
     private $updated;
-
 
     /**
      * @var boolean
@@ -751,5 +812,101 @@ class Restaurante
     public function getTrabajadores()
     {
         return $this->trabajadores;
+    }
+
+    /**
+     * Set fechaNacimiento
+     *
+     * @param \DateTime $fechaNacimiento
+     *
+     * @return Restaurante
+     */
+    public function setFechaNacimiento($fechaNacimiento)
+    {
+        $this->fechaNacimiento = $fechaNacimiento;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaNacimiento
+     *
+     * @return \DateTime
+     */
+    public function getFechaNacimiento()
+    {
+        return $this->fechaNacimiento;
+    }
+
+    /**
+     * Set lastLogin
+     *
+     * @param \DateTime $lastLogin
+     *
+     * @return Restaurante
+     */
+    public function setLastLogin($lastLogin)
+    {
+        $this->lastLogin = $lastLogin;
+
+        return $this;
+    }
+
+    /**
+     * Get lastLogin
+     *
+     * @return \DateTime
+     */
+    public function getLastLogin()
+    {
+        return $this->lastLogin;
+    }
+
+    /**
+     * Set questionSecurity
+     *
+     * @param string $questionSecurity
+     *
+     * @return Restaurante
+     */
+    public function setQuestionSecurity($questionSecurity)
+    {
+        $this->questionSecurity = $questionSecurity;
+
+        return $this;
+    }
+
+    /**
+     * Get questionSecurity
+     *
+     * @return string
+     */
+    public function getQuestionSecurity()
+    {
+        return $this->questionSecurity;
+    }
+
+    /**
+     * Set answerSecurity
+     *
+     * @param string $answerSecurity
+     *
+     * @return Restaurante
+     */
+    public function setAnswerSecurity($answerSecurity)
+    {
+        $this->answerSecurity = $answerSecurity;
+
+        return $this;
+    }
+
+    /**
+     * Get answerSecurity
+     *
+     * @return string
+     */
+    public function getAnswerSecurity()
+    {
+        return $this->answerSecurity;
     }
 }

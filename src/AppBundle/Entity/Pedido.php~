@@ -4,7 +4,6 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-//use Fresh\DoctrineEnumBundle\Validator\Constraints as DoctrineAssert;
 
 /**
  * Pedido
@@ -498,5 +497,125 @@ class Pedido
     public function getFechaLlegada()
     {
         return $this->fechaLlegada;
+    }
+
+    /**
+     * Set fechaHoraSalida
+     *
+     * @param \DateTime $fechaHoraSalida
+     *
+     * @return Pedido
+     */
+    public function setFechaHoraSalida($fechaHoraSalida)
+    {
+        $this->fechaHoraSalida = $fechaHoraSalida;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaHoraSalida
+     *
+     * @return \DateTime
+     */
+    public function getFechaHoraSalida()
+    {
+        return $this->fechaHoraSalida;
+    }
+
+    /**
+     * Set fechaHoraLlegada
+     *
+     * @param \DateTime $fechaHoraLlegada
+     *
+     * @return Pedido
+     */
+    public function setFechaHoraLlegada($fechaHoraLlegada)
+    {
+        $this->fechaHoraLlegada = $fechaHoraLlegada;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaHoraLlegada
+     *
+     * @return \DateTime
+     */
+    public function getFechaHoraLlegada()
+    {
+        return $this->fechaHoraLlegada;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Pedido
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->created_at = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Pedido
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updated_at = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * Set trash
+     *
+     * @param boolean $trash
+     *
+     * @return Pedido
+     */
+    public function setTrash($trash)
+    {
+        $this->trash = $trash;
+
+        return $this;
+    }
+
+    /**
+     * Get trash
+     *
+     * @return boolean
+     */
+    public function getTrash()
+    {
+        return $this->trash;
     }
 }
