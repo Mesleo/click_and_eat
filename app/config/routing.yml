@@ -1,8 +1,0 @@
-app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
-
-gestion:
-    resource: "@GestionCompanyBundle/Controller/"
-    type: annotation
-    prefix: /gestion
