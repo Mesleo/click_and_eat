@@ -1,0 +1,34 @@
+{# src/ManageCompanyBundle/Resources/views/Page/index.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
+{% block body %}
+    <div class="container" id="content">
+    	<div class="row">
+    		<div class="col-md-6" id="infor">
+    			<p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Gestiona tus reservas</p>
+				<p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Gestiona tus pedidos online</p>
+				<p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Administra la configuración de tu cuenta</p>
+    		</div>
+    		<div class="col-md-6" id="login">
+    			<h3>Conéctate a Mi Restaurante</h3>
+    			<hr>
+    			<form>
+    				<div class="form-group">
+        				<label class="control-label">Usuario</label>
+            			<input type="text" class="form-control" id="usuario" placeholder="Usuario">
+    				</div>
+    				<div class="form-group">
+        				<label class="control-label">Contraseña</label>
+        				<input type="password" class="form-control" id="password" placeholder="Contraseña">
+    				</div>
+    				<div class="form-group">
+    					<input type="checkbox" name="remember"> Recordar contraseña
+    				</div>
+    				<div class="form-group">
+            			<input type="submit" class="btn btn-connect" value="Conectar">
+    				</div>
+    			</form>
+    		</div>
+    	</div>
+	</div>
+{% endblock %}
