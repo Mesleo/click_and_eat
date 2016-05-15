@@ -1,0 +1,236 @@
+<?php
+// src/AppBundle/Entity/Mesa.php
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+
+/**
+ * Mesa
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="mesa")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MesaRepository")
+ */
+class Mesa
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="numPersonas", type="integer", nullable=false)
+     */
+    protected $numPersonas;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Reserva", mappedBy="mesa")
+     */
+    protected $reservas;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="mesas")
+     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
+     */
+    protected $restaurante;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    protected $created_at;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     */
+    protected $updated_at;
+
+    /**
+     * @var boolean 
+     *
+     * @ORM\Column(name="trash", type="boolean", options={"default":0})
+     */
+    protected $trash;
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set numPersonas
+     *
+     * @param integer $numPersonas
+     *
+     * @return Mesa
+     */
+    public function setNumPersonas($numPersonas)
+    {
+        $this->numPersonas = $numPersonas;
+
+        return $this;
+    }
+
+    /**
+     * Get numPersonas
+     *
+     * @return integer
+     */
+    public function getNumPersonas()
+    {
+        return $this->numPersonas;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Mesa
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->created_at = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Mesa
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updated_at = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * Set trash
+     *
+     * @param boolean $trash
+     *
+     * @return Mesa
+     */
+    public function setTrash($trash)
+    {
+        $this->trash = $trash;
+
+        return $this;
+    }
+
+    /**
+     * Get trash
+     *
+     * @return boolean
+     */
+    public function getTrash()
+    {
+        return $this->trash;
+    }
+
+    /**
+     * Add reserva
+     *
+     * @param \AppBundle\Entity\Reserva $reserva
+     *
+     * @return Mesa
+     */
+    public function addReserva(\AppBundle\Entity\Reserva $reserva)
+    {
+        $this->reservas[] = $reserva;
+
+        return $this;
+    }
+
+    /**
+     * Remove reserva
+     *
+     * @param \AppBundle\Entity\Reserva $reserva
+     */
+    public function removeReserva(\AppBundle\Entity\Reserva $reserva)
+    {
+        $this->reservas->removeElement($reserva);
+    }
+
+    /**
+     * Get reservas
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getReservas()
+    {
+        return $this->reservas;
+    }
+
+    /**
+     * Set restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     *
+     * @return Mesa
+     */
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
+    {
+        $this->restaurante = $restaurante;
+
+        return $this;
+    }
+
+    /**
+     * Get restaurante
+     *
+     * @return \AppBundle\Entity\Restaurante
+     */
+    public function getRestaurante()
+    {
+        return $this->restaurante;
+    }
+}
