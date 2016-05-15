@@ -1,7 +1,0 @@
-manage_company:
-    resource: "@ManageCompanyBundle/Resources/config/routing.yml"
-    prefix:   /
-
-app:
-    resource: "@ManageCompanyBundle/Controller/"
-    type:     annotation
