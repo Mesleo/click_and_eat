@@ -1,0 +1,193 @@
+<?php
+// src/AppBundle/Entity/Restaurante.php
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+
+/**
+ * Restaurante
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="restaurante")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
+ */
+class Restaurante
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="usuario", type="string", length=45, nullable=false)
+     */
+    protected $usuario;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=45, nullable=false)
+     */
+    protected $password;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=100, nullable=false)
+     */
+    protected $email;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
+     */
+    protected $nombre;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="cif", type="string", length=9, unique=true, nullable=false)
+     */
+    protected $cif;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="direccion", type="string", length=255, nullable=false)
+     */
+    protected $direccion;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="coordenadas", type="string", length=100, nullable=false)
+     */
+    protected $coordenadas;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Localidad", inversedBy="restaurantes")
+     * @ORM\JoinColumn(name="idLocalidad", referencedColumnName="id", nullable=false)
+     */
+    protected $localidad;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     */
+    protected $telefono;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="foto", type="string", length=255, nullable=false)
+     */
+    protected $foto;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="TipoComida", inversedBy="restaurantes")
+     * @ORM\JoinTable(name="restaurante_tipo_comida",
+     *      joinColumns={@ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="idTipoComida", referencedColumnName="id", nullable=false)}
+     *      )
+     */
+    protected $tipoComida;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="precio_envio", type="float", nullable=false, options={"default":"0.0"})
+     */
+    protected $precio_envio;
+
+    /**
+     * @var blob
+     *
+     * @ORM\Column(name="mapa", type="blob", length=100)
+     */
+    protected $mapa;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_alta", type="datetime", nullable=false)
+     */
+    protected $fecha_alta;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_baja", type="datetime")
+     */
+    protected $fecha_baja;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Horario", inversedBy="restaurantes")
+     * @ORM\JoinTable(name="horario_restaurante",
+     *      joinColumns={@ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="idHorario", referencedColumnName="id", nullable=false)}
+     *      )
+     */
+    protected $horarios;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Comentario", mappedBy="restaurante")
+     */
+    protected $comentarios;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Mesa", mappedBy="restaurante")
+     */
+    protected $mesas;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Pedido", mappedBy="restaurante")
+     */
+    protected $pedidos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Plato", mappedBy="restaurante")
+     */
+    protected $platos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Reserva", mappedBy="restaurante")
+     */
+    protected $reservas;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Trabajador", mappedBy="restaurante")
+     */
+    protected $trabajadores;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    protected $created_at;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     */
+    protected $updated_at;
+
+    /**
+     * @var boolean 
+     *
+     * @ORM\Column(name="trash", type="boolean", options={"default":0})
+     */
+    protected $trash;
+
+    
+}

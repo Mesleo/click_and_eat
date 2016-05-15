@@ -1,0 +1,40 @@
+<!-- src/ManageCompanyBundle/Resources/views/Page/base.html.twig -->
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>{% block title %}Click&Eat{% endblock %}</title>
+		{% block stylesheets %}
+            <link href="{{ asset('css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
+            <link href="{{ asset('css/bootstrap-theme.min.css') }}" type="text/css" rel="stylesheet" />
+			<link href="{{ asset('css/estilos.css') }}" type="text/css" rel="stylesheet" />
+        {% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+		<section id="wrapper">
+			{% block navigation %}
+				<nav role="navigation" class="navbar navbar-default">
+					<div class="navbar-header">
+						<button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a href="#" class="navbar-brand">Click & Eat</a>
+					</div>
+				</nav>
+			{% endblock %}
+			
+			<section class="main-col">
+				{% block body %}{% endblock %}
+			</section>
+		</section>
+        {% block javascripts %}
+			<script src="{{ asset('js/jquery-1.11.2.min.js') }}"></script>
+			<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+		{% endblock %}
+    </body>
+</html>
