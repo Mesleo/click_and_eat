@@ -1,0 +1,160 @@
+{# src/Manage/CompanyBundle/Resources/views/Page/form.html.twig #}
+{% extends 'ManageCompanyBundle:Base:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+		<h1>Registra tu empresa</h1>
+		<form method="post">
+			<h2>Datos usuario</h2>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+        				<label class="control-label">Usuario</label>
+            			<input type="text" class="form-control" name="inputUser" id="inputUser" placeholder="Usuario">
+    				</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+        				<label class="control-label">Email</label>
+            			<input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="Email">
+    				</div>
+				</div>
+			</div>
+    		<div class="row">
+    			<div class="col-md-6">
+    				<div class="form-group">
+        				<label class="control-label">Password</label>
+            			<input type="password" class="form-control" name="inputPassword" id="inputPassword" placeholder="Password">
+        			</div>
+    			</div>
+    			<div class="col-md-6">
+    				<div class="form-group">
+        				<label class="control-label">Confirmar Password</label>
+            			<input type="password" class="form-control" name="inputRePassword" id="inputRePassword" placeholder="Confirmar Password">
+        			</div>
+    			</div>
+    		</div>
+    		<h2>Datos empresa</h2>
+    		<div class="row">
+    			<div class="col-md-8">
+    				<div class="form-group">
+        				<label class="control-label">Nombre restaurante</label>
+            			<input type="text" class="form-control" name="inputNombre" id="inputNombre" placeholder="Nombre restaurante">
+        			</div>
+    			</div>
+    			<div class="col-md-4">
+    				<div class="form-group">
+        				<label class="control-label">NIF</label>
+            			<input type="text" class="form-control" name="inputNIF" id="inputNIF" placeholder="NIF">
+        			</div>
+    			</div>
+    		</div>
+    		<div class="row">
+    			<div class="col-md-6">
+    				<div class="form-group">
+        				<label class="control-label">Dirección</label>
+            			<input type="text" class="form-control" name="inputDireccion" id="inputDireccion" placeholder="Direccion">
+        			</div>
+    			</div>
+    			<div class="col-md-3">
+    				<div class="form-group">
+        				<label class="control-label">Localidad</label>
+        				<select class="form-control" name="localidad" id="localidad">
+            			</select>
+        			</div>
+    			</div>
+    			<div class="col-md-3">
+    				<div class="form-group">
+        				<label class="control-label">Provincia</label>
+        				<select class="form-control" name="provincia" id="provincia">
+            			</select>
+        			</div>
+    			</div>
+    		</div>
+    		<div class="row">
+    			<div class="col-md-6">
+    				<div class="form-group">
+        				<label class="control-label">Tipo de comida</label>
+            			<select class="form-control" name="tipoComida" id="tipoComida" multiple>
+            			</select>
+        			</div>
+    			</div>
+    			<div class="col-md-3">
+    				<label class="control-label">Precio envío</label>
+    				<input type="text" class="form-control" name="inputEnvio" id="inputEnvio" placeholder="Precio envio">
+    			</div>
+    			<div class="col-md-3">
+    				<div class="form-group">
+        				<label class="control-label">Teléfono</label>
+            			<input type="text" class="form-control" name="inputTelefono" id="inputTelefono" placeholder="Telefono">
+        			</div>
+    			</div>
+    		</div>
+    		<div class="row">
+    			<div class="col-md-6">
+    				<label class="control-label">Horario establecimiento</label>
+    				<br />
+    				<label class="control-label">Mediodía</label>
+    				<div class="row">
+    					<div class="col-md-5">
+    						<input type="text" class="form-control" name="horarioAperturaLocalM" id="horarioAperturaLocalM" placeholder="12:00">
+    					</div>
+    					<div class="col-md-2">
+    						<label class="control-label">hasta las</label>
+    					</div>
+    					<div class="col-md-5">
+    						<input type="text" class="form-control" name="horarioCierreLocalM" id="horarioCierreLocalM" placeholder="16:00">
+    					</div>
+    				</div>
+    				<br />
+    				<label class="control-label">Noche</label>
+    				<div class="row">
+    					<div class="col-md-5">
+    						<input type="text" class="form-control" name="horarioAperturaLocalN" id="horarioAperturaLocalN" placeholder="20:00">
+    					</div>
+    					<div class="col-md-2">
+    						<label class="control-label">hasta las</label>
+    					</div>
+    					<div class="col-md-5">
+    						<input type="text" class="form-control" name="horarioCierreLocalN" id="horarioCierreLocalN" placeholder="01:00">
+    					</div>
+    				</div>
+    			</div>
+    			<div class="col-md-6">
+    				<label class="control-label">Horario a domicilio</label>
+    				<br />
+    				<label class="control-label">Mediodía</label>
+    				<div class="row">
+    					<div class="col-md-5">
+    						<input type="text" class="form-control" name="horarioAperturaDomiM" id="horarioAperturaDomiM" placeholder="12:00">
+    					</div>
+    					<div class="col-md-2">
+    						<label class="control-label">hasta las</label>
+    					</div>
+    					<div class="col-md-5">
+    						<input type="text" class="form-control" name="horarioCierreDomiM" id="horarioCierreDomiM" placeholder="16:00">
+    					</div>
+    				</div>
+    				<br />
+    				<label class="control-label">Noche</label>
+    				<div class="row">
+    					<div class="col-md-5">
+    						<input type="text" class="form-control" name="horarioAperturaDomiN" id="horarioAperturaDomiN" placeholder="20:00">
+    					</div>
+    					<div class="col-md-2">
+    						<label class="control-label">hasta las</label>
+    					</div>
+    					<div class="col-md-5">
+    						<input type="text" class="form-control" name="horarioCierreDomiN" id="horarioCierreDomiN" placeholder="01:00">
+    					</div>
+    				</div>
+    			</div>
+    		</div>
+    		<br />
+        	<div class="form-group">
+	        	<input type="submit" class="btn btn-primary" value="Enviar">
+            	<input type="reset" class="btn btn-default" value="Limpiar">
+        	</div>
+		</form>
+	</div>
+{% endblock %}

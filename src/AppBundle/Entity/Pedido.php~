@@ -10,16 +10,17 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\Table(name="pedido")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PedidoRepository")
  */
 class Pedido
 {
-
     const STATUS_ESPERA_PAGO = 'espera de pago';
     const STATUS_PAGO = 'pagado';
     const STATUS_CANCELADO = 'cancelado';
     const STATUS_EN_CURSO = 'en curso';
     const STATUS_ENTREGADO = 'entregado';
     const STATUS_REEMBOLSADO = 'reembolsado';
+
     /**
      * @var integer
      *
@@ -28,6 +29,13 @@ class Pedido
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="numPedido", type="integer", nullable=false)
+     */
+    protected $numPedido;
 
     /**
      * @var \DateTime
@@ -44,18 +52,11 @@ class Pedido
     protected $fechaHoraLlegada;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="numPedido", type="integer", nullable=false)
-     */
-    protected $numPedido;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=100)
+     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
      */
-    private $nombre;
+    protected $nombre;
 
     /**
      * @var string
@@ -67,50 +68,49 @@ class Pedido
     /**
      * @var string
      *
-     * @ORM\Column(name="telefono", type="string", length=100)
+     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
      */
-    private $telefono;
+    protected $telefono;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=100)
+     * @ORM\Column(name="email", type="string", length=100, nullable=false)
      */
-    private $email;
+    protected $email;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="estado", type="string")
+     * @ORM\Column(name="estado", type="string", nullable=false)
      */
     protected $estado;
 
     /**
      * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="pedidos")
-     * @ORM\JoinColumn(name="restaurante_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
      */
     protected $restaurante;
 
     /**
      * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="pedidos")
-     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id")
+     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=false)
      */
     protected $cliente;
 
     /**
      * @ORM\ManyToOne(targetEntity="Trabajador", inversedBy="pedidos")
-     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id")
+     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id", nullable=false)
      */
     protected $trabajador;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Producto")
-     * @ORM\JoinTable(name="pedido_producto",
-     *      joinColumns={@ORM\JoinColumn(name="pedido_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="producto_id", referencedColumnName="id")}
-     *      )
+     * @ORM\OneToMany(targetEntity="PedidoPlato", mappedBy="pedido")
      */
-    private $pedido_producto;
+    protected $pedido_plato;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Ticket", mappedBy="pedido")
+     */
+    protected $ticket;
 
     /**
      * @var \DateTime
@@ -127,11 +127,19 @@ class Pedido
     protected $updated_at;
 
     /**
-     * @var boolean
+     * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->pedido_plato = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -192,74 +200,119 @@ class Pedido
     }
 
     /**
-     * Set domicilio
+     * Set nombre
      *
-     * @param string $domicilio
+     * @param string $nombre
      *
      * @return Pedido
      */
-    public function setDomicilio($domicilio)
+    public function setNombre($nombre)
     {
-        $this->domicilio = $domicilio;
+        $this->nombre = $nombre;
 
         return $this;
     }
 
     /**
-     * Get domicilio
+     * Get nombre
      *
      * @return string
      */
-    public function getDomicilio()
+    public function getNombre()
     {
-        return $this->domicilio;
+        return $this->nombre;
     }
 
     /**
-     * Set cantidad
+     * Set direccion
      *
-     * @param integer $cantidad
+     * @param string $direccion
      *
      * @return Pedido
      */
-    public function setCantidad($cantidad)
+    public function setDireccion($direccion)
     {
-        $this->cantidad = $cantidad;
+        $this->direccion = $direccion;
 
         return $this;
     }
 
     /**
-     * Get cantidad
+     * Get direccion
      *
-     * @return integer
+     * @return string
      */
-    public function getCantidad()
+    public function getDireccion()
     {
-        return $this->cantidad;
+        return $this->direccion;
+    }
+
+    /**
+     * Set telefono
+     *
+     * @param string $telefono
+     *
+     * @return Pedido
+     */
+    public function setTelefono($telefono)
+    {
+        $this->telefono = $telefono;
+
+        return $this;
+    }
+
+    /**
+     * Get telefono
+     *
+     * @return string
+     */
+    public function getTelefono()
+    {
+        return $this->telefono;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return Pedido
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     /**
      * Set estado
      *
-     * @param boolean $estado
+     * @param string $estado
      *
      * @return Pedido
      */
     public function setEstado($estado)
     {
-        if (!in_array($estado, array(self::STATUS_REEMBOLSADO, self::STATUS_PAGO, self::STATUS_CANCELADO, self::STATUS_ESPERA_PAGO,
-            self::STATUS_EN_CURSO, self::STATUS_ENTREGADO))) {
-            throw new \InvalidArgumentException("Estado inválido");
-        }
         $this->estado = $estado;
+
         return $this;
     }
 
     /**
      * Get estado
      *
-     * @return boolean
+     * @return string
      */
     public function getEstado()
     {
@@ -315,188 +368,85 @@ class Pedido
     }
 
     /**
-     * Set trabajador
+     * Set recorrido
      *
-     * @param \AppBundle\Entity\Trabajador $trabajador
+     * @param \AppBundle\Entity\Recorrido $recorrido
      *
      * @return Pedido
      */
-    public function setTrabajador(\AppBundle\Entity\Trabajador $trabajador = null)
+    public function setRecorrido(\AppBundle\Entity\Recorrido $recorrido = null)
     {
-        $this->trabajador = $trabajador;
+        $this->recorrido = $recorrido;
 
         return $this;
     }
 
     /**
-     * Get trabajador
+     * Get recorrido
      *
-     * @return \AppBundle\Entity\Trabajador
+     * @return \AppBundle\Entity\Recorrido
      */
-    public function getTrabajador()
+    public function getRecorrido()
     {
-        return $this->trabajador;
-    }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->pedido_producto = new \Doctrine\Common\Collections\ArrayCollection();
+        return $this->recorrido;
     }
 
     /**
-     * Add pedidoProducto
+     * Add pedidoPlato
      *
-     * @param \AppBundle\Entity\Producto $pedidoProducto
+     * @param \AppBundle\Entity\PedidoPlato $pedidoPlato
      *
      * @return Pedido
      */
-    public function addPedidoProducto(\AppBundle\Entity\Producto $pedidoProducto)
+    public function addPedidoPlato(\AppBundle\Entity\PedidoPlato $pedidoPlato)
     {
-        $this->pedido_producto[] = $pedidoProducto;
+        $this->pedido_plato[] = $pedidoPlato;
 
         return $this;
     }
 
     /**
-     * Remove pedidoProducto
+     * Remove pedidoPlato
      *
-     * @param \AppBundle\Entity\Producto $pedidoProducto
+     * @param \AppBundle\Entity\PedidoPlato $pedidoPlato
      */
-    public function removePedidoProducto(\AppBundle\Entity\Producto $pedidoProducto)
+    public function removePedidoPlato(\AppBundle\Entity\PedidoPlato $pedidoPlato)
     {
-        $this->pedido_producto->removeElement($pedidoProducto);
+        $this->pedido_plato->removeElement($pedidoPlato);
     }
 
     /**
-     * Get pedidoProducto
+     * Get pedidoPlato
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getPedidoProducto()
+    public function getPedidoPlato()
     {
-        return $this->pedido_producto;
+        return $this->pedido_plato;
     }
 
     /**
-     * Set nombre
+     * Set ticket
      *
-     * @param string $nombre
+     * @param \AppBundle\Entity\Ticket $ticket
      *
      * @return Pedido
      */
-    public function setNombre($nombre)
+    public function setTicket(\AppBundle\Entity\Ticket $ticket = null)
     {
-        $this->nombre = $nombre;
+        $this->ticket = $ticket;
 
         return $this;
     }
 
     /**
-     * Get nombre
+     * Get ticket
      *
-     * @return string
+     * @return \AppBundle\Entity\Ticket
      */
-    public function getNombre()
+    public function getTicket()
     {
-        return $this->nombre;
-    }
-
-    /**
-     * Set telefono
-     *
-     * @param string $telefono
-     *
-     * @return Pedido
-     */
-    public function setTelefono($telefono)
-    {
-        $this->telefono = $telefono;
-
-        return $this;
-    }
-
-    /**
-     * Get telefono
-     *
-     * @return string
-     */
-    public function getTelefono()
-    {
-        return $this->telefono;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return Pedido
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Set fechaSalida
-     *
-     * @param \DateTime $fechaSalida
-     *
-     * @return Pedido
-     */
-    public function setFechaSalida($fechaSalida)
-    {
-        $this->fechaSalida = $fechaSalida;
-
-        return $this;
-    }
-
-    /**
-     * Get fechaSalida
-     *
-     * @return \DateTime
-     */
-    public function getFechaSalida()
-    {
-        return $this->fechaSalida;
-    }
-
-    /**
-     * Set fechaLlegada
-     *
-     * @param \DateTime $fechaLlegada
-     *
-     * @return Pedido
-     */
-    public function setFechaLlegada($fechaLlegada)
-    {
-        $this->fechaLlegada = $fechaLlegada;
-
-        return $this;
-    }
-
-    /**
-     * Get fechaLlegada
-     *
-     * @return \DateTime
-     */
-    public function getFechaLlegada()
-    {
-        return $this->fechaLlegada;
+        return $this->ticket;
     }
 
     /**
@@ -545,6 +495,30 @@ class Pedido
     public function getFechaHoraLlegada()
     {
         return $this->fechaHoraLlegada;
+    }
+
+    /**
+     * Set domicilio
+     *
+     * @param string $domicilio
+     *
+     * @return Pedido
+     */
+    public function setDomicilio($domicilio)
+    {
+        $this->domicilio = $domicilio;
+
+        return $this;
+    }
+
+    /**
+     * Get domicilio
+     *
+     * @return string
+     */
+    public function getDomicilio()
+    {
+        return $this->domicilio;
     }
 
     /**
@@ -617,5 +591,29 @@ class Pedido
     public function getTrash()
     {
         return $this->trash;
+    }
+
+    /**
+     * Set trabajador
+     *
+     * @param \AppBundle\Entity\Trabajador $trabajador
+     *
+     * @return Pedido
+     */
+    public function setTrabajador(\AppBundle\Entity\Trabajador $trabajador)
+    {
+        $this->trabajador = $trabajador;
+
+        return $this;
+    }
+
+    /**
+     * Get trabajador
+     *
+     * @return \AppBundle\Entity\Trabajador
+     */
+    public function getTrabajador()
+    {
+        return $this->trabajador;
     }
 }

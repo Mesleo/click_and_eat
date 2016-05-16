@@ -45,13 +45,13 @@ class Domicilio
 
     /**
      * @ORM\ManyToOne(targetEntity="Localidad", inversedBy="domicilios")
-     * @ORM\JoinColumn(name="idLocalidad", referencedColumnName="id")
+     * @ORM\JoinColumn(name="idLocalidad", referencedColumnName="id", nullable=false)
      */
     protected $localidad;
 
     /**
      * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="domicilios")
-     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id")
+     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=false)
      */
     protected $cliente;
 
@@ -70,7 +70,7 @@ class Domicilio
     protected $updated_at;
 
     /**
-     * @var boolean
+     * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
@@ -84,6 +84,78 @@ class Domicilio
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set direccion
+     *
+     * @param string $direccion
+     *
+     * @return Domicilio
+     */
+    public function setDireccion($direccion)
+    {
+        $this->direccion = $direccion;
+
+        return $this;
+    }
+
+    /**
+     * Get direccion
+     *
+     * @return string
+     */
+    public function getDireccion()
+    {
+        return $this->direccion;
+    }
+
+    /**
+     * Set localidad
+     *
+     * @param \AppBundle\Entity\Localidad $localidad
+     *
+     * @return Domicilio
+     */
+    public function setLocalidad(\AppBundle\Entity\Localidad $localidad = null)
+    {
+        $this->localidad = $localidad;
+
+        return $this;
+    }
+
+    /**
+     * Get localidad
+     *
+     * @return \AppBundle\Entity\Localidad
+     */
+    public function getLocalidad()
+    {
+        return $this->localidad;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \AppBundle\Entity\Cliente $cliente
+     *
+     * @return Domicilio
+     */
+    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * Get cliente
+     *
+     * @return \AppBundle\Entity\Cliente
+     */
+    public function getCliente()
+    {
+        return $this->cliente;
     }
 
     /**
@@ -156,54 +228,6 @@ class Domicilio
     public function getCodigoPostal()
     {
         return $this->codigoPostal;
-    }
-
-    /**
-     * Set localidad
-     *
-     * @param \AppBundle\Entity\Localidad $localidad
-     *
-     * @return Domicilio
-     */
-    public function setLocalidad(\AppBundle\Entity\Localidad $localidad = null)
-    {
-        $this->localidad = $localidad;
-
-        return $this;
-    }
-
-    /**
-     * Get localidad
-     *
-     * @return \AppBundle\Entity\Localidad
-     */
-    public function getLocalidad()
-    {
-        return $this->localidad;
-    }
-
-    /**
-     * Set cliente
-     *
-     * @param \AppBundle\Entity\Cliente $cliente
-     *
-     * @return Domicilio
-     */
-    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
-    {
-        $this->cliente = $cliente;
-
-        return $this;
-    }
-
-    /**
-     * Get cliente
-     *
-     * @return \AppBundle\Entity\Cliente
-     */
-    public function getCliente()
-    {
-        return $this->cliente;
     }
 
     /**

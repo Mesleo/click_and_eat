@@ -13,28 +13,35 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Comentario
 {
-	/**
-	 * @var integer
-	 *
+    /**
+     * @var integer
+     *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-	protected $id;
+    protected $id;
 
-	/**
+    /**
      * @var string
      *
      * @ORM\Column(name="usuario", type="string", length=100, nullable=false)
      */
-	protected $usuario;
+    protected $usuario;
 
-     /**
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=100, nullable=false)
+     */
+    protected $email;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="comentario", type="string", length=255, nullable=false)
      */
-     protected $comentario;
+    protected $comentario;
 
     /**
      * @var \DateTime
@@ -51,17 +58,23 @@ class Comentario
     protected $updated_at;
 
     /**
-     * @var boolean
+     * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
 
-	/**
+    /**
      * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="comentarios")
-     * @ORM\JoinColumn(name="restaurante_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
      */
-    protected $idRestaurante;
+    protected $restaurante;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="comentarios")
+     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=false)
+     */
+    protected $cliente;
 
     /**
      * Get id
@@ -98,6 +111,30 @@ class Comentario
     }
 
     /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return Comentario
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
      * Set comentario
      *
      * @param string $comentario
@@ -119,6 +156,30 @@ class Comentario
     public function getComentario()
     {
         return $this->comentario;
+    }
+
+    /**
+     * Set valoracion
+     *
+     * @param string $valoracion
+     *
+     * @return Comentario
+     */
+    public function setValoracion($valoracion)
+    {
+        $this->valoracion = $valoracion;
+
+        return $this;
+    }
+
+    /**
+     * Get valoracion
+     *
+     * @return string
+     */
+    public function getValoracion()
+    {
+        return $this->valoracion;
     }
 
     /**
@@ -148,13 +209,13 @@ class Comentario
     /**
      * Set restaurante
      *
-     * @param \AppBundle\Entity\Restaurante $idRestaurante
+     * @param \AppBundle\Entity\Restaurante $restaurante
      *
      * @return Comentario
      */
-    public function setIdRestaurante(\AppBundle\Entity\Restaurante $idRestaurante = null)
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
     {
-        $this->idRestaurante = $idRestaurante;
+        $this->restaurante = $restaurante;
 
         return $this;
     }
@@ -164,9 +225,33 @@ class Comentario
      *
      * @return \AppBundle\Entity\Restaurante
      */
-    public function getIdRestaurante()
+    public function getRestaurante()
     {
-        return $this->idRestaurante;
+        return $this->restaurante;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \AppBundle\Entity\Cliente $cliente
+     *
+     * @return Comentario
+     */
+    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * Get cliente
+     *
+     * @return \AppBundle\Entity\Cliente
+     */
+    public function getCliente()
+    {
+        return $this->cliente;
     }
 
     /**

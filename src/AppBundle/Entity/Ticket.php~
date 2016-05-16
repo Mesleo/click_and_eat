@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  * @ORM\Table(name="ticket")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TicketRepository")
  */
 class Ticket
 {
@@ -28,31 +29,16 @@ class Ticket
      */
     protected $fecha;
 
-    /***
-     * @Column(name="formaPago", type="string", columnDefinition="ENUM('efectivo', 'tarjeta', 'paypal')")
+    /**
+     * @ORM\Column(name="formaPago", type="string", columnDefinition="ENUM('efectivo', 'tarjeta', 'paypal')", nullable=false)
      */
     protected $formaPago;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="iva", type="float", nullable=false)
+     * @ORM\OneToOne(targetEntity="Pedido", inversedBy="ticket")
+     * @ORM\JoinColumn(name="idPedido", referencedColumnName="id", nullable=false)
      */
-    protected $iva;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="total", type="float", nullable=false)
-     */
-    protected $total;
-
-    /**
-     * var integer
-     *
-     * @ORM\OneToOne(targetEntity="Pedido")
-     */
-    private $pedido;
+    protected $pedido;
 
     /**
      * @var \DateTime
@@ -69,7 +55,7 @@ class Ticket
     protected $updated_at;
 
     /**
-     * @var boolean
+     * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
@@ -110,51 +96,51 @@ class Ticket
     }
 
     /**
-     * Set iva
+     * Set formaPago
      *
-     * @param float $iva
+     * @param string $formaPago
      *
      * @return Ticket
      */
-    public function setIva($iva)
+    public function setFormaPago($formaPago)
     {
-        $this->iva = $iva;
+        $this->formaPago = $formaPago;
 
         return $this;
     }
 
     /**
-     * Get iva
+     * Get formaPago
      *
-     * @return float
+     * @return string
      */
-    public function getIva()
+    public function getFormaPago()
     {
-        return $this->iva;
+        return $this->formaPago;
     }
 
     /**
-     * Set total
+     * Set idPedido
      *
-     * @param float $total
+     * @param \AppBundle\Entity\Pedido $idPedido
      *
      * @return Ticket
      */
-    public function setTotal($total)
+    public function setIdPedido(\AppBundle\Entity\Pedido $idPedido = null)
     {
-        $this->total = $total;
+        $this->idPedido = $idPedido;
 
         return $this;
     }
 
     /**
-     * Get total
+     * Get idPedido
      *
-     * @return float
+     * @return \AppBundle\Entity\Pedido
      */
-    public function getTotal()
+    public function getIdPedido()
     {
-        return $this->total;
+        return $this->idPedido;
     }
 
     /**

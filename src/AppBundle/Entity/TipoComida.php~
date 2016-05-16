@@ -1,32 +1,39 @@
 <?php
+// src/AppBundle/Entity/TipoComida.php
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * TipoComida
  *
  * @ORM\Entity
- * @ORM\Table(name="tipocomida")
+ * @ORM\Table(name="tipo_comida")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TipoComidaRepository")
  */
 class TipoComida
 {
-
     /**
-     * @var bigint
+     * @var integer
      *
-     * @ORM\Column(name="id", type="bigint", nullable=false)
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
+     * @ORM\Column(name="nombre", type="string", length=255, nullable=false)
      */
-    public $nombre;
+    protected $nombre;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Restaurante", mappedBy="tipoComida")
+     */
+    protected $restaurantes;
 
     /**
      * @var \DateTime
@@ -43,11 +50,19 @@ class TipoComida
     protected $updated_at;
 
     /**
-     * @var boolean
+     * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->restaurantes = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -81,6 +96,40 @@ class TipoComida
     public function getNombre()
     {
         return $this->nombre;
+    }
+
+    /**
+     * Add restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     *
+     * @return TipoComida
+     */
+    public function addRestaurante(\AppBundle\Entity\Restaurante $restaurante)
+    {
+        $this->restaurantes[] = $restaurante;
+
+        return $this;
+    }
+
+    /**
+     * Remove restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     */
+    public function removeRestaurante(\AppBundle\Entity\Restaurante $restaurante)
+    {
+        $this->restaurantes->removeElement($restaurante);
+    }
+
+    /**
+     * Get restaurantes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRestaurantes()
+    {
+        return $this->restaurantes;
     }
 
     /**

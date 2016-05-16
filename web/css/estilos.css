@@ -1,0 +1,110 @@
+body {
+	background: #EEEEEE;
+}
+
+.btn-buscar {
+	background: #FFA000;
+	color: #FFFFFF;
+	padding: 0.8em 2em;
+	width: 100%;
+}
+
+.btn-connect {
+	background: #FFA000;
+	color: #FFFFFF;
+	margin-left: 42%;
+	padding: 0.8em 2em;
+}
+
+#buscar, #wrap {
+	background: rgba(255,255,255,0.8);
+	margin-top: 2em;
+	padding: 1em 1em;
+}
+
+.contenido {
+	display: inline-block;
+	width: 33%;
+}
+
+#content {
+	margin-top: 4em;
+}
+
+#footer {
+	background: #333333;
+	color: #EEEEEE;
+	padding: 0.5em 0;
+	text-align: center;
+}
+
+h1, h3 {
+	text-align: center;
+}
+
+h1 {
+	color: #FFC107;
+	font-size: 54px;
+	font-weight: bold;
+	margin: 0;
+	padding-top: 1em;
+	*text-shadow: 1px 1px 1px #FFFFFF;
+}
+
+header {
+	background: url("../images/fondo.jpg") no-repeat center center fixed;
+	background-size: cover;
+	padding-top: 2em;
+	padding-bottom: 3em;
+}
+
+#infor {
+	display: block;
+	margin: 10% 0;
+}
+
+#login {
+	background: rgba(255,255,255,0.9);
+	*margin: 2em;
+	padding: 2em;
+}
+
+.navbar-brand {
+	font-size: 28px;
+	margin-left: 2em;
+	text-decoration: none; 
+}
+
+.navbar-default {
+	background: #FFC107;
+	margin: 0;
+}
+
+p {
+	font-size: 22px;
+	margin-bottom: 1em;
+}
+
+.subtitulo {
+	font-size: 40px;
+	*text-shadow: 1px 1px 1px #FFFFFF;
+}
+
+#wrap {
+
+}
+
+@media (max-width: 991px) {
+	#infor {
+		display: none;
+	}
+	#login {
+		margin: 0 2em;
+	}
+}
+
+@media (max-width: 767px) {
+	.btn-connect {
+		margin-left: 40%;
+	}
+}

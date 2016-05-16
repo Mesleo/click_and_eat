@@ -1,5 +1,5 @@
 <?php
-
+// src/AppBundle/Entity/Trabajador.php
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Entity
  * @ORM\Table(name="trabajador")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TrabajadorRepository")
  */
 class Trabajador
 {
@@ -18,69 +19,67 @@ class Trabajador
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
      */
-    private $nombre;
+    protected $nombre;
 
     /**
      * @var string
      *
      * @ORM\Column(name="apellidos", type="string", length=100, nullable=false)
      */
-    private $apellidos;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="telefono_1", type="string")
-     */
-    private $telefono1;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="telefono_2", type="string")
-     */
-    private $telefono2;
+    protected $apellidos;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=100)
+     * @ORM\Column(name="usuario", type="string", length=45, nullable=false)
      */
-    private $correo;
+    protected $usuario;
 
     /**
-     * @ORM\OneToMany(targetEntity="Recorrido", mappedBy="idTrabajador")
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=45, nullable=false)
      */
-    private $recorridos;
+    protected $password;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=100, nullable=false)
+     */
+    protected $email;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     */
+    protected $telefono;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Pedido", mappedBy="trabajador")
+     */
+    protected $pedidos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Recorrido", mappedBy="trabajador")
+     */
+    protected $recorridos;
 
     /**
      * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="trabajadores")
-     * @ORM\JoinColumn(name="restaurante_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
      */
-    private $idRestaurante;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="usuario", type="string", length=8, nullable=false)
-     */
-    private $usuario;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=8, nullable=false)
-     */
-    private $password;
+    protected $restaurante;
 
     /**
      * @var \DateTime
@@ -97,13 +96,29 @@ class Trabajador
     protected $updated_at;
 
     /**
-     * @var boolean
+     * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->recorridos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set nombre
@@ -151,119 +166,6 @@ class Trabajador
     public function getApellidos()
     {
         return $this->apellidos;
-    }
-
-    /**
-     * Set telefono
-     *
-     * @param integer $telefono
-     *
-     * @return Trabajador
-     */
-    public function setTelefono($telefono)
-    {
-        $this->telefono = $telefono;
-
-        return $this;
-    }
-
-    /**
-     * Get telefono
-     *
-     * @return integer
-     */
-    public function getTelefono()
-    {
-        return $this->telefono;
-    }
-
-    /**
-     * Set idtrabajador
-     *
-     * @param integer $idtrabajador
-     *
-     * @return Trabajador
-     */
-    public function setIdtrabajador($idtrabajador)
-    {
-        $this->idtrabajador = $idtrabajador;
-
-        return $this;
-    }
-
-    /**
-     * Get idtrabajador
-     *
-     * @return integer
-     */
-    public function getIdtrabajador()
-    {
-        return $this->idtrabajador;
-    }
-
-    /**
-     * Set restauranterestaurante
-     *
-     * @param \AppBundle\Entity\Restaurante $restauranterestaurante
-     *
-     * @return Trabajador
-     */
-    public function setRestauranterestaurante(\AppBundle\Entity\Restaurante $restauranterestaurante)
-    {
-        $this->restauranterestaurante = $restauranterestaurante;
-
-        return $this;
-    }
-
-    /**
-     * Get restauranterestaurante
-     *
-     * @return \AppBundle\Entity\Restaurante
-     */
-    public function getRestauranterestaurante()
-    {
-        return $this->restauranterestaurante;
-    }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->recorridos = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return \integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set correo
-     *
-     * @param string $correo
-     *
-     * @return Trabajador
-     */
-    public function setCorreo($correo)
-    {
-        $this->correo = $correo;
-
-        return $this;
-    }
-
-    /**
-     * Get correo
-     *
-     * @return string
-     */
-    public function getCorreo()
-    {
-        return $this->correo;
     }
 
     /**
@@ -315,51 +217,99 @@ class Trabajador
     }
 
     /**
-     * Set created
+     * Set email
      *
-     * @param \DateTime $created
+     * @param string $email
      *
      * @return Trabajador
      */
-    public function setCreated($created)
+    public function setEmail($email)
     {
-        $this->created = $created;
+        $this->email = $email;
 
         return $this;
     }
 
     /**
-     * Get created
+     * Get email
      *
-     * @return \DateTime
+     * @return string
      */
-    public function getCreated()
+    public function getEmail()
     {
-        return $this->created;
+        return $this->email;
     }
 
     /**
-     * Set updated
+     * Set telefono
      *
-     * @param \DateTime $updated
+     * @param string $telefono
      *
      * @return Trabajador
      */
-    public function setUpdated($updated)
+    public function setTelefono($telefono)
     {
-        $this->updated = $updated;
+        $this->telefono = $telefono;
 
         return $this;
     }
 
     /**
-     * Get updated
+     * Get telefono
+     *
+     * @return string
+     */
+    public function getTelefono()
+    {
+        return $this->telefono;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Trabajador
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->created_at = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
      *
      * @return \DateTime
      */
-    public function getUpdated()
+    public function getCreatedAt()
     {
-        return $this->updated;
+        return $this->created_at;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Trabajador
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updated_at = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
     }
 
     /**
@@ -421,122 +371,60 @@ class Trabajador
     }
 
     /**
-     * Set telefono1
+     * Set restaurante
      *
-     * @param string $telefono1
+     * @param \AppBundle\Entity\Restaurante $restaurante
      *
      * @return Trabajador
      */
-    public function setTelefono1($telefono1)
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
     {
-        $this->telefono1 = $telefono1;
+        $this->restaurante = $restaurante;
 
         return $this;
     }
 
     /**
-     * Get telefono1
-     *
-     * @return string
-     */
-    public function getTelefono1()
-    {
-        return $this->telefono1;
-    }
-
-    /**
-     * Set telefono2
-     *
-     * @param string $telefono2
-     *
-     * @return Trabajador
-     */
-    public function setTelefono2($telefono2)
-    {
-        $this->telefono2 = $telefono2;
-
-        return $this;
-    }
-
-    /**
-     * Get telefono2
-     *
-     * @return string
-     */
-    public function getTelefono2()
-    {
-        return $this->telefono2;
-    }
-
-    /**
-     * Set idRestaurante
-     *
-     * @param \AppBundle\Entity\Restaurante $idRestaurante
-     *
-     * @return Trabajador
-     */
-    public function setIdRestaurante(\AppBundle\Entity\Restaurante $idRestaurante = null)
-    {
-        $this->idRestaurante = $idRestaurante;
-
-        return $this;
-    }
-
-    /**
-     * Get idRestaurante
+     * Get restaurante
      *
      * @return \AppBundle\Entity\Restaurante
      */
-    public function getIdRestaurante()
+    public function getRestaurante()
     {
-        return $this->idRestaurante;
+        return $this->restaurante;
     }
 
     /**
-     * Set createdAt
+     * Add pedido
      *
-     * @param \DateTime $createdAt
+     * @param \AppBundle\Entity\Pedido $pedido
      *
      * @return Trabajador
      */
-    public function setCreatedAt($createdAt)
+    public function addPedido(\AppBundle\Entity\Pedido $pedido)
     {
-        $this->created_at = $createdAt;
+        $this->pedidos[] = $pedido;
 
         return $this;
     }
 
     /**
-     * Get createdAt
+     * Remove pedido
      *
-     * @return \DateTime
+     * @param \AppBundle\Entity\Pedido $pedido
      */
-    public function getCreatedAt()
+    public function removePedido(\AppBundle\Entity\Pedido $pedido)
     {
-        return $this->created_at;
+        $this->pedidos->removeElement($pedido);
     }
 
     /**
-     * Set updatedAt
+     * Get pedidos
      *
-     * @param \DateTime $updatedAt
-     *
-     * @return Trabajador
+     * @return \Doctrine\Common\Collections\Collection
      */
-    public function setUpdatedAt($updatedAt)
+    public function getPedidos()
     {
-        $this->updated_at = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get updatedAt
-     *
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updated_at;
+        return $this->pedidos;
     }
 }

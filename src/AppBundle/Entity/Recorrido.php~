@@ -1,20 +1,19 @@
 <?php
-
+// src/AppBundle/Entity/Recorrido.php
 namespace AppBundle\Entity;
 
-
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Recorrido
  *
  * @ORM\Entity
  * @ORM\Table(name="recorrido")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\RecorridoRepository")
  */
 class Recorrido
 {
-    /**
+	/**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
@@ -23,14 +22,12 @@ class Recorrido
      */
     protected $id;
 
-
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="fecha_hora_salida", type="datetime", nullable=false)
      */
     protected $fechaHoraSalida;
-
 
     /**
      * @var \DateTime
@@ -41,9 +38,9 @@ class Recorrido
 
     /**
      * @ORM\ManyToOne(targetEntity="Trabajador", inversedBy="recorridos")
-     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id")
+     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id", nullable=false)
      */
-    protected $idTrabajador;
+    protected $trabajador;
 
     /**
      * @var \DateTime
@@ -60,11 +57,19 @@ class Recorrido
     protected $updated_at;
 
     /**
-     * @var boolean
+     * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -125,27 +130,61 @@ class Recorrido
     }
 
     /**
-     * Set idTrabajador
+     * Set trabajador
      *
-     * @param \AppBundle\Entity\Trabajador $idTrabajador
+     * @param \AppBundle\Entity\Trabajador $trabajador
      *
      * @return Recorrido
      */
-    public function setIdTrabajador(\AppBundle\Entity\Trabajador $idTrabajador = null)
+    public function setTrabajador(\AppBundle\Entity\Trabajador $trabajador = null)
     {
-        $this->idTrabajador = $idTrabajador;
+        $this->trabajador = $trabajador;
 
         return $this;
     }
 
     /**
-     * Get idTrabajador
+     * Get trabajador
      *
      * @return \AppBundle\Entity\Trabajador
      */
-    public function getIdTrabajador()
+    public function getTrabajador()
     {
-        return $this->idTrabajador;
+        return $this->trabajador;
+    }
+
+    /**
+     * Add pedido
+     *
+     * @param \AppBundle\Entity\Pedido $pedido
+     *
+     * @return Recorrido
+     */
+    public function addPedido(\AppBundle\Entity\Pedido $pedido)
+    {
+        $this->pedidos[] = $pedido;
+
+        return $this;
+    }
+
+    /**
+     * Remove pedido
+     *
+     * @param \AppBundle\Entity\Pedido $pedido
+     */
+    public function removePedido(\AppBundle\Entity\Pedido $pedido)
+    {
+        $this->pedidos->removeElement($pedido);
+    }
+
+    /**
+     * Get pedidos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPedidos()
+    {
+        return $this->pedidos;
     }
 
     /**

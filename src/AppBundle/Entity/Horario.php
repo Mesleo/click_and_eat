@@ -1,62 +1,67 @@
 <?php
-
+// src/AppBundle/Entity/Horario.php
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Horario
  *
  * @ORM\Entity
  * @ORM\Table(name="horario")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\HorarioRepository")
  */
 class Horario
 {
-
     /**
-     * @var bigint
+     * @var integer
      *
-     * @ORM\Column(name="id", type="bigint", nullable=false)
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    public $id;
+    protected $id;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="horario_apertura_local", type="datetime", nullable=false)
      */
-    private $horario_apertura_local;
+    protected $horario_apertura_local;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="horario_cierre_local", type="datetime", nullable=false)
      */
-    private $horario_cierre_local;
+    protected $horario_cierre_local;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="horario_apertura_ldomicilio", type="datetime", nullable=false)
+     * @ORM\Column(name="horario_apertura_domicilio", type="datetime", nullable=false)
      */
-    private $horario_apertura_domicilio;
+    protected $horario_apertura_domicilio;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="horario_cierre_domicilio", type="datetime", nullable=false)
      */
-    private $horario_cierre_domicilio;
-
+    protected $horario_cierre_domicilio;
 
     /**
-     * @var boolean
+     * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
-    private $trash;
+    protected $trash;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Restaurante", mappedBy="horarios")
+     */
+    protected $restaurantes;
 
     /**
      * Get id
@@ -66,6 +71,30 @@ class Horario
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set dia
+     *
+     * @param string $dia
+     *
+     * @return Horario
+     */
+    public function setDia($dia)
+    {
+        $this->dia = $dia;
+
+        return $this;
+    }
+
+    /**
+     * Get dia
+     *
+     * @return string
+     */
+    public function getDia()
+    {
+        return $this->dia;
     }
 
     /**
@@ -186,5 +215,71 @@ class Horario
     public function getTrash()
     {
         return $this->trash;
+    }
+
+    /**
+     * Set restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     *
+     * @return Horario
+     */
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
+    {
+        $this->restaurante = $restaurante;
+
+        return $this;
+    }
+
+    /**
+     * Get restaurante
+     *
+     * @return \AppBundle\Entity\Restaurante
+     */
+    public function getRestaurante()
+    {
+        return $this->restaurante;
+    }
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->restaurantes = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     *
+     * @return Horario
+     */
+    public function addRestaurante(\AppBundle\Entity\Restaurante $restaurante)
+    {
+        $this->restaurantes[] = $restaurante;
+
+        return $this;
+    }
+
+    /**
+     * Remove restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     */
+    public function removeRestaurante(\AppBundle\Entity\Restaurante $restaurante)
+    {
+        $this->restaurantes->removeElement($restaurante);
+    }
+
+    /**
+     * Get restaurantes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRestaurantes()
+    {
+        return $this->restaurantes;
     }
 }

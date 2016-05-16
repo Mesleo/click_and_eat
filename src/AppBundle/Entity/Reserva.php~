@@ -1,5 +1,5 @@
 <?php
-
+// src/AppBundle/Entity/Reserva.php
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  * @ORM\Table(name="reserva")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ReservaRepository")
  */
 class Reserva
 {
@@ -17,49 +18,62 @@ class Reserva
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Mesa", mappedBy="mesas")
-     */
-    private $idMesa;
+    protected $id;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fecha_hora", type="datetime",  nullable=false)
+     * @ORM\Column(name="fecha_hora", type="datetime", nullable=false)
      */
-    private $fechaHora;
+    protected $fechaHora;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=100)
+     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
      */
-    private $nombre;
+    protected $nombre;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="telefono", type="string", length=100)
+     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
      */
-    private $telefono;
+    protected $telefono;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=100)
+     * @ORM\Column(name="email", type="string", length=100, nullable=false)
      */
-    private $email;
+    protected $email;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="num_personas", type="integer")
+     * @ORM\Column(name="numPersonas", type="integer", nullable=false)
      */
-    private $numPersonas;
+    protected $numPersonas;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="reservas")
+     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
+     */
+    protected $restaurante;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="reservas")
+     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=false)
+     */
+    protected $cliente;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Mesa", inversedBy="reservas")
+     * @ORM\JoinColumn(name="idMesa", referencedColumnName="id", nullable=false)
+     */
+    protected $mesa;
 
     /**
      * @var \DateTime
@@ -76,24 +90,16 @@ class Reserva
     protected $updated_at;
 
     /**
-     * @var boolean
+     * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
-    private $trash;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->idMesa = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+    protected $trash;
 
     /**
      * Get id
      *
-     * @return \integer
+     * @return integer
      */
     public function getId()
     {
@@ -101,85 +107,27 @@ class Reserva
     }
 
     /**
-     * Set fechaHora
+     * Set fecha
      *
-     * @param \DateTime $fechaHora
+     * @param \DateTime $fecha
      *
      * @return Reserva
      */
-    public function setFechaHora($fechaHora)
+    public function setFecha($fecha)
     {
-        $this->fechaHora = $fechaHora;
+        $this->fecha = $fecha;
 
         return $this;
     }
 
     /**
-     * Get fechaHora
+     * Get fecha
      *
      * @return \DateTime
      */
-    public function getFechaHora()
+    public function getFecha()
     {
-        return $this->fechaHora;
-    }
-
-    /**
-     * Set trash
-     *
-     * @param boolean $trash
-     *
-     * @return Reserva
-     */
-    public function setTrash($trash)
-    {
-        $this->trash = $trash;
-
-        return $this;
-    }
-
-    /**
-     * Get trash
-     *
-     * @return boolean
-     */
-    public function getTrash()
-    {
-        return $this->trash;
-    }
-
-    /**
-     * Add idMesa
-     *
-     * @param \AppBundle\Entity\Mesa $idMesa
-     *
-     * @return Reserva
-     */
-    public function addIdMesa(\AppBundle\Entity\Mesa $idMesa)
-    {
-        $this->idMesa[] = $idMesa;
-
-        return $this;
-    }
-
-    /**
-     * Remove idMesa
-     *
-     * @param \AppBundle\Entity\Mesa $idMesa
-     */
-    public function removeIdMesa(\AppBundle\Entity\Mesa $idMesa)
-    {
-        $this->idMesa->removeElement($idMesa);
-    }
-
-    /**
-     * Get idMesa
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getIdMesa()
-    {
-        return $this->idMesa;
+        return $this->fecha;
     }
 
     /**
@@ -276,6 +224,126 @@ class Reserva
     public function getNumPersonas()
     {
         return $this->numPersonas;
+    }
+
+    /**
+     * Set trash
+     *
+     * @param boolean $trash
+     *
+     * @return Reserva
+     */
+    public function setTrash($trash)
+    {
+        $this->trash = $trash;
+
+        return $this;
+    }
+
+    /**
+     * Get trash
+     *
+     * @return boolean
+     */
+    public function getTrash()
+    {
+        return $this->trash;
+    }
+
+    /**
+     * Set restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     *
+     * @return Reserva
+     */
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
+    {
+        $this->restaurante = $restaurante;
+
+        return $this;
+    }
+
+    /**
+     * Get restaurante
+     *
+     * @return \AppBundle\Entity\Restaurante
+     */
+    public function getRestaurante()
+    {
+        return $this->restaurante;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \AppBundle\Entity\Cliente $cliente
+     *
+     * @return Reserva
+     */
+    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * Get cliente
+     *
+     * @return \AppBundle\Entity\Cliente
+     */
+    public function getCliente()
+    {
+        return $this->cliente;
+    }
+
+    /**
+     * Set mesa
+     *
+     * @param \AppBundle\Entity\Mesa $mesa
+     *
+     * @return Reserva
+     */
+    public function setMesa(\AppBundle\Entity\Mesa $mesa = null)
+    {
+        $this->mesa = $mesa;
+
+        return $this;
+    }
+
+    /**
+     * Get mesa
+     *
+     * @return \AppBundle\Entity\Mesa
+     */
+    public function getMesa()
+    {
+        return $this->mesa;
+    }
+
+    /**
+     * Set fechaHora
+     *
+     * @param \DateTime $fechaHora
+     *
+     * @return Reserva
+     */
+    public function setFechaHora($fechaHora)
+    {
+        $this->fechaHora = $fechaHora;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaHora
+     *
+     * @return \DateTime
+     */
+    public function getFechaHora()
+    {
+        return $this->fechaHora;
     }
 
     /**

@@ -31,29 +31,43 @@ class Localidad
 	protected $nombre;
 
     /**
-     * @var string
+     * @var integer
      *
-     * @ORM\Column(name="codigoPostal", type="string", length=100, nullable=false)
+     * @ORM\Column(name="codigo_postal", type="integer", nullable=false)
      */
     protected $codigoPostal;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="idComunidad", type="string")
+     * @ORM\Column(name="idComunidad", type="string", nullable=false)
      */
     protected $comunidad;
 
 	/**
      * @ORM\ManyToOne(targetEntity="Provincia", inversedBy="localidades")
-     * @ORM\JoinColumn(name="idProvincia", referencedColumnName="id")
+     * @ORM\JoinColumn(name="idProvincia", referencedColumnName="id", nullable=false)
      */
     protected $provincia;
 
     /**
+     * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="localidad")
+     */
+	protected $domicilios;
+
+    /**
      * @ORM\OneToMany(targetEntity="Restaurante", mappedBy="localidad")
      */
-    private $restaurantes;
+    protected $restaurantes;
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->domicilios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->restaurantes = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -90,6 +104,30 @@ class Localidad
     }
 
     /**
+     * Set codigoPostal
+     *
+     * @param integer $codigoPostal
+     *
+     * @return Localidad
+     */
+    public function setCodigoPostal($codigoPostal)
+    {
+        $this->codigoPostal = $codigoPostal;
+
+        return $this;
+    }
+
+    /**
+     * Get codigoPostal
+     *
+     * @return integer
+     */
+    public function getCodigoPostal()
+    {
+        return $this->codigoPostal;
+    }
+
+    /**
      * Set provincia
      *
      * @param \AppBundle\Entity\Provincia $provincia
@@ -112,12 +150,39 @@ class Localidad
     {
         return $this->provincia;
     }
+
     /**
-     * Constructor
+     * Add domicilio
+     *
+     * @param \AppBundle\Entity\Domicilio $domicilio
+     *
+     * @return Localidad
      */
-    public function __construct()
+    public function addDomicilio(\AppBundle\Entity\Domicilio $domicilio)
     {
-        $this->restaurantes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->domicilios[] = $domicilio;
+
+        return $this;
+    }
+
+    /**
+     * Remove domicilio
+     *
+     * @param \AppBundle\Entity\Domicilio $domicilio
+     */
+    public function removeDomicilio(\AppBundle\Entity\Domicilio $domicilio)
+    {
+        $this->domicilios->removeElement($domicilio);
+    }
+
+    /**
+     * Get domicilios
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDomicilios()
+    {
+        return $this->domicilios;
     }
 
     /**
@@ -155,30 +220,6 @@ class Localidad
     }
 
     /**
-     * Set codigoPostal
-     *
-     * @param string $codigoPostal
-     *
-     * @return Localidad
-     */
-    public function setCodigoPostal($codigoPostal)
-    {
-        $this->codigoPostal = $codigoPostal;
-
-        return $this;
-    }
-
-    /**
-     * Get codigoPostal
-     *
-     * @return string
-     */
-    public function getCodigoPostal()
-    {
-        return $this->codigoPostal;
-    }
-
-    /**
      * Set comunidad
      *
      * @param string $comunidad
@@ -200,5 +241,10 @@ class Localidad
     public function getComunidad()
     {
         return $this->comunidad;
+    }
+
+    public function __toString()
+    {
+        return $this->getNombre();
     }
 }

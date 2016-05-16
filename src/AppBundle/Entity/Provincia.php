@@ -14,26 +14,27 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Provincia 
 {
-	/**
-	 * @var integer
-	 *
+    /**
+     * @var integer
+     *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-	protected $id;
+    protected $id;
 
-	/**
+    /**
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
      */
-	protected $nombre;
+    protected $nombre;
 
-	/**
+    /**
      * @ORM\OneToMany(targetEntity="Localidad", mappedBy="provincia")
      */
-	protected $localidades;
+    protected $localidades;
+
     /**
      * Constructor
      */

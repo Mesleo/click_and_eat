@@ -4,7 +4,6 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use FOS\UserBundle\Model\User as BaseUser;
 
 /**
  * Cliente
@@ -13,15 +12,8 @@ use FOS\UserBundle\Model\User as BaseUser;
  * @ORM\Table(name="cliente")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ClienteRepository")
  */
-class Cliente extends BaseUser
+class Cliente
 {
-
-    const QUESTION_1 = 'Nombre de tu primera mascota';
-    const QUESTION_2 = 'Nombre de tu primer colegio';
-    const QUESTION_3 = 'Nombre del mejor amigo de tu infancia';
-    const QUESTION_4 = 'Superhéroe favorito';
-    const QUESTION_5 = 'Tu color favorito';
-
     /**
      * @var integer
      *
@@ -48,9 +40,23 @@ class Cliente extends BaseUser
     /**
      * @var string
      *
-     * @ORM\Column(name="email_2", type="string", length=100)
+     * @ORM\Column(name="usuario", type="string", length=45, nullable=false)
      */
-    protected $email_2;
+    protected $usuario;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=45, nullable=false)
+     */
+    protected $password;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=100, nullable=false)
+     */
+    protected $email;
 
     /**
      * @var string
@@ -58,27 +64,6 @@ class Cliente extends BaseUser
      * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
      */
     protected $telefono;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="fecha_nacimiento", type="datetime")
-     */
-    protected $fechaNacimiento;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="question_security", type="string", nullable=false)
-     */
-    protected $questionSecurity;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="answer_security", type="string", nullable=false)
-     */
-    protected $answerSecurity;
 
     /**
      * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente")
@@ -94,6 +79,11 @@ class Cliente extends BaseUser
      * @ORM\OneToMany(targetEntity="Reserva", mappedBy="cliente")
      */
     protected $reservas;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Comentario", mappedBy="cliente") 
+     */
+    protected $comentarios;
 
     /**
      * @var \DateTime
@@ -115,6 +105,7 @@ class Cliente extends BaseUser
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
+    
     /**
      * Constructor
      */
@@ -123,6 +114,7 @@ class Cliente extends BaseUser
         $this->domicilios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -205,6 +197,30 @@ class Cliente extends BaseUser
     public function getUsuario()
     {
         return $this->usuario;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     *
+     * @return Cliente
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 
     /**
@@ -430,101 +446,36 @@ class Cliente extends BaseUser
     }
 
     /**
-     * Set fechaNacimiento
+     * Add comentario
      *
-     * @param \DateTime $fechaNacimiento
+     * @param \AppBundle\Entity\Comentario $comentario
      *
      * @return Cliente
      */
-    public function setFechaNacimiento($fechaNacimiento)
+    public function addComentario(\AppBundle\Entity\Comentario $comentario)
     {
-        $this->fechaNacimiento = $fechaNacimiento;
+        $this->comentarios[] = $comentario;
 
         return $this;
     }
 
     /**
-     * Get fechaNacimiento
+     * Remove comentario
      *
-     * @return \DateTime
+     * @param \AppBundle\Entity\Comentario $comentario
      */
-    public function getFechaNacimiento()
+    public function removeComentario(\AppBundle\Entity\Comentario $comentario)
     {
-        return $this->fechaNacimiento;
+        $this->comentarios->removeElement($comentario);
     }
 
     /**
-     * Set questionSecurity
+     * Get comentarios
      *
-     * @param string $questionSecurity
-     *
-     * @return Cliente
+     * @return \Doctrine\Common\Collections\Collection
      */
-    public function setQuestionSecurity($questionSecurity)
+    public function getComentarios()
     {
-        if (!in_array($questionSecurity, array(self::QUESTION_1, self::QUESTION_2, self::QUESTION_3, self::QUESTION_4,
-            self::QUESTION_5))) {
-            throw new \InvalidArgumentException("Error en la pregunta");
-        }
-        $this->questionSecurity = $questionSecurity;
-        return $this;
-    }
-
-    /**
-     * Get questionSecurity
-     *
-     * @return string
-     */
-    public function getQuestionSecurity()
-    {
-        return $this->questionSecurity;
-    }
-
-    /**
-     * Set answerSecurity
-     *
-     * @param string $answerSecurity
-     *
-     * @return Cliente
-     */
-    public function setAnswerSecurity($answerSecurity)
-    {
-        $this->answerSecurity = $answerSecurity;
-
-        return $this;
-    }
-
-    /**
-     * Get answerSecurity
-     *
-     * @return string
-     */
-    public function getAnswerSecurity()
-    {
-        return $this->answerSecurity;
-    }
-
-    /**
-     * Set email2
-     *
-     * @param string $email2
-     *
-     * @return Cliente
-     */
-    public function setEmail2($email2)
-    {
-        $this->email_2 = $email2;
-
-        return $this;
-    }
-
-    /**
-     * Get email2
-     *
-     * @return string
-     */
-    public function getEmail2()
-    {
-        return $this->email_2;
+        return $this->comentarios;
     }
 }

@@ -3,9 +3,6 @@ app:
     type:     annotation
 
 manage:
+    prefix:   /gestion
+    type:     annotation
     resource: "@ManageCompanyBundle/Controller/"
-    type: annotation
-    prefix: /gestion
-
-fos_user:
-    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
