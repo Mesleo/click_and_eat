@@ -13,6 +13,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Ticket
 {
+
+    const PAGO_EFECTIVO = 'efectivo';
+    const PAGO_TARJETA = 'tarjeta';
+    const PAGO_PAYPAL = 'paypal';
+
+
     /**
      * @var integer
      *
@@ -30,7 +36,7 @@ class Ticket
     protected $fecha;
 
     /**
-     * @ORM\Column(name="formaPago", type="string", columnDefinition="ENUM('efectivo', 'tarjeta', 'paypal')", nullable=false)
+     * @ORM\Column(name="formaPago", type="string", nullable=false)
      */
     protected $formaPago;
 
@@ -104,8 +110,10 @@ class Ticket
      */
     public function setFormaPago($formaPago)
     {
+        if (!in_array($formaPago, array(self::PAGO_EFECTIVO, self::PAGO_PAYPAL, self::PAGO_TARJETA))) {
+            throw new \InvalidArgumentException("Estado inválido");
+        }
         $this->formaPago = $formaPago;
-
         return $this;
     }
 

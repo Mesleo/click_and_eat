@@ -2,33 +2,37 @@
 {% extends 'ManageCompanyBundle:Base:base.html.twig' %}
 
 {% block body %}
-    <div class="container" id="content">
-    	<div class="row">
-    		<div class="col-md-6" id="infor">
-    			<p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Gestiona tus reservas</p>
+	<div class="container" id="content">
+		<div class="row">
+			<div class="col-md-6" id="infor">
+				<p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Gestiona tus reservas</p>
 				<p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Gestiona tus pedidos online</p>
 				<p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Administra la configuración de tu cuenta</p>
-    		</div>
-    		<div class="col-md-6" id="login">
-    			<h3>Conéctate a Mi Restaurante</h3>
-    			<hr>
-    			<form>
-    				<div class="form-group">
-        				<label class="control-label">Usuario</label>
-            			<input type="text" class="form-control" id="usuario" placeholder="Usuario">
-    				</div>
-    				<div class="form-group">
-        				<label class="control-label">Contraseña</label>
-        				<input type="password" class="form-control" id="password" placeholder="Contraseña">
-    				</div>
-    				<div class="form-group">
-    					<input type="checkbox" name="remember"> Recordar contraseña
-    				</div>
-    				<div class="form-group">
-            			<input type="submit" class="btn btn-connect" value="Conectar">
-    				</div>
-    			</form>
-    		</div>
-    	</div>
+			</div>
+			<div class="col-md-6" id="login">
+				<h3>Conéctate a Mi Restaurante</h3>
+				<hr>
+				{% if error is defined %}
+					<div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+				{% endif %}
+				<form action="/app_dev.php/login_check" method="post">
+					<div class="form-group">
+						<label for="username" class="control-label">Email</label>
+						<input type="text" class="form-control" id="username" name="_username" value="" placeholder="Email">
+					</div>
+					<div class="form-group">
+						<label for="password" class="control-label">Contraseña</label>
+						<input type="password" class="form-control" id="password" name="_password" placeholder="Contraseña">
+					</div>
+					<div class="form-group">
+						<input type="checkbox" name="remember"> Recordar contraseña
+					</div>
+					<div class="form-group">
+						<a class="btn btn-success" href="{{ path('registro') }}" role="button">Enlace</a>
+						<button type="submit" class="btn btn-connect">Conectar</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 {% endblock %}

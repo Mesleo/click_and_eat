@@ -11,14 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use AppBundle\Entity\Restaurante;
-use ManageCompanyBundle\Form\RestauranteType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class RestauranteType extends AbstractType
 {
@@ -36,7 +29,7 @@ class RestauranteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('usuario', TextType::class, array(
+            ->add('username', TextType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
             ->add('password', RepeatedType::class, array(
@@ -61,20 +54,25 @@ class RestauranteType extends AbstractType
             	))
             ->add('localidad', EntityType::class, array(
                     'class' => 'AppBundle:Localidad',
+                "attr" => array('class' => 'form-control')
                 ))
-            /*->add('provincia', EntityType::class, array(
-                    'class' => 'AppBundle:Provincia',
-                ))*/
+//            ->add("provincia",
+//                    "text", array(
+//                    "property_path" => false,
+//                ))
             ->add('telefono', TextType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-            ->add('foto', FileType::class, array('required' => false,
-            		"attr" => array('class' => 'form-control')
-            	))
+            ->add('img', FileType::class, array('required' => false,
+                "attr" => array('class' => 'form-control')
+            ))
             ->add('precio_envio', MoneyType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-        ;
+            ->add('public', CheckboxType::class, array(
+                'label'    => 'Show this entry publicly?',
+                'required' => false,
+                ));
     }
 
 

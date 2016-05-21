@@ -5,9 +5,10 @@
 
     	{{ form_start(form) }}
 
+		{{ form_row(form._token) }}
     	<h2>Datos usuario</h2>
 
-    	{{ form_row(form.usuario) }}
+    	{{ form_row(form.username) }}
 
     	<div class="row">
     		<div class="col-md-6">
@@ -43,13 +44,14 @@
             </div>
         </div>
 
-    	{{ form_row(form.foto) }}
+    	{{ form_row(form.img) }}
     	{{ form_row(form.precio_envio) }}
 
     	<div class="form-group">
     		<br />
     		<button type="submit" class="btn btn-primary">Registro</button>
     	</div>
+		{{ form_rest(form) }}
     	{{ form_end(form) }}
     </div>
 {% endblock %}

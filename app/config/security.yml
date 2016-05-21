@@ -1,35 +1,40 @@
-# app/config/security.yml
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
 security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: bcrypt
+        #AppBundle\Entity\User:
+        #    algorithm: bcrypt
 
-    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    role_hierarchy:
+            ROLE_ADMIN:       ROLE_USER, ROLE_EDITOR, ROLE_GESTOR
+            ROLE_SUPER_ADMIN: ROLE_ADMIN
+
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
-        gestores:
-            memory:
-                users:
-                    javier:
-                        password: $2a$04$12Mb5onRI22ud6fDUeWcReJJR8beJX48R3ITHD39bz6/fY6DLMVJe
-                        roles:
-                          - ROLE_EDITOR
-                          - ROLE_GESTOR
-                          - ROLE_ADMIN
-                    elisa:
-                        password: $2a$04$51cx6Z/RBul4UAbRTMK7Ve65zwd6xMIQleDDMY30pDnZNCDjHAQCe
-                        roles:
-                          - ROLE_EDITOR
-                          - ROLE_GESTOR
-                          - ROLE_ADMIN
+        fos_userbundle:
+            id: fos_user.user_provider.username_email
+
+        db_provider:
+            entity:
+                class: AppBundle:Restaurante
+                property: username
 
     firewalls:
-         # disables authentication for assets and the profiler, adapt it according to your needs
+        # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        gestion:
-            pattern: ^/gestion
-            http_basic:
-                provider: gestores
+        main:
+              pattern: ^/
+              form_login:
+                  provider: fos_userbundle
+                  login_path: fos_user_security_login
+                  check_path: fos_user_security_check
+              logout: true
+              anonymous: true
+              switch_user: true
         main:
             anonymous: ~
             # activate different ways to authenticate
@@ -39,11 +44,11 @@ security:
 
             # form_login: ~
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
-    encoders:
-        Symfony\Component\Security\Core\User\User:
-            algorithm: bcrypt
-            cost: 12
 
     access_control:
-        - { path: ^/gestion, roles: ROLE_EDITOR }
-        - { path: ^/gestion/registro, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/registrar, role: IS_AUTHENTICATED_ANONYMOUSLY }
+#        - { path: ^/registro, role: ROLE_ADMIN }
+        - { path: ^/gestion, role: ROLE_ADMIN }
+        - { path: ^/gestion, role: ROLE_USER }
+        - { path: ^/gestion, role: ROLE_EDITOR }

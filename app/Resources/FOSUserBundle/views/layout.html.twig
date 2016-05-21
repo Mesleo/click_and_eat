@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
+        <meta charset="UTF-8" />
+    {% block stylesheet %}
+        <link href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
+        <link href="{{ asset('node_modules/bootstrap/dist/css/bootstrap-theme.min.css') }}" type="text/css" rel="stylesheet" />
+        <link href="{{ asset('css/estilos.css') }}" type="text/css" rel="stylesheet" />
+    {% endblock %}
 </head>
 <body>
 <div>

@@ -1,0 +1,54 @@
+{# @GestionBundle/Default/index.html.twig #}
+{% extends 'ManageCompanyBundle:Base:base.html.twig' %}
+{#{% import '@Gestion/Base/librerias.html.twig' as librerias %}#}
+{% block breadcrumb %}
+    <li><a href="{{ path('gestion_platos')}}">Plato</a></li>
+    <li><a href="javascript:;">Edición de página</a></li>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="container">
+            <div class="be-panel col-sm-12">
+                <table id="platos-table" class="display responsive nowrap">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if restaurante is defined %}
+                        {% if restaurante.platos %}
+                            {% for plato in restaurante.platos %}
+                                <tr>
+                                    <td>{{ plato.nombre }}</td>
+                                    <td>{{ plato.descripcion }}</td>
+                                    <td>
+                                        <a href="{{ path('gestion_plato', {'plato_id': plato.id}) }}" class="btn btn-primary"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                    </tbody>
+                </table>
+                <div class="row">
+                    <form method="post" action="{{ path('gestion_ins_plato') }}">
+                        <label for="nombre">Título</label>
+                        {#<input type="hidden" name="id"{% if restaurante is defined %} value="{{ restaurante.id }}"{% endif %}>#}
+                        <input type="hidden" name="restaurante-id" value="2">
+                        <input type="text" class="hidden" >
+                        <input type="text" name="nombre-plato" id="nombre-plato" placeholder="Nombre de la plato">
+                        <label for="descripcion">Descripción</label>
+                        <input type="text" name="descripcion-plato" id="descripcion-plato">
+                        <label for="descripcion">Precio</label>
+                        <input type="text" name="precio-plato" id="precio-plato">
+                        <input type="submit" class="btn btn-primary" value="Crear">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

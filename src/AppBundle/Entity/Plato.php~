@@ -59,7 +59,7 @@ class Plato
     protected $disponible;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="platos")
+     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="platos",  cascade={"persist"})
      * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
      */
     protected $restaurante;

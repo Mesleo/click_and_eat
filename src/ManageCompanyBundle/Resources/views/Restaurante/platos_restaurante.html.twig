@@ -1,0 +1,23 @@
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+
+    	{{ form_start(form) }}
+
+    	<h2>Insertar plato</h2>
+
+        <input type="hidden" name="id_restaurante" value="{{ 16 }}">
+
+    	{{ form_row(form.nombre) }}
+        {{ form_row(form.descripcion) }}
+        {{ form_row(form.precio) }}
+        {{ form_row(form.img) }}
+
+    	<div class="form-group">
+    		<br />
+    		<button type="submit" class="btn btn-primary">Insertar</button>
+    	</div>
+    	{{ form_end(form) }}
+    </div>
+{% endblock %}

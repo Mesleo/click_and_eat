@@ -1,5 +1,5 @@
 <?php
-// src/ManageCompanyBundle/Controller/RestauranteController.php
+// src/RegisterBundle/Controller/RestauranteController.php
 
 namespace ManageCompanyBundle\Controller;
 
@@ -16,6 +16,7 @@ class RestauranteController extends Controller
 {
 
     private $em = null;
+    private $params = null;
     
     /**
      * Genera el formulario de registro
@@ -29,26 +30,33 @@ class RestauranteController extends Controller
     {
         $restaurante = new Restaurante();
         $form = $this->createForm(RestauranteType::class, $restaurante);
+
         $form->handleRequest($request);
-        $restaurante->setCoordenadas('102,30');
-        $restaurante->setMapa('mapa');
-        $localidad = $this->getLocalidad(1025);
-        $restaurante->setLocalidad($localidad);
-        if ($form->isValid()) {
-            $this->initialize();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $restaurante->setCoordenadas('102,30');
+            $restaurante->setMapa('mapa');
+            $restaurante->addRole(1);
+
+            $password = $this->get('security.password_encoder')
+                ->encodePassword($restaurante, $restaurante->getPassword());
+            $restaurante->setPassword($password);
+
+            $em = $this->getDoctrine()->getManager();
             $em->persist($restaurante);
             $em->flush();
             return $this->redirectToRoute('homepage');
         }
+
         return $this->render('ManageCompanyBundle:Restaurante:registro.html.twig', array(
             'restaurante' => $restaurante,
             'form'    => $form->createView()
         ));
+
     }
 
-    public function getProvincia($provincia_id){
+    public function getProvincia(){
         $this->initialize();
-        $toRet = false;
         $toRet = $this->getProvincias();
         if (!$toRet) {
             throw $this->createNotFoundException('No se ha podido localizar la provincia');
@@ -86,6 +94,18 @@ class RestauranteController extends Controller
         return $this->params;
     }
 
+
+    /**
+     * Pagina de prueba
+     *
+     * @Route("/index", name="index")
+     * @Security("has_role('ROLE_EDITOR')")
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function indexAction(){
+        return $this->render("ManageCompanyBundle:Pages:form.html.twig");
+    }
     
     private function initialize(){
         $this->params = [];

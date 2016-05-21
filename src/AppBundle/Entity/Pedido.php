@@ -304,8 +304,11 @@ class Pedido
      */
     public function setEstado($estado)
     {
+        if (!in_array($estado, array(self::STATUS_REEMBOLSADO, self::STATUS_PAGO, self::STATUS_CANCELADO, self::STATUS_ESPERA_PAGO,
+            self::STATUS_EN_CURSO, self::STATUS_ENTREGADO))) {
+            throw new \InvalidArgumentException("Estado inválido");
+        }
         $this->estado = $estado;
-
         return $this;
     }
 

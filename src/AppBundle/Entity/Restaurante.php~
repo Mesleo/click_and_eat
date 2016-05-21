@@ -2,8 +2,10 @@
 // src/AppBundle/Entity/Restaurante.php
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Restaurante
@@ -12,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Table(name="restaurante")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
  */
-class Restaurante
+class Restaurante extends BaseUser
 {
     /**
      * @var integer
@@ -23,26 +25,6 @@ class Restaurante
      */
     protected $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="usuario", type="string", length=45, nullable=false)
-     */
-    protected $usuario;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=45, nullable=false)
-     */
-    protected $password;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=100, nullable=false)
-     */
-    protected $email;
 
     /**
      * @var string
@@ -78,11 +60,6 @@ class Restaurante
      */
     protected $localidad;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Provincia", inversedBy="restaurantes")
-     * @ORM\JoinColumn(name="idProvincia", referencedColumnName="id", nullable=false)
-     */
-    protected $provincia;
 
     /**
      * @var string
@@ -92,9 +69,14 @@ class Restaurante
     protected $telefono;
 
     /**
+     * @var UploadedFile
+     */
+    protected $img;
+
+    /**
      * @var string
      *
-     * @ORM\Column(name="foto", type="string", length=255, nullable=false)
+     * @ORM\Column(name="foto", type="string", length=255, nullable=true)
      */
     protected $foto;
 
@@ -131,7 +113,7 @@ class Restaurante
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fecha_baja", type="datetime")
+     * @ORM\Column(name="fecha_baja", type="datetime", nullable=true)
      */
     protected $fecha_baja;
 
@@ -173,6 +155,9 @@ class Restaurante
      * @ORM\OneToMany(targetEntity="Trabajador", mappedBy="restaurante")
      */
     protected $trabajadores;
+
+
+    protected $roles = [];
 
     /**
      * @var \DateTime
@@ -224,78 +209,6 @@ class Restaurante
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set usuario
-     *
-     * @param string $usuario
-     *
-     * @return Restaurante
-     */
-    public function setUsuario($usuario)
-    {
-        $this->usuario = $usuario;
-
-        return $this;
-    }
-
-    /**
-     * Get usuario
-     *
-     * @return string
-     */
-    public function getUsuario()
-    {
-        return $this->usuario;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return Restaurante
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return Restaurante
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
     }
 
     /**
@@ -441,6 +354,33 @@ class Restaurante
     {
         return $this->foto;
     }
+
+    /**
+     * @param mixed $img
+     */
+    public function setImg(UploadedFile $img)
+    {
+        $this->img = $img;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImg()
+    {
+        return $this->img;
+    }
+
+    public function uploadImg(){
+        if (null === $this->img) {
+            return;
+        }
+        $destiny = __DIR__.'/../../../web/uploads/restaurantes/images/';
+        $nameImg = $this->cif.'image.'.$this->img->getClientOriginalExtension();
+        $this->img->move($destiny, $nameImg);
+        $this->setFoto($nameImg);
+    }
+
 
     /**
      * Set precioEnvio
@@ -905,4 +845,96 @@ class Restaurante
     {
         return $this->trabajadores;
     }
+
+    /**
+     * Agrega un rol al usuario.
+     * @throws Exception
+     * @param Rol $rol
+     */
+    public function addRole( $rol )
+    {
+        if($rol == 1) {
+            array_push($this->roles, 'ROLE_ADMIN');
+        }
+        else if($rol == 2) {
+            array_push($this->roles, 'ROLE_USER');
+        }
+    }
+
+     /*
+     * Alternatively, the roles might be stored on a `roles` property,
+     * and populated in any number of different ways when the user object
+     * is created.
+     *
+     * @return (Role|string)[] The user roles
+     */
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+
+    /**
+     * Returns the salt that was originally used to encode the password.
+     *
+     * This can return null if the password was not encoded using a salt.
+     *
+     * @return string|null The salt
+     */
+    public function getSalt()
+    {
+        // you *may* need a real salt depending on your encoder
+        // see section on salt below
+        return null;
+    }
+
+    /**
+     * Returns the username used to authenticate the user.
+     *
+     * @return string The username
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Removes sensitive data from the user.
+     *
+     * This is important if, at any given point, sensitive information like
+     * the plain-text password is stored on this object.
+     */
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    /** @see \Serializable::serialize() */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->username,
+            $this->password,
+            // see section on salt below
+            // $this->salt,
+        ));
+    }
+
+    /** @see \Serializable::unserialize() */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+            $this->username,
+            $this->password,
+            // see section on salt below
+            // $this->salt
+        ) = unserialize($serialized);
+    }
+
 }

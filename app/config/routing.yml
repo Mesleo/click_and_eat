@@ -3,6 +3,15 @@ app:
     type:     annotation
 
 manage:
+    resource: "@ManageCompanyBundle/Controller/"
     prefix:   /gestion
     type:     annotation
-    resource: "@ManageCompanyBundle/Controller/"
+
+register:
+    resource: "@RegisterBundle/Controller/"
+    prefix:   /registro
+    type:     annotation
+#    methods:  [POST, PUT, GET]
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
