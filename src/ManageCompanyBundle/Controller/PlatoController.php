@@ -18,9 +18,8 @@ class PlatoController extends Controller
 
 	/**
      * Muestra la lista de platos
-     *
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/platos", name="gestion_platos")
-     * @Security("has_role('ROLE_GESTOR')")
      * @return [type]              [description]
      */
     public function showAction(){

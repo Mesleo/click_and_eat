@@ -155,9 +155,7 @@ class Restaurante extends BaseUser
      * @ORM\OneToMany(targetEntity="Trabajador", mappedBy="restaurante")
      */
     protected $trabajadores;
-
-
-    protected $roles = [];
+    
 
     /**
      * @var \DateTime
@@ -185,6 +183,8 @@ class Restaurante extends BaseUser
      */
     public function __construct()
     {
+        parent::__construct();
+        $this->addRole("ROLE_ADMIN");
         $this->tipoComida = new \Doctrine\Common\Collections\ArrayCollection();
         $this->horarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
@@ -844,33 +844,6 @@ class Restaurante extends BaseUser
     public function getTrabajadores()
     {
         return $this->trabajadores;
-    }
-
-    /**
-     * Agrega un rol al usuario.
-     * @throws Exception
-     * @param Rol $rol
-     */
-    public function addRole( $rol )
-    {
-        if($rol == 1) {
-            array_push($this->roles, 'ROLE_ADMIN');
-        }
-        else if($rol == 2) {
-            array_push($this->roles, 'ROLE_USER');
-        }
-    }
-
-     /*
-     * Alternatively, the roles might be stored on a `roles` property,
-     * and populated in any number of different ways when the user object
-     * is created.
-     *
-     * @return (Role|string)[] The user roles
-     */
-    public function getRoles()
-    {
-        return array('ROLE_USER');
     }
 
     /**

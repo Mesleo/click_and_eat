@@ -1,8 +1,0 @@
-homepage:
-    path:     /
-    defaults: { _controller: ManageCompanyBundle:Page:index }
-    methods:  GET
-
-register:
-    path:     /registro
-    defaults: { _controller: ManageCompanyBundle:Restaurante:register }

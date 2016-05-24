@@ -7,13 +7,13 @@ security:
         #    algorithm: bcrypt
 
     role_hierarchy:
-            ROLE_ADMIN:       ROLE_USER, ROLE_EDITOR, ROLE_GESTOR
-            ROLE_SUPER_ADMIN: ROLE_ADMIN
+        ROLE_ADMIN:       ROLE_USER, ROLE_EDITOR
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         fos_userbundle:
-            id: fos_user.user_provider.username_email
+            id: fos_user.user_provider.username
 
         db_provider:
             entity:
@@ -26,29 +26,27 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        main:
+        gestion:
               pattern: ^/
               form_login:
                   provider: fos_userbundle
-                  login_path: fos_user_security_login
-                  check_path: fos_user_security_check
-              logout: true
-              anonymous: true
-              switch_user: true
-        main:
-            anonymous: ~
-            # activate different ways to authenticate
+#                  csrf_token_generator: security.csrf.token_manager
+                  # if you are using Symfony < 2.8, use the following config instead:
+                  # csrf_provider: form.csrf_provider
 
-            # http_basic: ~
-            # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
+              logout:       true
+              anonymous:    true
 
-            # form_login: ~
-            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+#            # activate different ways to authenticate
+#
+#            # http_basic: ~
+#            # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
+#
+#            # form_login: ~
+#            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
 
     access_control:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/registrar, role: IS_AUTHENTICATED_ANONYMOUSLY }
-#        - { path: ^/registro, role: ROLE_ADMIN }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/gestion, role: ROLE_ADMIN }
-        - { path: ^/gestion, role: ROLE_USER }
-        - { path: ^/gestion, role: ROLE_EDITOR }

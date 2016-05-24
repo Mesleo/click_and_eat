@@ -17,12 +17,11 @@ class RestauranteController extends Controller
 
     private $em = null;
     private $params = null;
-    
+
     /**
      * Genera el formulario de registro
      *
      * @Route("/registro", name="registro")
-     * @Security("has_role('ROLE_EDITOR')")
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -36,7 +35,7 @@ class RestauranteController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $restaurante->setCoordenadas('102,30');
             $restaurante->setMapa('mapa');
-            $restaurante->addRole(1);
+            $restaurante->addRole("ROLE_ADMIN");
 
             $password = $this->get('security.password_encoder')
                 ->encodePassword($restaurante, $restaurante->getPassword());
@@ -106,7 +105,7 @@ class RestauranteController extends Controller
     public function indexAction(){
         return $this->render("ManageCompanyBundle:Pages:form.html.twig");
     }
-    
+
     private function initialize(){
         $this->params = [];
         $this->em = $this->getDoctrine()->getManager();

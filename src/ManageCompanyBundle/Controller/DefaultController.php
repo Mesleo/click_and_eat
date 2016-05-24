@@ -9,9 +9,11 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/")
+     * 
      */
     public function indexAction()
     {
         return $this->render('ManageCompanyBundle:Pages:index.html.twig');
     }
+    
 }

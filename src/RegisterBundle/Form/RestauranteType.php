@@ -1,6 +1,8 @@
 <?php
-// src/ManageCompanyBundle/Form/RestauranteType.php
+// src/RegisterBundle/Form/RestauranteType.php
+
 namespace ManageCompanyBundle\Form;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -21,7 +23,6 @@ class RestauranteType extends AbstractType
 
     /**
      * Genera el formulario de registro
-     *
      * @param FormBuilderInterface $builder
      * @param array $options
      */
