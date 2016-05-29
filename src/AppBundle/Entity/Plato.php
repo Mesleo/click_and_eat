@@ -96,6 +96,13 @@ class Plato
     public function __construct()
     {
         $this->pedido_plato = new \Doctrine\Common\Collections\ArrayCollection();
+		
+		$this->setDisponible(true);
+		
+		$this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+		
+		$this->setTrash(false);
     }
 
     /**

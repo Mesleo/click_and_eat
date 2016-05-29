@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Restaurante</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ restaurante.id }}</td>
+            </tr>
+            <tr>
+                <th>Username</th>
+                <td>{{ restaurante.username }}</td>
+            </tr>
+            <tr>
+                <th>Password</th>
+                <td>{{ restaurante.password }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ restaurante.email }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ restaurante.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Cif</th>
+                <td>{{ restaurante.cif }}</td>
+            </tr>
+            <tr>
+                <th>Direccion</th>
+                <td>{{ restaurante.direccion }}</td>
+            </tr>
+            <tr>
+                <th>Coordenadas</th>
+                <td>{{ restaurante.coordenadas }}</td>
+            </tr>
+            <tr>
+                <th>Telefono</th>
+                <td>{{ restaurante.telefono }}</td>
+            </tr>
+            <tr>
+                <th>Foto</th>
+                <td>{{ restaurante.foto }}</td>
+            </tr>
+            <tr>
+                <th>Precio_envio</th>
+                <td>{{ restaurante.precioenvio }}</td>
+            </tr>
+            <tr>
+                <th>Mapa</th>
+                <td>{{ restaurante.mapa }}</td>
+            </tr>
+            <tr>
+                <th>Fecha_alta</th>
+                <td>{% if restaurante.fechaalta %}{{ restaurante.fechaalta|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Fecha_baja</th>
+                <td>{% if restaurante.fechabaja %}{{ restaurante.fechabaja|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Created_at</th>
+                <td>{% if restaurante.createdat %}{{ restaurante.createdat|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Updated_at</th>
+                <td>{% if restaurante.updatedat %}{{ restaurante.updatedat|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Trash</th>
+                <td>{% if restaurante.trash %}Yes{% else %}No{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('restaurante_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,8 +1,21 @@
 homepage:
     path:     /
-    defaults: { _controller: ManageCompanyBundle:Page:index }
+    defaults: { _controller: ManageCompanyBundle:Default:index }
     methods:  GET
 
 register:
     path:     /registro
     defaults: { _controller: ManageCompanyBundle:Restaurante:register }
+
+login:
+    path:     /login
+    defaults: { _controller: ManageCompanyBundle:Restaurante:login }
+    methods:  GET|POST
+
+login_check:
+    path:     /login_check
+
+add_plato:
+    path:     /platos/insertar
+    defaults: { _controller: ManageCompanyBundle:Plato:new }
+    methods:  GET|POST

@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Restaurante
@@ -12,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Table(name="restaurante")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
  */
-class Restaurante
+class Restaurante implements UserInterface, \Serializable
 {
     /**
      * @var integer
@@ -26,9 +28,9 @@ class Restaurante
     /**
      * @var string
      *
-     * @ORM\Column(name="usuario", type="string", length=45, nullable=false)
+     * @ORM\Column(name="username", type="string", length=45, nullable=false)
      */
-    protected $usuario;
+    protected $username;
 
     /**
      * @var string
@@ -36,6 +38,8 @@ class Restaurante
      * @ORM\Column(name="password", type="string", length=45, nullable=false)
      */
     protected $password;
+
+    private $plainPassword;
 
     /**
      * @var string
@@ -84,6 +88,11 @@ class Restaurante
      * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
      */
     protected $telefono;
+
+    /**
+     * @var UploadedFile
+     */
+    protected $img;
 
     /**
      * @var string
@@ -227,9 +236,9 @@ class Restaurante
      *
      * @return Restaurante
      */
-    public function setUsuario($usuario)
+    public function setUsuario($username)
     {
-        $this->usuario = $usuario;
+        $this->username = $username;
 
         return $this;
     }
@@ -241,7 +250,7 @@ class Restaurante
      */
     public function getUsuario()
     {
-        return $this->usuario;
+        return $this->username;
     }
 
     /**
@@ -263,9 +272,19 @@ class Restaurante
      *
      * @return string
      */
-    public function getPassword()
+    /*public function getPassword()
     {
         return $this->password;
+    }*/
+
+    public function setPlainPassword($password)
+    {
+        $this->plainPassword = $password;
+    }
+
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
     }
 
     /**
@@ -436,6 +455,32 @@ class Restaurante
         return $this->foto;
     }
 
+    /**
+     * @param mixed $img
+     */
+    public function setImg(UploadedFile $img)
+    {
+        $this->img = $img;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImg()
+    {
+        return $this->img;
+    }
+
+    public function uploadImg(){
+        if (null === $this->img) {
+            return;
+        }
+        $destiny = __DIR__.'/../../../web/uploads/restaurantes/images/';
+        $nameImg = $this->cif.'image.'.$this->img->getClientOriginalExtension();
+        $this->img->move($destiny, $nameImg);
+        $this->setFoto($nameImg);
+    }
+    
     /**
      * Set precioEnvio
      *
@@ -898,5 +943,90 @@ class Restaurante
     public function getTrabajadores()
     {
         return $this->trabajadores;
+    }
+
+    /**
+     * Returns the roles granted to the user.
+     *
+     * <code>
+     * public function getRoles()
+     * {
+     *     return array('ROLE_USER');
+     * }
+     * </code>
+     *
+     * Alternatively, the roles might be stored on a ``roles`` property,
+     * and populated in any number of different ways when the user object
+     * is created.
+     *
+     * @return (Role|string)[] The user roles
+     */
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+
+    /**
+     * Returns the salt that was originally used to encode the password.
+     *
+     * This can return null if the password was not encoded using a salt.
+     *
+     * @return string|null The salt
+     */
+    public function getSalt()
+    {
+        // you *may* need a real salt depending on your encoder
+        // see section on salt below
+        return null;
+    }
+
+    /**
+     * Returns the username used to authenticate the user.
+     *
+     * @return string The username
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Removes sensitive data from the user.
+     *
+     * This is important if, at any given point, sensitive information like
+     * the plain-text password is stored on this object.
+     */
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    /** @see \Serializable::serialize() */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->username,
+            $this->password,
+            // see section on salt below
+            // $this->salt,
+        ));
+    }
+
+    /** @see \Serializable::unserialize() */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+            $this->username,
+            $this->password,
+            // see section on salt below
+            // $this->salt
+        ) = unserialize($serialized);
     }
 }

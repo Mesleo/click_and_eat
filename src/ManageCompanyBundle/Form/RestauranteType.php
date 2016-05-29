@@ -13,9 +13,19 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 class RestauranteType extends AbstractType
 {
+    private $em = null;
+    private $params = null;
+
     /**
+     * Genera el formulario de registro
+     * 
+     * @Security("has_role('ROLE_USER')")
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -45,20 +55,53 @@ class RestauranteType extends AbstractType
             ->add('direccion', TextType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-            /*->add('localidad', EntityType::class, array(
+            ->add('localidad', EntityType::class, array(
                     'class' => 'AppBundle:Localidad',
-                    'choice_label' => 'Localidad',
-            	))*/
+                    "attr" => array('class' => 'form-control')
+                ))
             ->add('telefono', TextType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-            ->add('foto', FileType::class, array('required' => false,
+            ->add('img', FileType::class, array('required' => false,
             		"attr" => array('class' => 'form-control')
             	))
             ->add('precio_envio', MoneyType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
         ;
+    }
+
+    public function getProvincia(){
+        $this->initialize();
+        $toRet = false;
+        $toRet = $this->getProvincias();
+        if (!$toRet) {
+            throw $this->createNotFoundException('No se ha podido localizar la provincia');
+        }
+        return new JsonResponse($toRet);
+    }
+
+    private function initialize(){
+        $this->params = [];
+        $this->em = $this->getDoctrine()->getManager();
+    }
+
+    /**
+     * Devuelve todas las provincias
+     *
+     * @return JsonResponse
+     */
+    private function getProvincias()
+    {
+        foreach (($this->em->getRepository('AppBundle:Provincia')
+            ->findBy(
+                ['nombre' => "ASC"]
+            )) as $provincia) {
+            $this->params['inscripciones'][] = [
+                'nombre' => $provincia->getNombre()
+            ];
+        }
+        return $this->params;
     }
 
     /**
