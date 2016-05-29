@@ -4,6 +4,7 @@
 	<div class="container">
 
     	{{ form_start(form) }}
+		{{ form_errors(form) }}
 
 		{{ form_row(form._token) }}
     	<h2>Datos usuario</h2>
@@ -37,20 +38,74 @@
 
         <div class="row">
             <div class="col-md-6">
-                {{ form_row(form.localidad) }}
+                {{ form_row(form.provincia) }}
             </div>
-            <div class="col-md-6">
-            {# {{ form_row(form.provincia) }} #}
+            <div class="col-md-6" id="select-localidades">
+                {#{{ form_row(form.localidad) }}#}
+                <label for="localidades">Localidad</label>
+                {#<div id="div-localidades">#}
+                    <select name="localidad" id="localidad" class="form-control"></select>
+                {#</div>#}
             </div>
         </div>
+		<div class="row">
+			<div class="col-md-12">
+				{{ form_row(form.coordenadas) }}
+				<div class="info-coordenadas"></div>
+				<strong>Nota: </strong>Si no está registrando el restaurante desde donde está éste ubicado, escriba las coordenadas a mano. Si no sabe cómo hacerlo visite esta página: <a href="http://www.coordenadas-gps.com/">http://www.coordenadas-gps.com/</a>
+			</div>
+		</div>
 
     	{{ form_row(form.img) }}
     	{{ form_row(form.precio_envio) }}
 
     	<div class="form-group">
     		<br />
-    		<button type="submit" class="btn btn-primary">Registro</button>
+    		<button type="submit" id="button-submit" class="btn btn-primary">Registro</button>
     	</div>
+
     	{{ form_end(form) }}
     </div>
+{% endblock %}
+{% block javascripts %}
+	<script>
+		(function(){
+			var inputCoords, divLocation, selectProvincia, selectLocalidad;
+
+			function initVars(){
+				inputCoords = $("#restaurante_coordenadas");
+				divLocation = $('.info-coordenadas');
+                selectProvincia = $('#restaurante_provincia');
+                selectLocalidad = $('#localidades');
+			}
+
+			function checkGeolocation(){
+				if ("geolocation" in navigator) {
+					navigator.geolocation.watchPosition(function(position) {
+						inputCoords.attr("placeholder", position.coords.latitude+"/"+position.coords.longitude);
+						inputCoords.val(position.coords.latitude+"/"+position.coords.longitude);
+						divLocation.html("Las coordenadas de su ubicación actual son: <ul><li>Latitud: "+position.coords.latitude+
+						"</li><li>Longitud: "+position.coords.longitude+"</li></ul>");
+					});
+				} else {
+					divLocation.html("La localización no está disponible en su navegador");
+				}
+			}
+
+            function changeSelectProvincia() {
+				selectProvincia.change(function() {
+					$("#select-localidades select").empty();
+					$.getJSON('localidades?provincia='+selectProvincia.val(),function(data){
+						$.each(data, function(id,value){
+							$("#select-localidades select").append('<option value="'+value[2]+'">'+value[0]+' ('+value[1]+') </option>');
+						});
+					});
+				});
+            }
+
+			initVars();
+			checkGeolocation();
+            changeSelectProvincia();
+		})();
+	</script>
 {% endblock %}

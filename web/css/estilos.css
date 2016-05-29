@@ -22,6 +22,10 @@ body {
 	padding: 1em 1em;
 }
 
+.container form> div{
+	margin-bottom: 15px;
+}
+
 .contenido {
 	display: inline-block;
 	width: 33%;

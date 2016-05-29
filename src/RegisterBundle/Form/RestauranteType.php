@@ -1,8 +1,9 @@
 <?php
 // src/RegisterBundle/Form/RestauranteType.php
 
-namespace ManageCompanyBundle\Form;
+namespace RegisterBundle\Form;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -52,18 +53,36 @@ class RestauranteType extends AbstractType
             ->add('direccion', TextType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-            ->add('localidad', EntityType::class, array(
-                    'class' => 'AppBundle:Localidad',
+//            ->add('localidad', EntityType::class, array(
+//                    'class' => 'AppBundle:Localidad',
+//                    'query_builder' => function (EntityRepository $er) {
+//                        return $er->createQueryBuilder('l')
+//                            ->orderBy('l.nombre', 'ASC');
+//                    },
+//                    "attr" => array('class' => 'form-control')
+//                ))
+            ->add("provincia", EntityType::class, array(
+                'class' => 'AppBundle:Provincia',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('p')
+                        ->orderBy('p.nombre', 'ASC');
+                },
+                'choice_label' => 'nombre',
                 "attr" => array('class' => 'form-control')
                 ))
-//            ->add("provincia",
-//                    "text", array(
-//                    "property_path" => false,
-//                ))
+            ->add('coordenadas', null, array(
+                "label" => "Coordenadas",
+                'required' => false,
+                "attr" => array(
+                    'class' => 'form-control',
+                    "title" => 'Si no está registrando el restaurante desde donde está éste ubicado, escriba las coordenadas a mano. Si no sabe cuáles son visite esta página: http://www.coordenadas-gps.com/')
+            ))
             ->add('telefono', TextType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-            ->add('img', FileType::class, array('required' => false,
+            ->add('img', FileType::class, array(
+                'label' => "Foto del restaurante",
+                'required' => false,
                 "attr" => array('class' => 'form-control')
             ))
             ->add('precio_envio', MoneyType::class, array(

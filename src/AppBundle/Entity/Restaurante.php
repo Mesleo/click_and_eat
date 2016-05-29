@@ -60,6 +60,12 @@ class Restaurante extends BaseUser
      */
     protected $localidad;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Provincia",  inversedBy="restaurantes")
+     * @ORM\JoinColumn(name="idProvincia", referencedColumnName="id", nullable=false)
+     */
+    protected $provincia;
+
 
     /**
      * @var string
@@ -910,4 +916,28 @@ class Restaurante extends BaseUser
         ) = unserialize($serialized);
     }
 
+
+    /**
+     * Set provincia
+     *
+     * @param \AppBundle\Entity\Provincia $provincia
+     *
+     * @return Restaurante
+     */
+    public function setProvincia(\AppBundle\Entity\Provincia $provincia)
+    {
+        $this->provincia = $provincia;
+
+        return $this;
+    }
+
+    /**
+     * Get provincia
+     *
+     * @return \AppBundle\Entity\Provincia
+     */
+    public function getProvincia()
+    {
+        return $this->provincia;
+    }
 }

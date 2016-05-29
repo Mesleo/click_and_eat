@@ -10,4 +10,6 @@ namespace AppBundle\Repository;
  */
 class LocalidadRepository extends \Doctrine\ORM\EntityRepository
 {
+    
+
 }

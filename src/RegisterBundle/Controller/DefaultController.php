@@ -4,11 +4,12 @@ namespace RegisterBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\Entity\Restaurante;
-use ManageCompanyBundle\Form\RestauranteType;
+use RegisterBundle\Form\RestauranteType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends Controller
 {
@@ -17,7 +18,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('RegisterBundle:Default:index.html.twig');
+        return $this->render('RegisterBundle:Base:base.html.twig');
     }
 
     private $em = null;
@@ -28,16 +29,21 @@ class DefaultController extends Controller
      */
     public function registerAction(Request $request)
     {
+        $this->initialize();
         $restaurante = new Restaurante();
         $form = $this->createForm(RestauranteType::class, $restaurante);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $restaurante->setCoordenadas('102,30');
             $restaurante->setMapa('mapa');
             $restaurante->addRole(1);
-
+            print_r($request->request->get("localidad"));
+            $localidad = $this->em->getRepository("AppBundle:Localidad")
+                ->findOneBy([
+                    "id" => $request->request->get("localidad")
+                ]);
+            $restaurante->setLocalidad($localidad);
             $password = $this->get('security.password_encoder')
                 ->encodePassword($restaurante, $restaurante->getPassword());
             $restaurante->setPassword($password);
@@ -48,58 +54,58 @@ class DefaultController extends Controller
             return $this->redirectToRoute('homepage');
         }
 
-        return $this->render('ManageCompanyBundle:Restaurante:registro.html.twig', array(
+        return $this->render('RegisterBundle:Web:registro.html.twig', array(
             'restaurante' => $restaurante,
-            'form'    => $form->createView()
+            'form'    => $form->createView(),
         ));
 
     }
 
-    public function getProvincia(){
-        $this->initialize();
-        $toRet = $this->getProvincias();
-        if (!$toRet) {
-            throw $this->createNotFoundException('No se ha podido localizar la provincia');
-        }
-        return new JsonResponse($toRet);
-    }
-
-
-    private function getLocalidad($localidad_id)
-    {
-        $this->initialize();
-        $localidad = $this->em->getRepository('AppBundle:Localidad')
-            ->find($localidad_id);
-        if (!$localidad) {
-            throw $this->createNotFoundException('No se ha podido localizar la localidad.');
-        }
-        return $localidad;
-    }
 
     /**
-     * Devuelve todas las provincias
+     * Muestra las localidades a partir de una consulta pasada a JSON
      *
-     * @return JsonResponse
+     * @Route("/listar/localidades", name="localidades_json")
+     * @return [type]              [description]
      */
-    private function getProvincias()
-    {
-        foreach (($this->em->getRepository('AppBundle:Provincia')
-            ->findBy(
-                ['nombre' => "ASC"]
-            )) as $provincia) {
-            $this->params['inscripciones'][] = [
-                'nombre' => $provincia->getNombre()
-            ];
-        }
-        return $this->params;
+    public function getLocalidad(){
+        $this->initialize();
+        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
+            ->findAll();
+        return $this->render('RegisterBundle:Json:localidades.json.twig', $this->params);
     }
 
     /**
-     * @Route("/prueba")
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Muestra las localidades a partir de una consulta pasada a JSON
+     *
+     * @Route("/localidades", name="localidades_json")
+     * @return [type]              [description]
      */
-    public function index2Action(){
-        return $this->render('RegisterBundle:Web:registro.html.twig');
+    public function getLocalidades(Request $request){
+        $this->initialize();
+        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
+            ->findBy(
+                array('provincia' => $request->query->get('provincia')),
+                array('nombre' => 'ASC')
+            );
+        return $this->render('RegisterBundle:Json:localidades.json.twig', $this->params);
+    }
+
+    /**
+     * Muestra las localidades a partir de una consulta pasada a JSON
+     *
+     * @Route("/json/localidad", name="listar_localidades")
+     * @return [type]              [description]
+     */
+    public function getLocalidadesProvincia(Request $request){
+        $this->initialize();
+        $provincia = $request->request->get("idProvincia");
+        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
+            ->findAll([],[
+                'idProvincia' => $provincia,
+                "nombre" => "DESC"
+            ]);
+        return $this->render('RegisterBundle:Json:localidades.json.twig', $this->params);
     }
 
     private function initialize(){

@@ -21,44 +21,44 @@ class Localidad
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-	protected $id;
+	private $id;
 
 	/**
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
      */
-	protected $nombre;
+	private $nombre;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="codigo_postal", type="integer", nullable=false)
      */
-    protected $codigoPostal;
+    private $codigoPostal;
 
     /**
-     * @var string
+     * @var integer
      *
-     * @ORM\Column(name="idComunidad", type="string", nullable=false)
+     * @ORM\Column(name="codigo_municipio", type="integer")
      */
-    protected $comunidad;
+     private $codigoMunicipio;
 
-	/**
+     /**
      * @ORM\ManyToOne(targetEntity="Provincia", inversedBy="localidades")
      * @ORM\JoinColumn(name="idProvincia", referencedColumnName="id", nullable=false)
      */
-    protected $provincia;
+    private $provincia;
 
     /**
      * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="localidad")
      */
-	protected $domicilios;
+	private $domicilios;
 
     /**
      * @ORM\OneToMany(targetEntity="Restaurante", mappedBy="localidad")
      */
-    protected $restaurantes;
+    private $restaurantes;
     
     /**
      * Constructor
@@ -246,5 +246,53 @@ class Localidad
     public function __toString()
     {
         return $this->getNombre();
+    }
+
+    /**
+     * Set idProvincia
+     *
+     * @param \AppBundle\Entity\Provincia $idProvincia
+     *
+     * @return Localidad
+     */
+    public function setIdProvincia(\AppBundle\Entity\Provincia $idProvincia)
+    {
+        $this->idProvincia = $idProvincia;
+
+        return $this;
+    }
+
+    /**
+     * Get idProvincia
+     *
+     * @return \AppBundle\Entity\Provincia
+     */
+    public function getIdProvincia()
+    {
+        return $this->idProvincia;
+    }
+
+    /**
+     * Set codigoMunicipio
+     *
+     * @param integer $codigoMunicipio
+     *
+     * @return Localidad
+     */
+    public function setCodigoMunicipio($codigoMunicipio)
+    {
+        $this->codigoMunicipio = $codigoMunicipio;
+
+        return $this;
+    }
+
+    /**
+     * Get codigoMunicipio
+     *
+     * @return integer
+     */
+    public function getCodigoMunicipio()
+    {
+        return $this->codigoMunicipio;
     }
 }
