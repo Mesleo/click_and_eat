@@ -55,12 +55,14 @@ class PlatoController extends Controller
 				->findOneBy([
 					"id" => $request->request->get('id_restaurante'),
 				]);
-			$plato->setFoto(' ');
+			//$plato->setFoto('');
 			$plato->setRestaurante($restaurante);
 			$restaurante->addPlato($plato);
 
         	$this->em->persist($plato);
             $this->em->flush();
+			
+			$plato->uploadImg();
 
             /*$platos = $this->em->getRepository('AppBundle:Plato')
                 ->findAll(["nombre" => "DESC"]);
@@ -105,7 +107,7 @@ class PlatoController extends Controller
 		$form->handleRequest($request);
 		
 		if ($form->isSubmitted() && $form->isValid()) {
-			
+			$plato->uploadImg();
 			$this->em->flush();
 			return $this->redirectToRoute('gestion_platos');
 		}
@@ -146,6 +148,38 @@ class PlatoController extends Controller
 		}
 		
 		$this->em->remove($plato);
+		$this->em->flush();
+		return $this->redirectToRoute('gestion_platos');
+	}
+	
+	/**
+     * @Route("/platos/{id_plato}", name="status_plato")
+     * 
+     * @param  Request $request    [description]
+     * @param  [type]  $id_plato [description]
+     * @return [type]              [description]
+     */
+	public function statusAction(Request $request, $id_plato)
+	{
+		$this->initialize();
+		
+		$plato = $this->em->getRepository('AppBundle:Plato')
+			->findOneBy([
+                "id" => $id_plato,
+            ]);
+		
+		if (!$plato) {
+			throw $this->createNotFoundException(
+				'No se encontró el plato con id '.$id_plato
+			);
+		}
+		
+		if ($plato->getDisponible()) {
+			$plato->setDisponible(false);
+		} else {
+			$plato->setDisponible(true);
+		}
+		
 		$this->em->flush();
 		return $this->redirectToRoute('gestion_platos');
 	}

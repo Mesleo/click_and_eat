@@ -1,22 +1,33 @@
-{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+{% extends 'ManageCompanyBundle:Page:layout.html.twig' %}
 
-{% block body %}
+{% block content %}
 	<div class="container">
-
     	{{ form_start(form) }}
 
-    	<h2>Insertar plato</h2>
+		{% if plato is defined %}
+			<h2>Modificar plato</h2>
+		{% else %}
+			<h2>Añadir plato</h2>
+		{% endif %}
 
         <input type="hidden" name="id_restaurante" value="18">
 
     	{{ form_row(form.nombre) }}
         {{ form_row(form.descripcion) }}
         {{ form_row(form.precio) }}
-        {{ form_row(form.foto) }}
+		
+		{% if plato is defined %}
+			{% if plato.foto %}
+				<img src="{{ asset('uploads/restaurantes/platos/' ~ plato.foto ) }}" alt="Foto de plato">
+			{% endif %}
+		{% endif %}
+		
+        {{ form_row(form.img) }}
 
     	<div class="form-group">
     		<br />
-    		<button type="submit" class="btn btn-primary">Insertar</button>
+    		<button type="submit" class="btn btn-primary">Aceptar</button>
+			<a href="{{ path('gestion_platos') }}" class="btn btn-danger">Cancelar</a>
 			{% if plato is defined %}
 				<a href="{{ path('delete_plato', {'id_plato': plato.id}) }}" class="btn btn-danger">Eliminar</a>
 			{% endif %}

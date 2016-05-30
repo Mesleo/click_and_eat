@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Plato
@@ -50,6 +51,11 @@ class Plato
      * @ORM\Column(name="foto", type="string", length=255, nullable=false)
      */
     protected $foto;
+	
+	/**
+     * @var UploadedFile
+     */
+    protected $img;
 
     /**
      * @var boolean 
@@ -209,6 +215,33 @@ class Plato
     public function getFoto()
     {
         return $this->foto;
+    }
+	
+	/**
+     * @param mixed $img
+     */
+    public function setImg(UploadedFile $img)
+    {
+        $this->img = $img;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImg()
+    {
+        return $this->img;
+    }
+	
+	public function uploadImg()
+	{
+        if (null === $this->img) {
+            return;
+        }
+        $destiny = __DIR__.'/../../../web/uploads/restaurantes/platos/';
+        $nameImg = $this->id.'.'.$this->img->getClientOriginalExtension();
+        $this->img->move($destiny, $nameImg);
+        $this->setFoto($nameImg);
     }
 
     /**

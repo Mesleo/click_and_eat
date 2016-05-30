@@ -1,44 +1,52 @@
-{# @GestionBundle/Default/index.html.twig #}
-{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+{# src/ManageCompanyBundle/Resources/views/Restaurante/platos.html.twig #}
+{% extends 'ManageCompanyBundle:Page:layout.html.twig' %}
 
 {% block breadcrumb %}
     <li><a href="{{ path('gestion_platos')}}">Plato</a></li>
     <li><a href="javascript:;">Edición de página</a></li>
 {% endblock %}
 
-{% block body %}
-    <div class="row">
-        <div class="container">
-			<p>
-				<br />
-				<a href="{{ path('add_plato') }}" class="btn btn-primary">Añadir plato</a>
-            </p>
-			<div class="be-panel col-sm-12">
-                <table id="platos-table" class="table display responsive nowrap">
-                    <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Description</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {# if restaurante is defined #}
-                        {# if restaurante.platos #}
-                            {% for plato in platos %}
-                                <tr>
-                                    <td>{{ plato.nombre }}</td>
-                                    <td>{{ plato.descripcion }}</td>
-                                    <td>
-                                        <a href="{{ path('edit_plato', {'id_plato': plato.id}) }}" class="btn btn-primary">Editar</a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {# endif #}
+{% block content %}
+    <div class="container">
+		<p>
+			<br />
+			<a href="{{ path('add_plato') }}" class="btn btn-primary">Añadir plato</a>
+        </p>
+		<div class="be-panel col-sm-12">
+            <table id="platos-table" class="table display responsive nowrap">
+                <thead>
+                <tr>
+					<th>Nombre</th>
+                    <th>Description</th>
+					<th>Disponibilidad</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {# if restaurante is defined #}
+                    {# if restaurante.platos #}
+                        {% for plato in platos %}
+							<tr>
+                                <td>{{ plato.nombre }}</td>
+                                <td>{{ plato.descripcion }}</td>
+								<td>
+									<a href="{{ path('status_plato', {'id_plato': plato.id}) }}">
+										{% if plato.disponible %}
+											<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+										{% else %}
+											<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+										{% endif %}
+									</a>
+								</td>
+                                <td>
+                                    <a href="{{ path('edit_plato', {'id_plato': plato.id}) }}" class="btn btn-primary">Editar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
                     {# endif #}
-                    </tbody>
-                </table>
-            </div>
+                {# endif #}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}

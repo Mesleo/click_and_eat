@@ -1,0 +1,37 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/mesas.html.twig #}
+{% extends 'ManageCompanyBundle:Page:layout.html.twig' %}
+
+{% block content %}
+    <div class="container">
+		<p>
+			<br />
+			<a href="{{ path('add_mesa') }}" class="btn btn-primary">Añadir mesa</a>
+        </p>
+		<div class="be-panel col-sm-12">
+            <table id="platos-table" class="table display responsive nowrap">
+                <thead>
+                <tr>
+					<th>Id</th>
+                    <th>Número de Personas</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {# if restaurante is defined #}
+                    {# if restaurante.mesas #}
+                        {% for mesa in mesas %}
+							<tr>
+                                <td>{{ mesa.id }}</td>
+                                <td>{{ mesa.numPersonas }}</td>
+                                <td>
+                                    <a href="{{ path('edit_mesa', {'id_mesa': mesa.id}) }}" class="btn btn-primary">Editar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {# endif #}
+                {# endif #}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
