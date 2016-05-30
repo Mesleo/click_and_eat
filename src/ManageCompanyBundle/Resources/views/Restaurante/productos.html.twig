@@ -1,0 +1,41 @@
+{# @GestionBundle/Default/index.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
+{% block breadcrumb %}
+    <li><a href="{{ path('gestion_productos')}}">Producto</a></li>
+    <li><a href="javascript:;">Edición de página</a></li>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+    </div>
+        <div class="container">
+
+            <p>
+                <br />
+                <a href="{{ path('add_producto') }}" class="btn btn-primary">Añadir producto</a>
+            </p>
+            <div class="be-panel col-sm-12">
+                <table id="productos-table" class="table display responsive nowrap">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for producto in productos %}
+                        <tr>
+                            <td>{{ producto.nombre }}</td>
+                            <td>{{ producto.descripcion }}</td>
+                            <td>
+                                <a href="{{ path('edit_producto', {'id_producto': producto.id}) }}" class="btn btn-primary">Editar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}

@@ -271,4 +271,28 @@ class Localidad
     {
         return $this->idProvincia;
     }
+
+    /**
+     * Set codigoMunicipio
+     *
+     * @param integer $codigoMunicipio
+     *
+     * @return Localidad
+     */
+    public function setCodigoMunicipio($codigoMunicipio)
+    {
+        $this->codigoMunicipio = $codigoMunicipio;
+
+        return $this;
+    }
+
+    /**
+     * Get codigoMunicipio
+     *
+     * @return integer
+     */
+    public function getCodigoMunicipio()
+    {
+        return $this->codigoMunicipio;
+    }
 }

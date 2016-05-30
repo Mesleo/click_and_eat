@@ -14,26 +14,28 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Producto{
 
-    const TIPO_ENTRANTE = 'entrante';
-    const TIPO_HAMBURGUESA = 'hamburguesa';
-    const TIPO_PLATO_COMBINADO = 'Producto combinado';
-    const TIPO_CARNES = 'carne';
-    const TIPO_PESCADOS = 'pescado';
-    const TIPO_SANDWICHES = 'sandwich';
-    const TIPO_ENSALADAS = 'ensalada';
-    const TIPO_KEBAB = 'kebab';
-    const TIPO_DURUM = 'durum';
-    const TIPO_FALAFEL = 'falafel';
-    const TIPO_ARROCES = 'arroz';
-    const TIPO_PASTA = 'pasta';
-    const TIPO_SOPAS = 'sopa';
-    const TIPO_REVUELTOS = 'revueltos';
-    const TIPO_OTRO = 'otro';
-    
-    const TIPO_PIZZAS = 'pizza';
-    const TIPO_REFRESCOS = 'refresco';
-    const TIPO_CERVEZAS = 'cerveza';
-    const TIPO_VINOS = 'vino';
+    const TIPO_ENTRANTE = 'Entrante';
+    const TIPO_HAMBURGUESA = 'Hamburguesa';
+    const TIPO_SANDWICHES = 'Sandwich';
+    const TIPO_BOCADILLO = 'Bocadillo';
+    const TIPO_MONTADO = 'Montado';
+    const TIPO_PLATO_COMBINADO = 'Plato combinado';
+    const TIPO_CARNES = 'Carne';
+    const TIPO_PESCADOS = 'Pescado';
+    const TIPO_ENSALADAS = 'Ensalada';
+    const TIPO_KEBAB = 'Kebab';
+    const TIPO_DURUM = 'Durum';
+    const TIPO_FALAFEL = 'Falafel';
+    const TIPO_ARROCES = 'Arroz';
+    const TIPO_PASTA = 'Pasta';
+    const TIPO_SOPAS = 'Sopa';
+    const TIPO_REVUELTOS = 'Revuelto';
+    const TIPO_PIZZAS = 'Pizza';
+
+    const TIPO_REFRESCOS = 'Refresco';
+    const TIPO_CERVEZAS = 'Cerveza';
+    const TIPO_VINOS = 'Vino';
+    const TIPO_OTRO = 'Otro';
 
     /**
      * @var integer
@@ -124,7 +126,6 @@ class Producto{
     public function __construct()
     {
         $this->pedidoProducto = new \Doctrine\Common\Collections\ArrayCollection();
-
         $this->setDisponible(true);
 
         $this->setCreatedAt(new \DateTime());
@@ -402,8 +403,14 @@ class Producto{
      */
     public function setTipo($tipo)
     {
+//        if (!in_array($tipo, array(self::TIPO_ARROCES, self::TIPO_CARNES, self::TIPO_CERVEZAS, self::TIPO_DURUM,
+//            self::TIPO_ENSALADAS, self::TIPO_ENTRANTE, self::TIPO_FALAFEL, self::TIPO_KEBAB, self::TIPO_HAMBURGUESA,
+//            self::TIPO_PASTA, self::TIPO_PESCADOS, self::TIPO_PLATO_COMBINADO, self::TIPO_PESCADOS, self::TIPO_OTRO,
+//            self::TIPO_REVUELTOS, self::TIPO_REFRESCOS, self::TIPO_SANDWICHES, self::TIPO_SOPAS, self::TIPO_VINOS),
+//            self::TIPO_BOCADILLO, self::TIPO_MONTADO)) {
+//            throw new \InvalidArgumentException("Tipo de producto inválido");
+//        }
         $this->tipo = $tipo;
-
         return $this;
     }
 

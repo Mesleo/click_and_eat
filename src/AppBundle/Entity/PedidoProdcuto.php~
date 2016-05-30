@@ -1,17 +1,17 @@
 <?php
-// src/AppBundle/Entity/PedidoPlato.php
+// src/AppBundle/Entity/Pedidoproducto.php
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * PedidoPlato
+ * PedidoProducto
  *
  * @ORM\Entity
- * @ORM\Table(name="pedido_plato")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\PedidoPlatoRepository")
+ * @ORM\Table(name="pedido_producto")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PedidoProductoRepository")
  */
-class PedidoPlato
+class PedidoProdcuto
 {
 	/**
      * @var integer
@@ -23,16 +23,16 @@ class PedidoPlato
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Pedido", inversedBy="pedido_plato")
+     * @ORM\ManyToOne(targetEntity="Pedido", inversedBy="pedido_producto")
      * @ORM\JoinColumn(name="idPedido", referencedColumnName="id", nullable=false)
      */
     protected $pedido;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Plato", inversedBy="pedido_plato")
-     * @ORM\JoinColumn(name="idPlato", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Producto", inversedBy="pedido_producto")
+     * @ORM\JoinColumn(name="idproducto", referencedColumnName="id", nullable=false)
      */
-    protected $plato;
+    protected $producto;
 
     /**
      * @var integer
@@ -77,7 +77,7 @@ class PedidoPlato
      *
      * @param integer $cantidad
      *
-     * @return PedidoPlato
+     * @return PedidoProdcuto
      */
     public function setCantidad($cantidad)
     {
@@ -101,7 +101,7 @@ class PedidoPlato
      *
      * @param float $precio
      *
-     * @return PedidoPlato
+     * @return PedidoProdcuto
      */
     public function setPrecio($precio)
     {
@@ -125,7 +125,7 @@ class PedidoPlato
      *
      * @param integer $descuento
      *
-     * @return PedidoPlato
+     * @return PedidoProdcuto
      */
     public function setDescuento($descuento)
     {
@@ -149,7 +149,7 @@ class PedidoPlato
      *
      * @param float $total
      *
-     * @return PedidoPlato
+     * @return PedidoProdcuto
      */
     public function setTotal($total)
     {
@@ -173,7 +173,7 @@ class PedidoPlato
      *
      * @param \AppBundle\Entity\Pedido $pedido
      *
-     * @return PedidoPlato
+     * @return PedidoProdcuto
      */
     public function setPedido(\AppBundle\Entity\Pedido $pedido = null)
     {
@@ -193,26 +193,26 @@ class PedidoPlato
     }
 
     /**
-     * Set plato
+     * Set producto
      *
-     * @param \AppBundle\Entity\Producto $plato
+     * @param \AppBundle\Entity\Producto $producto
      *
-     * @return PedidoPlato
+     * @return PedidoProdcuto
      */
-    public function setPlato(\AppBundle\Entity\Producto $plato = null)
+    public function setproducto(\AppBundle\Entity\Producto $producto = null)
     {
-        $this->plato = $plato;
+        $this->producto = $producto;
 
         return $this;
     }
 
     /**
-     * Get plato
+     * Get producto
      *
      * @return \AppBundle\Entity\Producto
      */
-    public function getPlato()
+    public function getproducto()
     {
-        return $this->plato;
+        return $this->producto;
     }
 }

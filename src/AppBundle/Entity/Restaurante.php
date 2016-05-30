@@ -148,9 +148,9 @@ class Restaurante extends BaseUser
     protected $pedidos;
 
     /**
-     * @ORM\OneToMany(targetEntity="Plato", mappedBy="restaurante",  cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Producto", mappedBy="restaurante",  cascade={"persist"})
      */
-    protected $platos;
+    protected $productos;
 
     /**
      * @ORM\OneToMany(targetEntity="Reserva", mappedBy="restaurante")
@@ -196,7 +196,7 @@ class Restaurante extends BaseUser
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mesas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->platos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->productos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->trabajadores = new \Doctrine\Common\Collections\ArrayCollection();
 
@@ -751,37 +751,37 @@ class Restaurante extends BaseUser
     }
 
     /**
-     * Add plato
+     * Add producto
      *
-     * @param \AppBundle\Entity\Plato $plato
+     * @param \AppBundle\Entity\Producto $producto
      *
      * @return Restaurante
      */
-    public function addPlato(\AppBundle\Entity\Plato $plato)
+    public function addproducto(\AppBundle\Entity\Producto $producto)
     {
-        $this->platos[] = $plato;
+        $this->productos[] = $producto;
 
         return $this;
     }
 
     /**
-     * Remove plato
+     * Remove producto
      *
-     * @param \AppBundle\Entity\Plato $plato
+     * @param \AppBundle\Entity\Producto $producto
      */
-    public function removePlato(\AppBundle\Entity\Plato $plato)
+    public function removeproducto(\AppBundle\Entity\Producto $producto)
     {
-        $this->platos->removeElement($plato);
+        $this->productos->removeElement($producto);
     }
 
     /**
-     * Get platos
+     * Get productos
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getPlatos()
+    public function getproductos()
     {
-        return $this->platos;
+        return $this->productos;
     }
 
     /**

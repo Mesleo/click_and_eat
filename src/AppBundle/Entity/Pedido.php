@@ -103,9 +103,9 @@ class Pedido
     protected $trabajador;
 
     /**
-     * @ORM\OneToMany(targetEntity="PedidoPlato", mappedBy="pedido")
+     * @ORM\OneToMany(targetEntity="PedidoProducto", mappedBy="pedido")
      */
-    protected $pedido_plato;
+    protected $pedidoProducto;
 
     /**
      * @ORM\OneToOne(targetEntity="Ticket", mappedBy="pedido")
@@ -138,7 +138,7 @@ class Pedido
      */
     public function __construct()
     {
-        $this->pedido_plato = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->pedidoProducto =  \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -395,37 +395,37 @@ class Pedido
     }
 
     /**
-     * Add pedidoPlato
+     * Add pedidoProducto
      *
-     * @param \AppBundle\Entity\PedidoPlato $pedidoPlato
+     * @param \AppBundle\Entity\PedidoProdcuto $pedidoProducto
      *
      * @return Pedido
      */
-    public function addPedidoPlato(\AppBundle\Entity\PedidoPlato $pedidoPlato)
+    public function addPedidoProducto(\AppBundle\Entity\PedidoProdcuto $pedidoProducto)
     {
-        $this->pedido_plato[] = $pedidoPlato;
+        $this->pedidoProducto[] = $pedidoProducto;
 
         return $this;
     }
 
     /**
-     * Remove pedidoPlato
+     * Remove pedidoProducto
      *
-     * @param \AppBundle\Entity\PedidoPlato $pedidoPlato
+     * @param \AppBundle\Entity\PedidoProdcuto $pedidoProducto
      */
-    public function removePedidoPlato(\AppBundle\Entity\PedidoPlato $pedidoPlato)
+    public function removePedidoProducto(\AppBundle\Entity\PedidoProdcuto $pedidoProducto)
     {
-        $this->pedido_plato->removeElement($pedidoPlato);
+        $this->pedidoProducto->removeElement($pedidoProducto);
     }
 
     /**
-     * Get pedidoPlato
+     * Get pedidoProducto
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getPedidoPlato()
+    public function getPedidoProducto()
     {
-        return $this->pedido_plato;
+        return $this->pedidoProducto;
     }
 
     /**

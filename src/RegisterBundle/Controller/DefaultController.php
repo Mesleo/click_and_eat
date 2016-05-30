@@ -10,9 +10,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 
 class DefaultController extends Controller
 {
+
+    private $em = null;
+    private $params = null;
+
     /**
      * @Route("/")
      */
@@ -20,9 +26,6 @@ class DefaultController extends Controller
     {
         return $this->render('RegisterBundle:Base:base.html.twig');
     }
-
-    private $em = null;
-    private $params = null;
 
     /**
      * @Route("/registro", name="registro_restaurante")
@@ -61,18 +64,18 @@ class DefaultController extends Controller
     }
 
 
-    /**
-     * Muestra las localidades a partir de una consulta pasada a JSON
-     *
-     * @Route("/listar/localidades", name="localidades_json")
-     * @return [type]              [description]
-     */
-    public function getLocalidad(){
-        $this->initialize();
-        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
-            ->findAll();
-        return $this->render('RegisterBundle:Json:localidades.json.twig', $this->params);
-    }
+//    /**
+//     * Muestra las localidades a partir de una consulta pasada a JSON
+//     *
+//     * @Route("/listar/localidades", name="localidades_json")
+//     * @return [type]              [description]
+//     */
+//    public function getLocalidad(){
+//        $this->initialize();
+//        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
+//            ->findAll();
+//        return $this->render('RegisterBundle:Json:localidades.json.twig', $this->params);
+//    }
 
     /**
      * Muestra las localidades a partir de una consulta pasada a JSON
