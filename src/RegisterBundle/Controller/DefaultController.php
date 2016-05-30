@@ -38,7 +38,6 @@ class DefaultController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $restaurante->setMapa('mapa');
             $restaurante->addRole(1);
-            print_r($request->request->get("localidad"));
             $localidad = $this->em->getRepository("AppBundle:Localidad")
                 ->findOneBy([
                     "id" => $request->request->get("localidad")

@@ -47,7 +47,7 @@ class Plato
     /**
      * @var string
      *
-     * @ORM\Column(name="foto", type="string", length=255, nullable=false)
+     * @ORM\Column(name="foto", type="string", length=255, nullable=true)
      */
     protected $foto;
 
@@ -96,6 +96,13 @@ class Plato
     public function __construct()
     {
         $this->pedido_plato = new \Doctrine\Common\Collections\ArrayCollection();
+
+        $this->setDisponible(true);
+
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
+        $this->setTrash(false);
     }
 
     /**

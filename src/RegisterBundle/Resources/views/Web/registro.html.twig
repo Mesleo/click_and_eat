@@ -1,6 +1,21 @@
 {% extends 'RegisterBundle:Base:base.html.twig' %}
 
 {% block body %}
+	<script async defer
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgRHjOa0n38Z2adOjuXwBnmEBFMn4qltc&callback=initMap">
+	</script>
+	<div id="map"></div>
+	<script type="text/javascript">
+
+		var map;
+		function initMap() {
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {lat: -34.397, lng: 150.644},
+				zoom: 8
+			});
+		}
+
+	</script>
 	<div class="container">
 
     	{{ form_start(form) }}
@@ -41,18 +56,16 @@
                 {{ form_row(form.provincia) }}
             </div>
             <div class="col-md-6" id="select-localidades">
-                {#{{ form_row(form.localidad) }}#}
                 <label for="localidades">Localidad</label>
-                {#<div id="div-localidades">#}
-                    <select name="localidad" id="localidad" class="form-control"></select>
-                {#</div>#}
+                    <select name="localidad" id="localidad" class="form-control" required></select>
             </div>
         </div>
 		<div class="row">
 			<div class="col-md-12">
 				{{ form_row(form.coordenadas) }}
 				<div class="info-coordenadas"></div>
-				<strong>Nota: </strong>Si no está registrando el restaurante desde donde está éste ubicado, escriba las coordenadas a mano. Si no sabe cómo hacerlo visite esta página: <a href="http://www.coordenadas-gps.com/">http://www.coordenadas-gps.com/</a>
+				<div id="map-coords"></div>
+				<strong>Nota: </strong>Si no está registrando el restaurante desde donde está éste ubicado, escriba las coordenadas a mano. Si no sabe cómo hacerlo visite esta página: <a href="http://www.coordenadas-gps.com/" target="_blank">http://www.coordenadas-gps.com/</a>
 			</div>
 		</div>
 

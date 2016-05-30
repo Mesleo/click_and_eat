@@ -53,14 +53,6 @@ class RestauranteType extends AbstractType
             ->add('direccion', TextType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-//            ->add('localidad', EntityType::class, array(
-//                    'class' => 'AppBundle:Localidad',
-//                    'query_builder' => function (EntityRepository $er) {
-//                        return $er->createQueryBuilder('l')
-//                            ->orderBy('l.nombre', 'ASC');
-//                    },
-//                    "attr" => array('class' => 'form-control')
-//                ))
             ->add("provincia", EntityType::class, array(
                 'class' => 'AppBundle:Provincia',
                 'query_builder' => function (EntityRepository $er) {

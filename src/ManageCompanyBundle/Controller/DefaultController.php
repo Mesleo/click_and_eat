@@ -13,7 +13,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('ManageCompanyBundle:Pages:index.html.twig');
+        return $this->render('ManageCompanyBundle:Page:index.html.twig');
     }
     
 }
