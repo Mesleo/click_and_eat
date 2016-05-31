@@ -105,7 +105,7 @@ class Pedido
     /**
      * @ORM\OneToMany(targetEntity="PedidoProducto", mappedBy="pedido")
      */
-    protected $pedidoProducto;
+    protected $pedidoProducto = [];
 
     /**
      * @ORM\OneToOne(targetEntity="Ticket", mappedBy="pedido")
@@ -138,7 +138,7 @@ class Pedido
      */
     public function __construct()
     {
-        $this->pedidoProducto = ne \Doctrine\Common\Collections\ArrayCollection();
+        $this->pedidoProducto =  \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**

@@ -6,12 +6,26 @@ use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Restaurante
  *
  * @ORM\Entity
  * @ORM\Table(name="restaurante")
+ * @UniqueEntity(
+ *     fields={"username"},
+ *     message="Ese nombre de usuario ya existe."
+ * )
+ * @UniqueEntity(
+ *     fields={"email"},
+ *     message="Ese correo ya ha sido registrado."
+ * )
+ * @UniqueEntity(
+ *     fields={"cif"},
+ *     message="Ese CIF ya ha sido registrado."
+ * )
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
  */
 class Restaurante extends BaseUser
@@ -30,6 +44,8 @@ class Restaurante extends BaseUser
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=6)
      */
     protected $nombre;
 
@@ -37,6 +53,11 @@ class Restaurante extends BaseUser
      * @var string
      *
      * @ORM\Column(name="cif", type="string", length=9, unique=true, nullable=false)
+     * @Assert\Type(
+     *     type="string",
+     *     message="Este valor debería contener una letra seguida de 7 dígitos y una letra al final"
+     * )
+     * @Assert\Length(min=9, max=9)
      */
     protected $cif;
 
@@ -71,6 +92,7 @@ class Restaurante extends BaseUser
      * @var string
      *
      * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     * @Assert\Length(min=9, max=15)
      */
     protected $telefono;
 
@@ -99,6 +121,10 @@ class Restaurante extends BaseUser
      * @var float
      *
      * @ORM\Column(name="precio_envio", type="float", nullable=false, options={"default":"0.0"})
+     * @Assert\Type(
+     *     type="float",
+     *     message="Este valor debe ser un número"
+     * )
      */
     protected $precio_envio;
 

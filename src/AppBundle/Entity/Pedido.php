@@ -105,7 +105,7 @@ class Pedido
     /**
      * @ORM\OneToMany(targetEntity="PedidoProducto", mappedBy="pedido")
      */
-    protected $pedidoProducto;
+    protected $pedidoProducto = [];
 
     /**
      * @ORM\OneToOne(targetEntity="Ticket", mappedBy="pedido")

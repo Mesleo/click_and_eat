@@ -45,6 +45,7 @@ class DefaultController extends Controller
                 ->findOneBy([
                     "id" => $request->request->get("localidad")
                 ]);
+
             $restaurante->setLocalidad($localidad);
             $password = $this->get('security.password_encoder')
                 ->encodePassword($restaurante, $restaurante->getPassword());
@@ -62,20 +63,6 @@ class DefaultController extends Controller
         ));
 
     }
-
-
-//    /**
-//     * Muestra las localidades a partir de una consulta pasada a JSON
-//     *
-//     * @Route("/listar/localidades", name="localidades_json")
-//     * @return [type]              [description]
-//     */
-//    public function getLocalidad(){
-//        $this->initialize();
-//        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
-//            ->findAll();
-//        return $this->render('RegisterBundle:Json:localidades.json.twig', $this->params);
-//    }
 
     /**
      * Muestra las localidades a partir de una consulta pasada a JSON

@@ -21,7 +21,7 @@
     	{{ form_start(form) }}
 		{{ form_errors(form) }}
 
-		{{ form_row(form._token) }}
+		{#{{ form_row(form._token) }}#}
     	<h2>Datos usuario</h2>
 
     	{{ form_row(form.username) }}
@@ -72,6 +72,12 @@
     	{{ form_row(form.img) }}
     	{{ form_row(form.precio_envio) }}
 
+		<div class="checkbox">
+			<label>
+				<input name="term-license" type="checkbox" required> Acepto los términos y licencias
+			</label>
+		</div>
+
     	<div class="form-group">
     		<br />
     		<button type="submit" id="button-submit" class="btn btn-primary">Registro</button>
@@ -82,6 +88,7 @@
     </div>
 {% endblock %}
 {% block javascripts %}
+	<script src="{{ asset('manage/js/register.js') }}"></script>
 	<script>
 		(function(){
 			var inputCoords, divLocation, selectProvincia, selectLocalidad;
@@ -98,8 +105,8 @@
 					navigator.geolocation.watchPosition(function(position) {
 						inputCoords.attr("placeholder", position.coords.latitude+"/"+position.coords.longitude);
 						inputCoords.val(position.coords.latitude+"/"+position.coords.longitude);
-						divLocation.html("Las coordenadas de su ubicación actual son: <ul><li>Latitud: "+position.coords.latitude+
-						"</li><li>Longitud: "+position.coords.longitude+"</li></ul>");
+						divLocation.html("Las coordenadas de su ubicación actual son: <ul><li class='li-position'>Latitud: "+position.coords.latitude+
+						"</li><li class='li-position'>Longitud: "+position.coords.longitude+"</li></ul>");
 					});
 				} else {
 					divLocation.html("La localización no está disponible en su navegador");
