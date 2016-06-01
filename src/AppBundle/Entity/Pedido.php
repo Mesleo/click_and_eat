@@ -103,9 +103,9 @@ class Pedido
     protected $trabajador;
 
     /**
-     * @ORM\OneToMany(targetEntity="PedidoPlato", mappedBy="pedido")
+     * @ORM\OneToMany(targetEntity="PedidoProducto", mappedBy="pedido")
      */
-    protected $pedido_plato;
+    protected $pedido_producto;
 
     /**
      * @ORM\OneToOne(targetEntity="Ticket", mappedBy="pedido")
@@ -132,13 +132,12 @@ class Pedido
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->pedido_plato = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->pedido_producto = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -176,27 +175,51 @@ class Pedido
     }
 
     /**
-     * Set fecha
+     * Set fechaHoraSalida
      *
-     * @param \DateTime $fecha
+     * @param \DateTime $fechaHoraSalida
      *
      * @return Pedido
      */
-    public function setFecha($fecha)
+    public function setFechaHoraSalida($fechaHoraSalida)
     {
-        $this->fecha = $fecha;
+        $this->fechaHoraSalida = $fechaHoraSalida;
 
         return $this;
     }
 
     /**
-     * Get fecha
+     * Get fechaHoraSalida
      *
      * @return \DateTime
      */
-    public function getFecha()
+    public function getFechaHoraSalida()
     {
-        return $this->fecha;
+        return $this->fechaHoraSalida;
+    }
+
+    /**
+     * Set fechaHoraLlegada
+     *
+     * @param \DateTime $fechaHoraLlegada
+     *
+     * @return Pedido
+     */
+    public function setFechaHoraLlegada($fechaHoraLlegada)
+    {
+        $this->fechaHoraLlegada = $fechaHoraLlegada;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaHoraLlegada
+     *
+     * @return \DateTime
+     */
+    public function getFechaHoraLlegada()
+    {
+        return $this->fechaHoraLlegada;
     }
 
     /**
@@ -224,27 +247,27 @@ class Pedido
     }
 
     /**
-     * Set direccion
+     * Set domicilio
      *
-     * @param string $direccion
+     * @param string $domicilio
      *
      * @return Pedido
      */
-    public function setDireccion($direccion)
+    public function setDomicilio($domicilio)
     {
-        $this->direccion = $direccion;
+        $this->domicilio = $domicilio;
 
         return $this;
     }
 
     /**
-     * Get direccion
+     * Get domicilio
      *
      * @return string
      */
-    public function getDireccion()
+    public function getDomicilio()
     {
-        return $this->direccion;
+        return $this->domicilio;
     }
 
     /**
@@ -320,208 +343,6 @@ class Pedido
     }
 
     /**
-     * Set restaurante
-     *
-     * @param \AppBundle\Entity\Restaurante $restaurante
-     *
-     * @return Pedido
-     */
-    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
-    {
-        $this->restaurante = $restaurante;
-
-        return $this;
-    }
-
-    /**
-     * Get restaurante
-     *
-     * @return \AppBundle\Entity\Restaurante
-     */
-    public function getRestaurante()
-    {
-        return $this->restaurante;
-    }
-
-    /**
-     * Set cliente
-     *
-     * @param \AppBundle\Entity\Cliente $cliente
-     *
-     * @return Pedido
-     */
-    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
-    {
-        $this->cliente = $cliente;
-
-        return $this;
-    }
-
-    /**
-     * Get cliente
-     *
-     * @return \AppBundle\Entity\Cliente
-     */
-    public function getCliente()
-    {
-        return $this->cliente;
-    }
-
-    /**
-     * Set recorrido
-     *
-     * @param \AppBundle\Entity\Recorrido $recorrido
-     *
-     * @return Pedido
-     */
-    public function setRecorrido(\AppBundle\Entity\Recorrido $recorrido = null)
-    {
-        $this->recorrido = $recorrido;
-
-        return $this;
-    }
-
-    /**
-     * Get recorrido
-     *
-     * @return \AppBundle\Entity\Recorrido
-     */
-    public function getRecorrido()
-    {
-        return $this->recorrido;
-    }
-
-    /**
-     * Add pedidoPlato
-     *
-     * @param \AppBundle\Entity\PedidoPlato $pedidoPlato
-     *
-     * @return Pedido
-     */
-    public function addPedidoPlato(\AppBundle\Entity\PedidoPlato $pedidoPlato)
-    {
-        $this->pedido_plato[] = $pedidoPlato;
-
-        return $this;
-    }
-
-    /**
-     * Remove pedidoPlato
-     *
-     * @param \AppBundle\Entity\PedidoPlato $pedidoPlato
-     */
-    public function removePedidoPlato(\AppBundle\Entity\PedidoPlato $pedidoPlato)
-    {
-        $this->pedido_plato->removeElement($pedidoPlato);
-    }
-
-    /**
-     * Get pedidoPlato
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getPedidoPlato()
-    {
-        return $this->pedido_plato;
-    }
-
-    /**
-     * Set ticket
-     *
-     * @param \AppBundle\Entity\Ticket $ticket
-     *
-     * @return Pedido
-     */
-    public function setTicket(\AppBundle\Entity\Ticket $ticket = null)
-    {
-        $this->ticket = $ticket;
-
-        return $this;
-    }
-
-    /**
-     * Get ticket
-     *
-     * @return \AppBundle\Entity\Ticket
-     */
-    public function getTicket()
-    {
-        return $this->ticket;
-    }
-
-    /**
-     * Set fechaHoraSalida
-     *
-     * @param \DateTime $fechaHoraSalida
-     *
-     * @return Pedido
-     */
-    public function setFechaHoraSalida($fechaHoraSalida)
-    {
-        $this->fechaHoraSalida = $fechaHoraSalida;
-
-        return $this;
-    }
-
-    /**
-     * Get fechaHoraSalida
-     *
-     * @return \DateTime
-     */
-    public function getFechaHoraSalida()
-    {
-        return $this->fechaHoraSalida;
-    }
-
-    /**
-     * Set fechaHoraLlegada
-     *
-     * @param \DateTime $fechaHoraLlegada
-     *
-     * @return Pedido
-     */
-    public function setFechaHoraLlegada($fechaHoraLlegada)
-    {
-        $this->fechaHoraLlegada = $fechaHoraLlegada;
-
-        return $this;
-    }
-
-    /**
-     * Get fechaHoraLlegada
-     *
-     * @return \DateTime
-     */
-    public function getFechaHoraLlegada()
-    {
-        return $this->fechaHoraLlegada;
-    }
-
-    /**
-     * Set domicilio
-     *
-     * @param string $domicilio
-     *
-     * @return Pedido
-     */
-    public function setDomicilio($domicilio)
-    {
-        $this->domicilio = $domicilio;
-
-        return $this;
-    }
-
-    /**
-     * Get domicilio
-     *
-     * @return string
-     */
-    public function getDomicilio()
-    {
-        return $this->domicilio;
-    }
-
-    /**
      * Set createdAt
      *
      * @param \DateTime $createdAt
@@ -594,6 +415,54 @@ class Pedido
     }
 
     /**
+     * Set restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     *
+     * @return Pedido
+     */
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante)
+    {
+        $this->restaurante = $restaurante;
+
+        return $this;
+    }
+
+    /**
+     * Get restaurante
+     *
+     * @return \AppBundle\Entity\Restaurante
+     */
+    public function getRestaurante()
+    {
+        return $this->restaurante;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \AppBundle\Entity\Cliente $cliente
+     *
+     * @return Pedido
+     */
+    public function setCliente(\AppBundle\Entity\Cliente $cliente)
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * Get cliente
+     *
+     * @return \AppBundle\Entity\Cliente
+     */
+    public function getCliente()
+    {
+        return $this->cliente;
+    }
+
+    /**
      * Set trabajador
      *
      * @param \AppBundle\Entity\Trabajador $trabajador
@@ -615,5 +484,63 @@ class Pedido
     public function getTrabajador()
     {
         return $this->trabajador;
+    }
+
+    /**
+     * Add pedidoProducto
+     *
+     * @param \AppBundle\Entity\PedidoProducto $pedidoProducto
+     *
+     * @return Pedido
+     */
+    public function addPedidoProducto(\AppBundle\Entity\PedidoProducto $pedidoProducto)
+    {
+        $this->pedido_producto[] = $pedidoProducto;
+
+        return $this;
+    }
+
+    /**
+     * Remove pedidoProducto
+     *
+     * @param \AppBundle\Entity\PedidoProducto $pedidoProducto
+     */
+    public function removePedidoProducto(\AppBundle\Entity\PedidoProducto $pedidoProducto)
+    {
+        $this->pedido_producto->removeElement($pedidoProducto);
+    }
+
+    /**
+     * Get pedidoProducto
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPedidoProducto()
+    {
+        return $this->pedido_producto;
+    }
+
+    /**
+     * Set ticket
+     *
+     * @param \AppBundle\Entity\Ticket $ticket
+     *
+     * @return Pedido
+     */
+    public function setTicket(\AppBundle\Entity\Ticket $ticket = null)
+    {
+        $this->ticket = $ticket;
+
+        return $this;
+    }
+
+    /**
+     * Get ticket
+     *
+     * @return \AppBundle\Entity\Ticket
+     */
+    public function getTicket()
+    {
+        return $this->ticket;
     }
 }

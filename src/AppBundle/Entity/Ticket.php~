@@ -13,6 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Ticket
 {
+    const PAGO_EFECTIVO = 'efectivo';
+    const PAGO_TARJETA = 'tarjeta';
+    const PAGO_PAYPAL = 'paypal';
+
     /**
      * @var integer
      *
@@ -30,7 +34,7 @@ class Ticket
     protected $fecha;
 
     /**
-     * @ORM\Column(name="formaPago", type="string", columnDefinition="ENUM('efectivo', 'tarjeta', 'paypal')", nullable=false)
+     * @ORM\Column(name="formaPago", type="string", nullable=false)
      */
     protected $formaPago;
 
@@ -120,54 +124,6 @@ class Ticket
     }
 
     /**
-     * Set idPedido
-     *
-     * @param \AppBundle\Entity\Pedido $idPedido
-     *
-     * @return Ticket
-     */
-    public function setIdPedido(\AppBundle\Entity\Pedido $idPedido = null)
-    {
-        $this->idPedido = $idPedido;
-
-        return $this;
-    }
-
-    /**
-     * Get idPedido
-     *
-     * @return \AppBundle\Entity\Pedido
-     */
-    public function getIdPedido()
-    {
-        return $this->idPedido;
-    }
-
-    /**
-     * Set pedido
-     *
-     * @param \AppBundle\Entity\Pedido $pedido
-     *
-     * @return Ticket
-     */
-    public function setPedido(\AppBundle\Entity\Pedido $pedido = null)
-    {
-        $this->pedido = $pedido;
-
-        return $this;
-    }
-
-    /**
-     * Get pedido
-     *
-     * @return \AppBundle\Entity\Pedido
-     */
-    public function getPedido()
-    {
-        return $this->pedido;
-    }
-
-    /**
      * Set createdAt
      *
      * @param \DateTime $createdAt
@@ -237,5 +193,29 @@ class Ticket
     public function getTrash()
     {
         return $this->trash;
+    }
+
+    /**
+     * Set pedido
+     *
+     * @param \AppBundle\Entity\Pedido $pedido
+     *
+     * @return Ticket
+     */
+    public function setPedido(\AppBundle\Entity\Pedido $pedido)
+    {
+        $this->pedido = $pedido;
+
+        return $this;
+    }
+
+    /**
+     * Get pedido
+     *
+     * @return \AppBundle\Entity\Pedido
+     */
+    public function getPedido()
+    {
+        return $this->pedido;
     }
 }

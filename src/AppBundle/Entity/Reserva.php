@@ -107,27 +107,27 @@ class Reserva
     }
 
     /**
-     * Set fecha
+     * Set fechaHora
      *
-     * @param \DateTime $fecha
+     * @param \DateTime $fechaHora
      *
      * @return Reserva
      */
-    public function setFecha($fecha)
+    public function setFechaHora($fechaHora)
     {
-        $this->fecha = $fecha;
+        $this->fechaHora = $fechaHora;
 
         return $this;
     }
 
     /**
-     * Get fecha
+     * Get fechaHora
      *
      * @return \DateTime
      */
-    public function getFecha()
+    public function getFechaHora()
     {
-        return $this->fecha;
+        return $this->fechaHora;
     }
 
     /**
@@ -227,126 +227,6 @@ class Reserva
     }
 
     /**
-     * Set trash
-     *
-     * @param boolean $trash
-     *
-     * @return Reserva
-     */
-    public function setTrash($trash)
-    {
-        $this->trash = $trash;
-
-        return $this;
-    }
-
-    /**
-     * Get trash
-     *
-     * @return boolean
-     */
-    public function getTrash()
-    {
-        return $this->trash;
-    }
-
-    /**
-     * Set restaurante
-     *
-     * @param \AppBundle\Entity\Restaurante $restaurante
-     *
-     * @return Reserva
-     */
-    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
-    {
-        $this->restaurante = $restaurante;
-
-        return $this;
-    }
-
-    /**
-     * Get restaurante
-     *
-     * @return \AppBundle\Entity\Restaurante
-     */
-    public function getRestaurante()
-    {
-        return $this->restaurante;
-    }
-
-    /**
-     * Set cliente
-     *
-     * @param \AppBundle\Entity\Cliente $cliente
-     *
-     * @return Reserva
-     */
-    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
-    {
-        $this->cliente = $cliente;
-
-        return $this;
-    }
-
-    /**
-     * Get cliente
-     *
-     * @return \AppBundle\Entity\Cliente
-     */
-    public function getCliente()
-    {
-        return $this->cliente;
-    }
-
-    /**
-     * Set mesa
-     *
-     * @param \AppBundle\Entity\Mesa $mesa
-     *
-     * @return Reserva
-     */
-    public function setMesa(\AppBundle\Entity\Mesa $mesa = null)
-    {
-        $this->mesa = $mesa;
-
-        return $this;
-    }
-
-    /**
-     * Get mesa
-     *
-     * @return \AppBundle\Entity\Mesa
-     */
-    public function getMesa()
-    {
-        return $this->mesa;
-    }
-
-    /**
-     * Set fechaHora
-     *
-     * @param \DateTime $fechaHora
-     *
-     * @return Reserva
-     */
-    public function setFechaHora($fechaHora)
-    {
-        $this->fechaHora = $fechaHora;
-
-        return $this;
-    }
-
-    /**
-     * Get fechaHora
-     *
-     * @return \DateTime
-     */
-    public function getFechaHora()
-    {
-        return $this->fechaHora;
-    }
-
-    /**
      * Set createdAt
      *
      * @param \DateTime $createdAt
@@ -392,5 +272,101 @@ class Reserva
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+
+    /**
+     * Set trash
+     *
+     * @param boolean $trash
+     *
+     * @return Reserva
+     */
+    public function setTrash($trash)
+    {
+        $this->trash = $trash;
+
+        return $this;
+    }
+
+    /**
+     * Get trash
+     *
+     * @return boolean
+     */
+    public function getTrash()
+    {
+        return $this->trash;
+    }
+
+    /**
+     * Set restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     *
+     * @return Reserva
+     */
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante)
+    {
+        $this->restaurante = $restaurante;
+
+        return $this;
+    }
+
+    /**
+     * Get restaurante
+     *
+     * @return \AppBundle\Entity\Restaurante
+     */
+    public function getRestaurante()
+    {
+        return $this->restaurante;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \AppBundle\Entity\Cliente $cliente
+     *
+     * @return Reserva
+     */
+    public function setCliente(\AppBundle\Entity\Cliente $cliente)
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * Get cliente
+     *
+     * @return \AppBundle\Entity\Cliente
+     */
+    public function getCliente()
+    {
+        return $this->cliente;
+    }
+
+    /**
+     * Set mesa
+     *
+     * @param \AppBundle\Entity\Mesa $mesa
+     *
+     * @return Reserva
+     */
+    public function setMesa(\AppBundle\Entity\Mesa $mesa)
+    {
+        $this->mesa = $mesa;
+
+        return $this;
+    }
+
+    /**
+     * Get mesa
+     *
+     * @return \AppBundle\Entity\Mesa
+     */
+    public function getMesa()
+    {
+        return $this->mesa;
     }
 }

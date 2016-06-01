@@ -2,17 +2,28 @@
 // src/AppBundle/Entity/Trabajador.php
 namespace AppBundle\Entity;
 
+use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Trabajador
  *
  * @ORM\Entity
  * @ORM\Table(name="trabajador")
+ * @UniqueEntity(
+ *     fields={"username"},
+ *     message="Ese nombre de usuario ya existe."
+ * )
+ * @UniqueEntity(
+ *     fields={"email"},
+ *     message="Ese correo ya ha sido registrado."
+ * )
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TrabajadorRepository")
  */
-class Trabajador
+class Trabajador extends BaseUser
 {
     /**
      * @var integer
@@ -27,6 +38,8 @@ class Trabajador
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
+	 * @Assert\NotBlank()
+     * @Assert\Length(min=6)
      */
     protected $nombre;
 
@@ -40,28 +53,8 @@ class Trabajador
     /**
      * @var string
      *
-     * @ORM\Column(name="usuario", type="string", length=45, nullable=false)
-     */
-    protected $usuario;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=45, nullable=false)
-     */
-    protected $password;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=100, nullable=false)
-     */
-    protected $email;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+	 * @Assert\Length(min=9, max=15)
      */
     protected $telefono;
 
@@ -101,13 +94,22 @@ class Trabajador
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-
+	
     /**
      * Constructor
      */
     public function __construct()
     {
+		parent::__construct();
+        $this->addRole("ROLE_ADMIN");
+		
+        $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->recorridos = new \Doctrine\Common\Collections\ArrayCollection();
+		
+		$this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
+        $this->setTrash(false);
     }
 
     /**
@@ -166,78 +168,6 @@ class Trabajador
     public function getApellidos()
     {
         return $this->apellidos;
-    }
-
-    /**
-     * Set usuario
-     *
-     * @param string $usuario
-     *
-     * @return Trabajador
-     */
-    public function setUsuario($usuario)
-    {
-        $this->usuario = $usuario;
-
-        return $this;
-    }
-
-    /**
-     * Get usuario
-     *
-     * @return string
-     */
-    public function getUsuario()
-    {
-        return $this->usuario;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return Trabajador
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return Trabajador
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
     }
 
     /**
@@ -337,6 +267,40 @@ class Trabajador
     }
 
     /**
+     * Add pedido
+     *
+     * @param \AppBundle\Entity\Pedido $pedido
+     *
+     * @return Trabajador
+     */
+    public function addPedido(\AppBundle\Entity\Pedido $pedido)
+    {
+        $this->pedidos[] = $pedido;
+
+        return $this;
+    }
+
+    /**
+     * Remove pedido
+     *
+     * @param \AppBundle\Entity\Pedido $pedido
+     */
+    public function removePedido(\AppBundle\Entity\Pedido $pedido)
+    {
+        $this->pedidos->removeElement($pedido);
+    }
+
+    /**
+     * Get pedidos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPedidos()
+    {
+        return $this->pedidos;
+    }
+
+    /**
      * Add recorrido
      *
      * @param \AppBundle\Entity\Recorrido $recorrido
@@ -377,7 +341,7 @@ class Trabajador
      *
      * @return Trabajador
      */
-    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante)
     {
         $this->restaurante = $restaurante;
 
@@ -393,38 +357,97 @@ class Trabajador
     {
         return $this->restaurante;
     }
-
-    /**
-     * Add pedido
+	
+	/**
+     * Returns the salt that was originally used to encode the password.
      *
-     * @param \AppBundle\Entity\Pedido $pedido
+     * This can return null if the password was not encoded using a salt.
+     *
+     * @return string|null The salt
+     */
+    public function getSalt()
+    {
+        // you *may* need a real salt depending on your encoder
+        // see section on salt below
+        return null;
+    }
+	
+	/**
+     * Returns the username used to authenticate the user.
+     *
+     * @return string The username
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+	/**
+     * Returns the password used to authenticate the user.
+     *
+     * @return string The password
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+	
+	/**
+     * Removes sensitive data from the user.
+     *
+     * This is important if, at any given point, sensitive information like
+     * the plain-text password is stored on this object.
+     */
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+	
+	/** @see \Serializable::serialize() */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->username,
+            $this->password,
+            // see section on salt below
+            // $this->salt,
+        ));
+    }
+
+    /** @see \Serializable::unserialize() */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+            $this->username,
+            $this->password,
+            // see section on salt below
+            // $this->salt
+        ) = unserialize($serialized);
+    }
+	
+	/**
+     * Set enabled
+     *
+     * @param boolean $enabled
      *
      * @return Trabajador
      */
-    public function addPedido(\AppBundle\Entity\Pedido $pedido)
+    public function setEnabled($enabled)
     {
-        $this->pedidos[] = $pedido;
+        $this->enabled = $enabled;
 
         return $this;
     }
 
     /**
-     * Remove pedido
+     * Get enabled
      *
-     * @param \AppBundle\Entity\Pedido $pedido
+     * @return boolean
      */
-    public function removePedido(\AppBundle\Entity\Pedido $pedido)
+    public function getEnabled()
     {
-        $this->pedidos->removeElement($pedido);
-    }
-
-    /**
-     * Get pedidos
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getPedidos()
-    {
-        return $this->pedidos;
+        return $this->enabled;
     }
 }

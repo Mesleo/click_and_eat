@@ -7,17 +7,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
 class MesaType extends AbstractType
 {
-	private $em = null;
-    private $params = null;
-
     /**
-     * Genera el formulario de registro
+     *
      * 
      * @param FormBuilderInterface $builder
      * @param array $options

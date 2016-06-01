@@ -62,6 +62,13 @@ class Horario
      * @ORM\ManyToMany(targetEntity="Restaurante", mappedBy="horarios")
      */
     protected $restaurantes;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->restaurantes = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -71,30 +78,6 @@ class Horario
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set dia
-     *
-     * @param string $dia
-     *
-     * @return Horario
-     */
-    public function setDia($dia)
-    {
-        $this->dia = $dia;
-
-        return $this;
-    }
-
-    /**
-     * Get dia
-     *
-     * @return string
-     */
-    public function getDia()
-    {
-        return $this->dia;
     }
 
     /**
@@ -215,38 +198,6 @@ class Horario
     public function getTrash()
     {
         return $this->trash;
-    }
-
-    /**
-     * Set restaurante
-     *
-     * @param \AppBundle\Entity\Restaurante $restaurante
-     *
-     * @return Horario
-     */
-    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
-    {
-        $this->restaurante = $restaurante;
-
-        return $this;
-    }
-
-    /**
-     * Get restaurante
-     *
-     * @return \AppBundle\Entity\Restaurante
-     */
-    public function getRestaurante()
-    {
-        return $this->restaurante;
-    }
-    
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->restaurantes = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**

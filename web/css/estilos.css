@@ -1,5 +1,22 @@
+@font-face {
+	font-family: 'Glyphicons Halflings';
+	src: url('../fonts/glyphicons/glyphicons-halflings-regular.eot');
+	src: url('../fonts/glyphicons/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+}
+
+@font-face {
+	font-family: "FontAwesome";
+	src: url('../fonts/font-awesome-4.6.3/fonts/fontawesome-webfont.eot');
+	src: url('../fonts/font-awesome-4.6.3/fonts/fontawesome-webfont.eot?#iefix') format('eot'),
+	url('../fonts/font-awesome-4.6.3/fonts/fontawesome-webfont.woff') format('woff'),
+	url('../fonts/font-awesome-4.6.3/fonts/fontawesome-webfont.ttf') format('truetype'),
+	url('../fonts/font-awesome-4.6.3/fonts/fontawesome-webfont.svg#FontAwesome') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
 body {
-	background: #EEEEEE;
+	background: #F5F5F5;
 }
 
 .btn-buscar {
@@ -10,7 +27,7 @@ body {
 }
 
 .btn-connect {
-	background: #FFA000;
+	background: #689F38;
 	color: #FFFFFF;
 	margin-left: 42%;
 	padding: 0.8em 2em;
@@ -22,6 +39,10 @@ body {
 	padding: 1em 1em;
 }
 
+.container form> div{
+	margin-bottom: 15px;
+}
+
 .contenido {
 	display: inline-block;
 	width: 33%;
@@ -29,6 +50,10 @@ body {
 
 #content {
 	margin-top: 4em;
+}
+
+.error {
+	color: #FF0000;
 }
 
 #footer {
@@ -76,7 +101,7 @@ header {
 }
 
 .navbar-default {
-	background: #FFC107;
+	background: #8BC34A;
 	margin: 0;
 }
 
@@ -85,14 +110,15 @@ p {
 	margin-bottom: 1em;
 }
 
+.required:after {
+	content: " (*)";
+}
+
 .subtitulo {
 	font-size: 40px;
 	*text-shadow: 1px 1px 1px #FFFFFF;
 }
 
-#wrap {
-
-}
 
 @media (max-width: 991px) {
 	#infor {

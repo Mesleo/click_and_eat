@@ -2,19 +2,33 @@
 // src/AppBundle/Entity/Restaurante.php
 namespace AppBundle\Entity;
 
+use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Restaurante
  *
  * @ORM\Entity
  * @ORM\Table(name="restaurante")
+ * @UniqueEntity(
+ *     fields={"username"},
+ *     message="Ese nombre de usuario ya existe."
+ * )
+ * @UniqueEntity(
+ *     fields={"email"},
+ *     message="Ese correo ya ha sido registrado."
+ * )
+ * @UniqueEntity(
+ *     fields={"cif"},
+ *     message="Ese CIF ya ha sido registrado."
+ * )
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
  */
-class Restaurante implements UserInterface, \Serializable
+class Restaurante extends BaseUser
 {
     /**
      * @var integer
@@ -28,30 +42,9 @@ class Restaurante implements UserInterface, \Serializable
     /**
      * @var string
      *
-     * @ORM\Column(name="username", type="string", length=45, nullable=false)
-     */
-    protected $username;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=45, nullable=false)
-     */
-    protected $password;
-
-    private $plainPassword;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=100, nullable=false)
-     */
-    protected $email;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=6)
      */
     protected $nombre;
 
@@ -59,6 +52,11 @@ class Restaurante implements UserInterface, \Serializable
      * @var string
      *
      * @ORM\Column(name="cif", type="string", length=9, unique=true, nullable=false)
+     * @Assert\Type(
+     *     type="string",
+     *     message="Este valor debería contener una letra seguida de 7 dígitos y una letra al final"
+     * )
+     * @Assert\Length(min=9, max=9)
      */
     protected $cif;
 
@@ -83,9 +81,16 @@ class Restaurante implements UserInterface, \Serializable
     protected $localidad;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Provincia",  inversedBy="restaurantes")
+     * @ORM\JoinColumn(name="idProvincia", referencedColumnName="id", nullable=false)
+     */
+    protected $provincia;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     * @Assert\Length(min=9, max=15)
      */
     protected $telefono;
 
@@ -97,7 +102,7 @@ class Restaurante implements UserInterface, \Serializable
     /**
      * @var string
      *
-     * @ORM\Column(name="foto", type="string", length=255, nullable=false)
+     * @ORM\Column(name="foto", type="string", length=255, nullable=true)
      */
     protected $foto;
 
@@ -114,6 +119,10 @@ class Restaurante implements UserInterface, \Serializable
      * @var float
      *
      * @ORM\Column(name="precio_envio", type="float", nullable=false, options={"default":"0.0"})
+     * @Assert\Type(
+     *     type="float",
+     *     message="Este valor debe ser un número"
+     * )
      */
     protected $precio_envio;
 
@@ -134,7 +143,7 @@ class Restaurante implements UserInterface, \Serializable
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fecha_baja", type="datetime")
+     * @ORM\Column(name="fecha_baja", type="datetime", nullable=true)
      */
     protected $fecha_baja;
 
@@ -163,9 +172,9 @@ class Restaurante implements UserInterface, \Serializable
     protected $pedidos;
 
     /**
-     * @ORM\OneToMany(targetEntity="Plato", mappedBy="restaurante")
+     * @ORM\OneToMany(targetEntity="Producto", mappedBy="restaurante",  cascade={"persist"})
      */
-    protected $platos;
+    protected $productos;
 
     /**
      * @ORM\OneToMany(targetEntity="Reserva", mappedBy="restaurante")
@@ -203,12 +212,15 @@ class Restaurante implements UserInterface, \Serializable
      */
     public function __construct()
     {
+        parent::__construct();
+        $this->addRole("ROLE_ADMIN");
+		
         $this->tipoComida = new \Doctrine\Common\Collections\ArrayCollection();
         $this->horarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mesas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->platos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->productos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->trabajadores = new \Doctrine\Common\Collections\ArrayCollection();
 
@@ -227,88 +239,6 @@ class Restaurante implements UserInterface, \Serializable
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set usuario
-     *
-     * @param string $usuario
-     *
-     * @return Restaurante
-     */
-    public function setUsuario($username)
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    /**
-     * Get usuario
-     *
-     * @return string
-     */
-    public function getUsuario()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return Restaurante
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    /*public function getPassword()
-    {
-        return $this->password;
-    }*/
-
-    public function setPlainPassword($password)
-    {
-        $this->plainPassword = $password;
-    }
-
-    public function getPlainPassword()
-    {
-        return $this->plainPassword;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return Restaurante
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
     }
 
     /**
@@ -471,7 +401,8 @@ class Restaurante implements UserInterface, \Serializable
         return $this->img;
     }
 
-    public function uploadImg(){
+    public function uploadImg()
+	{
         if (null === $this->img) {
             return;
         }
@@ -480,7 +411,7 @@ class Restaurante implements UserInterface, \Serializable
         $this->img->move($destiny, $nameImg);
         $this->setFoto($nameImg);
     }
-    
+
     /**
      * Set precioEnvio
      *
@@ -672,6 +603,30 @@ class Restaurante implements UserInterface, \Serializable
     {
         return $this->localidad;
     }
+	
+	/**
+     * Set provincia
+     *
+     * @param \AppBundle\Entity\Provincia $provincia
+     *
+     * @return Restaurante
+     */
+    public function setProvincia(\AppBundle\Entity\Provincia $provincia)
+    {
+        $this->provincia = $provincia;
+
+        return $this;
+    }
+
+    /**
+     * Get provincia
+     *
+     * @return \AppBundle\Entity\Provincia
+     */
+    public function getProvincia()
+    {
+        return $this->provincia;
+    }
 
     /**
      * Add tipoComida
@@ -844,37 +799,37 @@ class Restaurante implements UserInterface, \Serializable
     }
 
     /**
-     * Add plato
+     * Add producto
      *
-     * @param \AppBundle\Entity\Plato $plato
+     * @param \AppBundle\Entity\Producto $producto
      *
      * @return Restaurante
      */
-    public function addPlato(\AppBundle\Entity\Plato $plato)
+    public function addProducto(\AppBundle\Entity\Producto $producto)
     {
-        $this->platos[] = $plato;
+        $this->productos[] = $producto;
 
         return $this;
     }
 
     /**
-     * Remove plato
+     * Remove producto
      *
-     * @param \AppBundle\Entity\Plato $plato
+     * @param \AppBundle\Entity\Producto $producto
      */
-    public function removePlato(\AppBundle\Entity\Plato $plato)
+    public function removeProducto(\AppBundle\Entity\Producto $producto)
     {
-        $this->platos->removeElement($plato);
+        $this->productos->removeElement($producto);
     }
 
     /**
-     * Get platos
+     * Get productos
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getPlatos()
+    public function getProductos()
     {
-        return $this->platos;
+        return $this->productos;
     }
 
     /**
@@ -946,27 +901,6 @@ class Restaurante implements UserInterface, \Serializable
     }
 
     /**
-     * Returns the roles granted to the user.
-     *
-     * <code>
-     * public function getRoles()
-     * {
-     *     return array('ROLE_USER');
-     * }
-     * </code>
-     *
-     * Alternatively, the roles might be stored on a ``roles`` property,
-     * and populated in any number of different ways when the user object
-     * is created.
-     *
-     * @return (Role|string)[] The user roles
-     */
-    public function getRoles()
-    {
-        return array('ROLE_USER');
-    }
-
-    /**
      * Returns the salt that was originally used to encode the password.
      *
      * This can return null if the password was not encoded using a salt.
@@ -990,6 +924,11 @@ class Restaurante implements UserInterface, \Serializable
         return $this->username;
     }
 
+	/**
+     * Returns the password used to authenticate the user.
+     *
+     * @return string The password
+     */
     public function getPassword()
     {
         return $this->password;

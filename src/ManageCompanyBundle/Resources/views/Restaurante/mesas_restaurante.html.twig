@@ -1,6 +1,7 @@
-{% extends 'ManageCompanyBundle:Page:layout.html.twig' %}
+{# src/ManageCompanyBundle/Resources/views/Restaurante/mesas_restaurante.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
 
-{% block content %}
+{% block body %}
 	<div class="container">
     	{{ form_start(form) }}
 
@@ -9,8 +10,6 @@
 		{% else %}
 			<h2>Añadir mesa</h2>
 		{% endif %}
-
-        <input type="hidden" name="id_restaurante" value="18">
 
     	{{ form_row(form.numPersonas) }}
 

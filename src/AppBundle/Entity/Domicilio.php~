@@ -87,78 +87,6 @@ class Domicilio
     }
 
     /**
-     * Set direccion
-     *
-     * @param string $direccion
-     *
-     * @return Domicilio
-     */
-    public function setDireccion($direccion)
-    {
-        $this->direccion = $direccion;
-
-        return $this;
-    }
-
-    /**
-     * Get direccion
-     *
-     * @return string
-     */
-    public function getDireccion()
-    {
-        return $this->direccion;
-    }
-
-    /**
-     * Set localidad
-     *
-     * @param \AppBundle\Entity\Localidad $localidad
-     *
-     * @return Domicilio
-     */
-    public function setLocalidad(\AppBundle\Entity\Localidad $localidad = null)
-    {
-        $this->localidad = $localidad;
-
-        return $this;
-    }
-
-    /**
-     * Get localidad
-     *
-     * @return \AppBundle\Entity\Localidad
-     */
-    public function getLocalidad()
-    {
-        return $this->localidad;
-    }
-
-    /**
-     * Set cliente
-     *
-     * @param \AppBundle\Entity\Cliente $cliente
-     *
-     * @return Domicilio
-     */
-    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
-    {
-        $this->cliente = $cliente;
-
-        return $this;
-    }
-
-    /**
-     * Get cliente
-     *
-     * @return \AppBundle\Entity\Cliente
-     */
-    public function getCliente()
-    {
-        return $this->cliente;
-    }
-
-    /**
      * Set domicilio
      *
      * @param string $domicilio
@@ -300,5 +228,53 @@ class Domicilio
     public function getTrash()
     {
         return $this->trash;
+    }
+
+    /**
+     * Set localidad
+     *
+     * @param \AppBundle\Entity\Localidad $localidad
+     *
+     * @return Domicilio
+     */
+    public function setLocalidad(\AppBundle\Entity\Localidad $localidad)
+    {
+        $this->localidad = $localidad;
+
+        return $this;
+    }
+
+    /**
+     * Get localidad
+     *
+     * @return \AppBundle\Entity\Localidad
+     */
+    public function getLocalidad()
+    {
+        return $this->localidad;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \AppBundle\Entity\Cliente $cliente
+     *
+     * @return Domicilio
+     */
+    public function setCliente(\AppBundle\Entity\Cliente $cliente)
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * Get cliente
+     *
+     * @return \AppBundle\Entity\Cliente
+     */
+    public function getCliente()
+    {
+        return $this->cliente;
     }
 }

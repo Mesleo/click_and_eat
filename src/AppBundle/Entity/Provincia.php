@@ -36,6 +36,11 @@ class Provincia
     protected $localidades;
 
     /**
+     * @ORM\OneToMany(targetEntity="Restaurante", mappedBy="provincia")
+     */
+    protected $restaurantes;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -109,5 +114,39 @@ class Provincia
     public function getLocalidades()
     {
         return $this->localidades;
+    }
+
+    /**
+     * Add restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     *
+     * @return Provincia
+     */
+    public function addRestaurante(\AppBundle\Entity\Restaurante $restaurante)
+    {
+        $this->restaurantes[] = $restaurante;
+
+        return $this;
+    }
+
+    /**
+     * Remove restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     */
+    public function removeRestaurante(\AppBundle\Entity\Restaurante $restaurante)
+    {
+        $this->restaurantes->removeElement($restaurante);
+    }
+
+    /**
+     * Get restaurantes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRestaurantes()
+    {
+        return $this->restaurantes;
     }
 }

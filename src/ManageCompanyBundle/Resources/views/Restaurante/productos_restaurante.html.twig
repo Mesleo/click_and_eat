@@ -1,0 +1,37 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/productos_restaurante.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+    	{{ form_start(form) }}
+
+		{% if producto is defined %}
+			<h2>Modificar producto</h2>
+		{% else %}
+			<h2>Insertar producto</h2>
+		{% endif %}
+
+    	{{ form_row(form.nombre) }}
+        {{ form_row(form.descripcion) }}
+        {{ form_row(form.precio) }}
+		{{ form_row(form.tipo) }}
+		
+		{% if producto is defined %}
+			{% if producto.foto %}
+				<p><img src="{{ asset('uploads/restaurantes/productos/' ~ producto.foto ) }}" alt="Foto de producto" class="img-thumbnail"></p>
+			{% endif %}
+		{% endif %}
+		
+        {{ form_row(form.img) }}
+
+    	<div class="form-group">
+    		<br />
+    		<button type="submit" class="btn btn-primary">Aceptar</button>
+			<a href="{{ path('gestion_productos') }}" class="btn btn-danger">Cancelar</a>
+			{% if producto is defined %}
+				<a href="{{ path('delete_producto', {'id_producto': producto.id}) }}" class="btn btn-danger">Eliminar</a>
+			{% endif %}
+    	</div>
+    	{{ form_end(form) }}
+    </div>
+{% endblock %}

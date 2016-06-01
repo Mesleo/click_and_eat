@@ -159,30 +159,6 @@ class Comentario
     }
 
     /**
-     * Set valoracion
-     *
-     * @param string $valoracion
-     *
-     * @return Comentario
-     */
-    public function setValoracion($valoracion)
-    {
-        $this->valoracion = $valoracion;
-
-        return $this;
-    }
-
-    /**
-     * Get valoracion
-     *
-     * @return string
-     */
-    public function getValoracion()
-    {
-        return $this->valoracion;
-    }
-
-    /**
      * Set createdAt
      *
      * @param \DateTime $createdAt
@@ -204,54 +180,6 @@ class Comentario
     public function getCreatedAt()
     {
         return $this->created_at;
-    }
-
-    /**
-     * Set restaurante
-     *
-     * @param \AppBundle\Entity\Restaurante $restaurante
-     *
-     * @return Comentario
-     */
-    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
-    {
-        $this->restaurante = $restaurante;
-
-        return $this;
-    }
-
-    /**
-     * Get restaurante
-     *
-     * @return \AppBundle\Entity\Restaurante
-     */
-    public function getRestaurante()
-    {
-        return $this->restaurante;
-    }
-
-    /**
-     * Set cliente
-     *
-     * @param \AppBundle\Entity\Cliente $cliente
-     *
-     * @return Comentario
-     */
-    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
-    {
-        $this->cliente = $cliente;
-
-        return $this;
-    }
-
-    /**
-     * Get cliente
-     *
-     * @return \AppBundle\Entity\Cliente
-     */
-    public function getCliente()
-    {
-        return $this->cliente;
     }
 
     /**
@@ -300,5 +228,53 @@ class Comentario
     public function getTrash()
     {
         return $this->trash;
+    }
+
+    /**
+     * Set restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     *
+     * @return Comentario
+     */
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
+    {
+        $this->restaurante = $restaurante;
+
+        return $this;
+    }
+
+    /**
+     * Get restaurante
+     *
+     * @return \AppBundle\Entity\Restaurante
+     */
+    public function getRestaurante()
+    {
+        return $this->restaurante;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \AppBundle\Entity\Cliente $cliente
+     *
+     * @return Comentario
+     */
+    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * Get cliente
+     *
+     * @return \AppBundle\Entity\Cliente
+     */
+    public function getCliente()
+    {
+        return $this->cliente;
     }
 }

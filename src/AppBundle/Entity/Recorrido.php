@@ -62,14 +62,6 @@ class Recorrido
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-    
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
     /**
      * Get id
@@ -127,64 +119,6 @@ class Recorrido
     public function getFechaHoraLlegada()
     {
         return $this->fechaHoraLlegada;
-    }
-
-    /**
-     * Set trabajador
-     *
-     * @param \AppBundle\Entity\Trabajador $trabajador
-     *
-     * @return Recorrido
-     */
-    public function setTrabajador(\AppBundle\Entity\Trabajador $trabajador = null)
-    {
-        $this->trabajador = $trabajador;
-
-        return $this;
-    }
-
-    /**
-     * Get trabajador
-     *
-     * @return \AppBundle\Entity\Trabajador
-     */
-    public function getTrabajador()
-    {
-        return $this->trabajador;
-    }
-
-    /**
-     * Add pedido
-     *
-     * @param \AppBundle\Entity\Pedido $pedido
-     *
-     * @return Recorrido
-     */
-    public function addPedido(\AppBundle\Entity\Pedido $pedido)
-    {
-        $this->pedidos[] = $pedido;
-
-        return $this;
-    }
-
-    /**
-     * Remove pedido
-     *
-     * @param \AppBundle\Entity\Pedido $pedido
-     */
-    public function removePedido(\AppBundle\Entity\Pedido $pedido)
-    {
-        $this->pedidos->removeElement($pedido);
-    }
-
-    /**
-     * Get pedidos
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getPedidos()
-    {
-        return $this->pedidos;
     }
 
     /**
@@ -257,5 +191,29 @@ class Recorrido
     public function getTrash()
     {
         return $this->trash;
+    }
+
+    /**
+     * Set trabajador
+     *
+     * @param \AppBundle\Entity\Trabajador $trabajador
+     *
+     * @return Recorrido
+     */
+    public function setTrabajador(\AppBundle\Entity\Trabajador $trabajador)
+    {
+        $this->trabajador = $trabajador;
+
+        return $this;
+    }
+
+    /**
+     * Get trabajador
+     *
+     * @return \AppBundle\Entity\Trabajador
+     */
+    public function getTrabajador()
+    {
+        return $this->trabajador;
     }
 }

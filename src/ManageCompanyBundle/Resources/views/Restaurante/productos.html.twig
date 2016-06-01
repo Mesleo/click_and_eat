@@ -1,0 +1,43 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/productos.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+		<p>
+			<br />
+			<a href="{{ path('add_producto') }}" class="btn btn-success">Añadir producto</a>
+        </p>
+		<div class="be-panel col-sm-12">
+            <table id="platos-table" class="table display responsive nowrap">
+                <thead>
+                <tr>
+					<th>Nombre</th>
+                    <th>Descripcion</th>
+					<th>Disponibilidad</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for producto in productos %}
+					<tr>
+                        <td>{{ producto.nombre }}</td>
+                        <td>{{ producto.descripcion }}</td>
+						<td>
+							<a href="{{ path('status_producto', {'id_producto': producto.id}) }}">
+								{% if producto.disponible %}
+									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+								{% else %}
+									<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+								{% endif %}
+							</a>
+						</td>
+                        <td>
+                            <a href="{{ path('edit_producto', {'id_producto': producto.id}) }}" class="btn btn-primary">Editar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

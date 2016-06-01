@@ -38,11 +38,11 @@ class Localidad
     protected $codigoPostal;
 
     /**
-     * @var string
+     * @var integer
      *
-     * @ORM\Column(name="idComunidad", type="string", nullable=false)
+     * @ORM\Column(name="codigo_municipio", type="integer", nullable=false)
      */
-    protected $comunidad;
+    protected $codigoMunicipio;
 
 	/**
      * @ORM\ManyToOne(targetEntity="Provincia", inversedBy="localidades")
@@ -219,32 +219,32 @@ class Localidad
         return $this->restaurantes;
     }
 
+    public function __toString()
+    {
+        return $this->getNombre();
+    }
+
     /**
-     * Set comunidad
+     * Set codigoMunicipio
      *
-     * @param string $comunidad
+     * @param integer $codigoMunicipio
      *
      * @return Localidad
      */
-    public function setComunidad($comunidad)
+    public function setCodigoMunicipio($codigoMunicipio)
     {
-        $this->comunidad = $comunidad;
+        $this->codigoMunicipio = $codigoMunicipio;
 
         return $this;
     }
 
     /**
-     * Get comunidad
+     * Get codigoMunicipio
      *
-     * @return string
+     * @return integer
      */
-    public function getComunidad()
+    public function getCodigoMunicipio()
     {
-        return $this->comunidad;
-    }
-
-    public function __toString()
-    {
-        return $this->getNombre();
+        return $this->codigoMunicipio;
     }
 }

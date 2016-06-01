@@ -1,5 +1,4 @@
 <?php
-// src/ManageCompanyBundle/Controller/JsonController.php
 namespace ManageCompanyBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,9 +27,10 @@ class JsonController extends Controller
             ->findAll();
         return $this->render('ManageCompanyBundle:Json:localidades.json.twig', $this->params);
     }
-    
+
     private function initialize(){
         $this->params = [];
         $this->em = $this->getDoctrine()->getManager();
     }
+
 }

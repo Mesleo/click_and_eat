@@ -26,10 +26,10 @@ class MesaController extends Controller
         $this->initialize();
 
         $this->params['mesas'] = $this->em->getRepository('AppBundle:Mesa')
-            ->findAll([
-                "id" => "ASC",
-                "idRestaurante" => 18
-            ]);
+            ->findBy(
+				['restaurante' => $this->getIdRestaurante()],
+                ['id' => 'ASC']
+            );
 
         return $this->render('ManageCompanyBundle:Restaurante:mesas.html.twig', $this->params);
     }
@@ -53,7 +53,7 @@ class MesaController extends Controller
 			
 			$restaurante = $this->em->getRepository('AppBundle:Restaurante')
 				->findOneBy([
-					"id" => $request->request->get('id_restaurante'),
+					'id' => $this->getIdRestaurante()
 				]);
 			$mesa->setRestaurante($restaurante);
 			$restaurante->addMesa($mesa);
@@ -65,7 +65,7 @@ class MesaController extends Controller
         }
 		
 		return $this->render('ManageCompanyBundle:Restaurante:mesas_restaurante.html.twig', array(
-            'form'	=> $form->createView()
+            'form' => $form->createView()
         ));
 	}
 	
@@ -82,7 +82,7 @@ class MesaController extends Controller
 		
 		$mesa = $this->em->getRepository('AppBundle:Mesa')
 			->findOneBy([
-                "id" => $id_mesa,
+                'id' => $id_mesa
             ]);
 		
 		if (!$mesa) {
@@ -101,8 +101,8 @@ class MesaController extends Controller
 		}
 		
 		return $this->render('ManageCompanyBundle:Restaurante:mesas_restaurante.html.twig', array(
-			'mesa'	=> $mesa,
-            'form'  => $form->createView()
+			'mesa' => $mesa,
+            'form' => $form->createView()
         ));
 	}
 	
@@ -119,7 +119,7 @@ class MesaController extends Controller
 		
 		$mesa = $this->em->getRepository('AppBundle:Mesa')
 			->findOneBy([
-                "id" => $id_mesa,
+                'id' => $id_mesa
             ]);
 		
 		if (!$mesa) {
@@ -128,10 +128,22 @@ class MesaController extends Controller
 			);
 		}
 		
+		$restaurante = $this->em->getRepository('AppBundle:Restaurante')
+			->findOneBy([
+				'id' => $this->getIdRestaurante()
+			]);
+		$restaurante->removeMesa($mesa);
+		
 		$this->em->remove($mesa);
 		$this->em->flush();
 		return $this->redirectToRoute('gestion_mesas');
 	}
+	
+	private function getIdRestaurante()
+	{
+		$user = $this->getUser()->getId();
+		return $user;
+    }
 
 	private function initialize()
 	{
