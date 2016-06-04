@@ -32,7 +32,8 @@ class RestauranteType extends AbstractType
     {
         $builder
             ->add('username', TextType::class, array(
-            		"attr" => array('class' => 'form-control')
+            		"attr" => array('class' => 'form-control'),
+                    "label" => "Nombre de usuario"
             	))
             ->add('password', RepeatedType::class, array(
                     'type' => PasswordType::class,
@@ -45,42 +46,12 @@ class RestauranteType extends AbstractType
             ->add('email', EmailType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-            ->add('nombre', TextType::class, array(
-            		"attr" => array('class' => 'form-control')
+            ->add('name', TextType::class, array(
+            		"attr" => array('class' => 'form-control'),
+                "label" => "Nombre"
             	))
-            ->add('cif', TextType::class, array(
-            		"attr" => array('class' => 'form-control')
-            	))
-            ->add('direccion', TextType::class, array(
-            		"attr" => array('class' => 'form-control')
-            	))
-            ->add("provincia", EntityType::class, array(
-                'class' => 'AppBundle:Provincia',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('p')
-                        ->orderBy('p.nombre', 'ASC');
-                },
-                'choice_label' => 'nombre',
-                "attr" => array('class' => 'form-control')
-                ))
-            ->add('coordenadas', null, array(
-                "label" => "Coordenadas",
-                'required' => false,
-                "attr" => array(
-                    'class' => 'form-control',
-                    "title" => 'Si no está registrando el restaurante desde donde está éste ubicado, escriba las coordenadas a mano. Si no sabe cuáles son visite esta página: http://www.coordenadas-gps.com/')
-            ))
             ->add('telefono', TextType::class, array(
             		"attr" => array('class' => 'form-control')
-            	))
-            ->add('img', FileType::class, array(
-                'label' => "Foto del restaurante",
-                'required' => false,
-                "attr" => array('class' => 'form-control')
-            ))
-            ->add('precio_envio', MoneyType::class, array(
-            		"attr" => array(
-                        'class' => 'form-control')
             	))
         ;
     }
@@ -137,7 +108,7 @@ class RestauranteType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\Restaurante'
+            'data_class' => 'AppBundle\Entity\Usuario'
         ]);
     }
 }

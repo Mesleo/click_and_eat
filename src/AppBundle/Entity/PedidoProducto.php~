@@ -1,5 +1,5 @@
 <?php
-// src/AppBundle/Entity/Pedidoproducto.php
+// src/AppBundle/Entity/PedidoProducto.php
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -23,16 +23,16 @@ class PedidoProducto
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Producto", inversedBy="pedidoProducto")
-     * @ORM\JoinColumn(name="idProducto", referencedColumnName="id", nullable=false)
-     */
-    protected $producto;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Pedido", inversedBy="pedidoProducto")
+     * @ORM\ManyToOne(targetEntity="Pedido", inversedBy="pedido_producto")
      * @ORM\JoinColumn(name="idPedido", referencedColumnName="id", nullable=false)
      */
     protected $pedido;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Producto", inversedBy="pedido_producto")
+     * @ORM\JoinColumn(name="idProducto", referencedColumnName="id", nullable=false)
+     */
+    protected $producto;
 
     /**
      * @var integer
@@ -77,7 +77,7 @@ class PedidoProducto
      *
      * @param integer $cantidad
      *
-     * @return PedidoProdcuto
+     * @return PedidoProducto
      */
     public function setCantidad($cantidad)
     {
@@ -101,7 +101,7 @@ class PedidoProducto
      *
      * @param float $precio
      *
-     * @return PedidoProdcuto
+     * @return PedidoProducto
      */
     public function setPrecio($precio)
     {
@@ -125,7 +125,7 @@ class PedidoProducto
      *
      * @param integer $descuento
      *
-     * @return PedidoProdcuto
+     * @return PedidoProducto
      */
     public function setDescuento($descuento)
     {
@@ -149,7 +149,7 @@ class PedidoProducto
      *
      * @param float $total
      *
-     * @return PedidoProdcuto
+     * @return PedidoProducto
      */
     public function setTotal($total)
     {
@@ -173,7 +173,7 @@ class PedidoProducto
      *
      * @param \AppBundle\Entity\Pedido $pedido
      *
-     * @return PedidoProdcuto
+     * @return PedidoProducto
      */
     public function setPedido(\AppBundle\Entity\Pedido $pedido = null)
     {
@@ -197,9 +197,9 @@ class PedidoProducto
      *
      * @param \AppBundle\Entity\Producto $producto
      *
-     * @return PedidoProdcuto
+     * @return PedidoProducto
      */
-    public function setproducto(\AppBundle\Entity\Producto $producto = null)
+    public function setProducto(\AppBundle\Entity\Producto $producto = null)
     {
         $this->producto = $producto;
 
@@ -211,7 +211,7 @@ class PedidoProducto
      *
      * @return \AppBundle\Entity\Producto
      */
-    public function getproducto()
+    public function getProducto()
     {
         return $this->producto;
     }

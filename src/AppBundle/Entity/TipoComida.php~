@@ -62,6 +62,9 @@ class TipoComida
     public function __construct()
     {
         $this->restaurantes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+        $this->setTrash(false);
     }
 
     /**

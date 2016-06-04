@@ -1,0 +1,5 @@
+[
+    {% for tipo_comida in tipos_comida %}
+    "{{ tipo_comida.nombre }}"{% if not loop.last %},{% endif %}
+    {%  endfor %}
+]

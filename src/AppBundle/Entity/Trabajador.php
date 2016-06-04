@@ -4,21 +4,23 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Trabajador
  *
  * @ORM\Entity
  * @ORM\Table(name="trabajador")
+ *
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TrabajadorRepository")
  */
 class Trabajador
 {
+
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -26,44 +28,9 @@ class Trabajador
     /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
-     */
-    protected $nombre;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="apellidos", type="string", length=100, nullable=false)
      */
     protected $apellidos;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="usuario", type="string", length=45, nullable=false)
-     */
-    protected $usuario;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=45, nullable=false)
-     */
-    protected $password;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=100, nullable=false)
-     */
-    protected $email;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
-     */
-    protected $telefono;
 
     /**
      * @ORM\OneToMany(targetEntity="Pedido", mappedBy="trabajador")
@@ -81,67 +48,14 @@ class Trabajador
      */
     protected $restaurante;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime", nullable=false)
-     */
-    protected $created_at;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
-     */
-    protected $updated_at;
-
-    /**
-     * @var boolean 
-     *
-     * @ORM\Column(name="trash", type="boolean", options={"default":0})
-     */
-    protected $trash;
 
     /**
      * Constructor
      */
     public function __construct()
     {
+        $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->recorridos = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set nombre
-     *
-     * @param string $nombre
-     *
-     * @return Trabajador
-     */
-    public function setNombre($nombre)
-    {
-        $this->nombre = $nombre;
-
-        return $this;
-    }
-
-    /**
-     * Get nombre
-     *
-     * @return string
-     */
-    public function getNombre()
-    {
-        return $this->nombre;
     }
 
     /**
@@ -169,75 +83,27 @@ class Trabajador
     }
 
     /**
-     * Set usuario
+     * Set name
      *
-     * @param string $usuario
+     * @param string $name
      *
      * @return Trabajador
      */
-    public function setUsuario($usuario)
+    public function setName($name)
     {
-        $this->usuario = $usuario;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get usuario
+     * Get name
      *
      * @return string
      */
-    public function getUsuario()
+    public function getName()
     {
-        return $this->usuario;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return Trabajador
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return Trabajador
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
+        return $this->name;
     }
 
     /**
@@ -262,6 +128,30 @@ class Trabajador
     public function getTelefono()
     {
         return $this->telefono;
+    }
+
+    /**
+     * Set typeUser
+     *
+     * @param integer $typeUser
+     *
+     * @return Trabajador
+     */
+    public function setTypeUser($typeUser)
+    {
+        $this->typeUser = $typeUser;
+
+        return $this;
+    }
+
+    /**
+     * Get typeUser
+     *
+     * @return integer
+     */
+    public function getTypeUser()
+    {
+        return $this->typeUser;
     }
 
     /**
@@ -337,6 +227,40 @@ class Trabajador
     }
 
     /**
+     * Add pedido
+     *
+     * @param \AppBundle\Entity\Pedido $pedido
+     *
+     * @return Trabajador
+     */
+    public function addPedido(\AppBundle\Entity\Pedido $pedido)
+    {
+        $this->pedidos[] = $pedido;
+
+        return $this;
+    }
+
+    /**
+     * Remove pedido
+     *
+     * @param \AppBundle\Entity\Pedido $pedido
+     */
+    public function removePedido(\AppBundle\Entity\Pedido $pedido)
+    {
+        $this->pedidos->removeElement($pedido);
+    }
+
+    /**
+     * Get pedidos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPedidos()
+    {
+        return $this->pedidos;
+    }
+
+    /**
      * Add recorrido
      *
      * @param \AppBundle\Entity\Recorrido $recorrido
@@ -377,7 +301,7 @@ class Trabajador
      *
      * @return Trabajador
      */
-    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante)
     {
         $this->restaurante = $restaurante;
 
@@ -395,36 +319,12 @@ class Trabajador
     }
 
     /**
-     * Add pedido
+     * Get id
      *
-     * @param \AppBundle\Entity\Pedido $pedido
-     *
-     * @return Trabajador
+     * @return integer
      */
-    public function addPedido(\AppBundle\Entity\Pedido $pedido)
+    public function getId()
     {
-        $this->pedidos[] = $pedido;
-
-        return $this;
-    }
-
-    /**
-     * Remove pedido
-     *
-     * @param \AppBundle\Entity\Pedido $pedido
-     */
-    public function removePedido(\AppBundle\Entity\Pedido $pedido)
-    {
-        $this->pedidos->removeElement($pedido);
-    }
-
-    /**
-     * Get pedidos
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getPedidos()
-    {
-        return $this->pedidos;
+        return $this->id;
     }
 }

@@ -10,4 +10,41 @@ namespace AppBundle\Repository;
  */
 class TrabajadorRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    /**
+     * Muestra los campos de las tablas usuario y trabajador correspondientes a los trabajadores del restaurante
+     *
+     * @param $idRestaurante
+     * @return mixed
+     */
+    public function showEmployeesRestaurant($idRestaurante)
+    {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'SELECT u.name, t.apellidos, t.id, u.username, u.email, u.enabled   FROM AppBundle:Trabajador t, AppBundle:Usuario u WHERE t.restaurante = :idRestaurante
+                AND t.id = u.idTrabajador'
+            );
+        $query->setParameter('idRestaurante',$idRestaurante);
+        $trabajadores = $query->getResult();
+        return $trabajadores;
+    }
+
+    /**
+     * Borra un registro de la tabla usuario y de la tabla trabajador correspondientes al trabajador del restaurante
+     *
+     * @param $idRestaurante
+     * @param $idTrabajador
+     * @return mixed
+     */
+    public function deleteEmployee($idTrabajador)
+    {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'DELETE FROM AppBundle:Trabajador t WHERE t.id = :idTrabajador
+                '
+            );
+        $query->setParameter('idTrabajador',$idTrabajador);
+        $trabajador = $query->getResult();
+        return $trabajador;
+    }
 }

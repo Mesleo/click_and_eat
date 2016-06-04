@@ -19,9 +19,10 @@ class AppKernel extends Kernel
             new AppBundle\AppBundle(),
             new ManageCompanyBundle\ManageCompanyBundle(),
             new RegisterBundle\RegisterBundle(),
+            new ClientBundle\ClientBundle(),
         ];
 
-        if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
+        if (in_array($this->getEnvironment(), ['dev', 'test'], false)) {
             $bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();

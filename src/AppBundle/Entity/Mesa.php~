@@ -4,12 +4,22 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Mesa
  *
  * @ORM\Entity
  * @ORM\Table(name="mesa")
+ * @UniqueEntity(
+ *     fields={"numPersonas"},
+ *     message="Debe asignar un número de persobas para la mesa."
+ * )
+ * @UniqueEntity(
+ *     fields={"codMesa"},
+ *     message="Debe asignar un identificador para la mesa."
+ * )
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MesaRepository")
  */
 class Mesa
@@ -24,11 +34,31 @@ class Mesa
     protected $id;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="codMesa", type="string", nullable=false)
+     * @Assert\notBlank()
+     */
+    protected $codMesa;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="numPersonas", type="integer", nullable=false)
+     * @Assert\Type(
+     *     type="integer",
+     *     message="Este valor debe ser un número"
+     * )
+     * @Assert\notBlank()
      */
     protected $numPersonas;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="descripcion", type="string", nullable=true)
+     */
+    protected $descripcion;
 
     /**
      * @ORM\OneToMany(targetEntity="Reserva", mappedBy="mesa")
@@ -68,6 +98,10 @@ class Mesa
     public function __construct()
     {
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
+        $this->setTrash(false);
     }
 
     /**

@@ -39,21 +39,39 @@
 
    		<h2>Datos empresa</h2>
 
-    	{{ form_row(form.nombre) }}
-    	{{ form_row(form.cif) }}
+		<div class="row">
+			<div class="col-md-12">
+			{{ form_row(form.name) }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<label for="direccion">Dirección</label>
+				<input type="text" class="form-control" name="direccion" id="direccion">
+			</div>
+		</div>
+
 
     	<div class="row">
-    		<div class="col-md-8">
-    			{{ form_row(form.direccion) }}
+    		<div class="col-md-6">
+				<label for="cif">CIF</label>
+				<input type="text" class="form-control" name="cif" id="cif">
     		</div>
-    		<div class="col-md-4">
+    		<div class="col-md-6">
     			{{ form_row(form.telefono) }}
     		</div>
     	</div>
 
         <div class="row">
             <div class="col-md-6">
-                {{ form_row(form.provincia) }}
+				<label for="provincias">Provincia</label>
+				{% if provincias is defined %}
+					<select class="form-control" name="provincia" id="provincias">
+					{% for provincia in provincias %}
+						<option value="{{ provincia.id }}">{{ provincia.nombre }}</option>
+					{% endfor %}
+					</select>
+				{% endif %}
             </div>
             <div class="col-md-6" id="select-localidades">
                 <label for="localidades">Localidad</label>
@@ -62,15 +80,26 @@
         </div>
 		<div class="row">
 			<div class="col-md-12">
-				{{ form_row(form.coordenadas) }}
+				<label for="coordenadas">Coordenadas</label>
+				<input type="text" class="form-control" name="coordenadas" id="coordenadas" title="Si no está registrando el restaurante desde donde está éste ubicado, escriba las coordenadas a mano. Si no sabe cuáles son visite esta página: http://www.coordenadas-gps.com/">
 				<div class="info-coordenadas"></div>
 				<div id="map-coords"></div>
 				<strong>Nota: </strong>Si no está registrando el restaurante desde donde está éste ubicado, escriba las coordenadas a mano. Si no sabe cómo hacerlo visite esta página: <a href="http://www.coordenadas-gps.com/" target="_blank">http://www.coordenadas-gps.com/</a>
 			</div>
 		</div>
 
-    	{{ form_row(form.img) }}
-    	{{ form_row(form.precio_envio) }}
+		<div class="row">
+			<div class="col-md-6">
+				<label for="foto">Foto</label>
+				<input type="file" class="form-control" name="foto" id="foto">
+			</div>
+			<div class="col-md-6">
+				<label for="precioEnvio">Precio envío</label>
+				<input type="number" class="form-control" name="precioEnvio" id="precioEnvio">
+			</div>
+		</div>
+
+
 
 		<div class="checkbox">
 			<label>
@@ -89,44 +118,4 @@
 {% endblock %}
 {% block javascripts %}
 	<script src="{{ asset('manage/js/register.js') }}"></script>
-	<script>
-		(function(){
-			var inputCoords, divLocation, selectProvincia, selectLocalidad;
-
-			function initVars(){
-				inputCoords = $("#restaurante_coordenadas");
-				divLocation = $('.info-coordenadas');
-                selectProvincia = $('#restaurante_provincia');
-                selectLocalidad = $('#localidades');
-			}
-
-			function checkGeolocation(){
-				if ("geolocation" in navigator) {
-					navigator.geolocation.watchPosition(function(position) {
-						inputCoords.attr("placeholder", position.coords.latitude+"/"+position.coords.longitude);
-						inputCoords.val(position.coords.latitude+"/"+position.coords.longitude);
-						divLocation.html("Las coordenadas de su ubicación actual son: <ul><li class='li-position'>Latitud: "+position.coords.latitude+
-						"</li><li class='li-position'>Longitud: "+position.coords.longitude+"</li></ul>");
-					});
-				} else {
-					divLocation.html("La localización no está disponible en su navegador");
-				}
-			}
-
-            function changeSelectProvincia() {
-				selectProvincia.change(function() {
-					$("#select-localidades select").empty();
-					$.getJSON('localidades?provincia='+selectProvincia.val(),function(data){
-						$.each(data, function(id,value){
-							$("#select-localidades select").append('<option value="'+value[2]+'">'+value[0]+' ('+value[1]+') </option>');
-						});
-					});
-				});
-            }
-
-			initVars();
-			checkGeolocation();
-            changeSelectProvincia();
-		})();
-	</script>
 {% endblock %}

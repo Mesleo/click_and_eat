@@ -2,7 +2,6 @@
 // src/AppBundle/Entity/Restaurante.php
 namespace AppBundle\Entity;
 
-use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -14,32 +13,22 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @ORM\Entity
  * @ORM\Table(name="restaurante")
+ *
  * @UniqueEntity(
- *     fields={"username"},
- *     message="Ese nombre de usuario ya existe."
+ *     fields={"cif"},
+ *     message="Ese CIF ya ha sido registrado."
  * )
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
  */
-class Restaurante extends BaseUser
-{
+class Restaurante{
+
+
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
-     * @Assert\NotBlank()
-     * @Assert\Length(min=6)
-     */
-    protected $nombre;
 
     /**
      * @var string
@@ -78,14 +67,6 @@ class Restaurante extends BaseUser
      * @ORM\JoinColumn(name="idProvincia", referencedColumnName="id", nullable=false)
      */
     protected $provincia;
-
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
-     */
-    protected $telefono;
 
     /**
      * @var UploadedFile
@@ -141,13 +122,9 @@ class Restaurante extends BaseUser
     protected $fecha_baja;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Horario", inversedBy="restaurantes")
-     * @ORM\JoinTable(name="horario_restaurante",
-     *      joinColumns={@ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="idHorario", referencedColumnName="id", nullable=false)}
-     *      )
+     * @ORM\ManyToOne(targetEntity="Horario", inversedBy="restaurante",cascade={"persist"})
      */
-    protected $horarios;
+    protected $horario;
 
     /**
      * @ORM\OneToMany(targetEntity="Comentario", mappedBy="restaurante")
@@ -178,36 +155,12 @@ class Restaurante extends BaseUser
      * @ORM\OneToMany(targetEntity="Trabajador", mappedBy="restaurante")
      */
     protected $trabajadores;
-    
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime", nullable=false)
-     */
-    protected $created_at;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
-     */
-    protected $updated_at;
-
-    /**
-     * @var boolean 
-     *
-     * @ORM\Column(name="trash", type="boolean", options={"default":0})
-     */
-    protected $trash;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        parent::__construct();
-        $this->addRole("ROLE_ADMIN");
         $this->tipoComida = new \Doctrine\Common\Collections\ArrayCollection();
         $this->horarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
@@ -216,12 +169,7 @@ class Restaurante extends BaseUser
         $this->productos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->trabajadores = new \Doctrine\Common\Collections\ArrayCollection();
-
-        $this->setFechaAlta(new \DateTime());
-        $this->setCreatedAt(new \DateTime());
-        $this->setUpdatedAt(new \DateTime());
-
-        $this->setTrash(false);
+        $this->fecha_alta = new \DateTime();
     }
 
     /**
@@ -956,5 +904,77 @@ class Restaurante extends BaseUser
     public function getProvincia()
     {
         return $this->provincia;
+    }
+
+    /**
+     * Get horario
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getHorario()
+    {
+        return $this->horario;
+    }
+
+    /**
+     * Set horario
+     *
+     * @param \AppBundle\Entity\Horario $horario
+     *
+     * @return Restaurante
+     */
+    public function setHorario(\AppBundle\Entity\Horario $horario = null)
+    {
+        $this->horario = $horario;
+
+        return $this;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Restaurante
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set typeUser
+     *
+     * @param integer $typeUser
+     *
+     * @return Restaurante
+     */
+    public function setTypeUser($typeUser)
+    {
+        $this->typeUser = $typeUser;
+
+        return $this;
+    }
+
+    /**
+     * Get typeUser
+     *
+     * @return integer
+     */
+    public function getTypeUser()
+    {
+        return $this->typeUser;
     }
 }

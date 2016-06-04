@@ -1,7 +1,8 @@
-register:
-    resource: "@RegisterBundle/Controller/"
-    prefix:   /register
+client:
+    resource: "@ClientBundle/Controller/"
     type:     annotation
+    host:     clickandeat.cliente.local
+    prefix:   /
 
 app:
     resource: "@AppBundle/Controller/"
@@ -10,7 +11,27 @@ app:
 manage:
     resource: "@ManageCompanyBundle/Controller/"
     prefix:   /gestion
+    host:     clickandeat.restaurante.local
+    type:     annotation
+
+
+register:
+    resource: "@RegisterBundle/Controller"
+    prefix:   /register
+    host:     clickandeat.restaurante.local
     type:     annotation
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+admin_login:
+    path:  /login
+    defaults: { _controller: FOSUserBundle:Security:login }
+
+admin_check:
+    path:  /login_check
+    defaults: { _controller: FOSUserBundle:Security:check }
+
+admin_logout:
+    path:  /logout
+    defaults: { _controller: FOSUserBundle:Security:logout }

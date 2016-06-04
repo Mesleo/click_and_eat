@@ -1,0 +1,45 @@
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+		{{ form_start(form) }}
+
+		<h2>Insertar producto</h2>
+
+		<input type="hidden" name="id_restaurante" value="5">
+
+		{{ form_row(form.tipo) }}
+		{{ form_row(form.nombre) }}
+		{{ form_row(form.descripcion) }}
+		{{ form_row(form.precio) }}
+		{{ form_row(form.foto) }}
+
+		{{ form_row(form.disponible) }}
+		<input type="text" class="hidden" name="producto-id" id="producto-id" {% if producto is defined %} value="{{ producto.id }}" {% endif %}>
+		<div class="foto">
+			{% if producto is defined %}
+				<img src="upload/{{ producto.foto }}" alt="">
+			{% endif %}
+		</div>
+
+		<div class="form-group">
+			<button type="submit" class="btn btn-primary">Guardar</button>
+			{% if producto is defined %}
+				<a href="{{ path('delete_producto', {'id_producto': producto.id}) }}" class="btn btn-danger">Eliminar</a>
+			{% endif %}
+		</div>
+		{{ form_end(form) }}
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="/js/main.js"></script>
+	<script>
+		(function(){
+			$('ul').css("padding", "0");
+			$('li:not(.item-not-style)').addClass("alert alert-danger");
+			$('li:not(.item-not-style)').css("listStyle", "none");
+		})();
+	</script>
+{% endblock %}

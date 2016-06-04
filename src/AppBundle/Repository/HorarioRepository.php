@@ -10,4 +10,5 @@ namespace AppBundle\Repository;
  */
 class HorarioRepository extends \Doctrine\ORM\EntityRepository
 {
+
 }

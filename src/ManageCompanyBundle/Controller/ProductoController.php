@@ -16,17 +16,9 @@ class ProductoController extends Controller
 	private $em = null;
 	private $params = null;
 
-    /**
-     * @Route("/", name="gestion")
-     * @Security("has_role('ROLE_ADMIN')")
-     */
-    public function indexAction()
-    {
-        return $this->render('ManageCompanyBundle:Page:base.html.twig');
-    }
-
 	/**
-     * Muestra la lista de productos
+     * Muestra la lista de productos del restaurante
+     *
      * @Route("/productos", name="gestion_productos")
      * @return [type]              [description]
      */
@@ -54,7 +46,6 @@ class ProductoController extends Controller
 
         $producto = new Producto();
         $form = $this->createForm(ProductoType::class, $producto);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -63,6 +54,12 @@ class ProductoController extends Controller
                 ->findOneBy([
                     "id" => $this->getIdRestaurante()
                 ]);
+            if($request->request->get("producto-id") != null) {
+                $producto = $this->em->getRepository("AppBundle:Producto")
+                    ->findOneBy([
+                        "id" => $request->request->get('producto-id')
+                    ]);
+            }
             $producto->setFoto(' ');
             $disponible = $request->request->has("producto_disponible");
             $producto->setRestaurante($restaurante);
@@ -78,48 +75,50 @@ class ProductoController extends Controller
             return $this->redirectToRoute('gestion_productos');
         }
 
-        return $this->render('ManageCompanyBundle:Restaurante:productos_restaurante.html.twig', array(
+        return $this->render('ManageCompanyBundle:Restaurante:producto.html.twig', array(
             'form'	=> $form->createView()
         ));
 
     }
 
     /**
-     * @Route("/productos/{id_producto}/edit", name="edit_producto")
+     * @Route("/productos/edit", name="edit_producto")
      *
      * @param  Request $request    [description]
      * @param  [type]  $id_producto [description]
      * @return [type]              [description]
+     * Method({POST})
      */
-    public function updateAction(Request $request, $id_producto)
+    public function updateAction(Request $request)
     {
         $this->initialize();
-
         $producto = $this->em->getRepository('AppBundle:Producto')
             ->findOneBy([
-                "id" => $id_producto,
+                "id" => $request->request->get('producto-id'),
             ]);
 
         if (!$producto) {
             throw $this->createNotFoundException(
-                'No se encontró el producto con id '.$id_producto
+                'No se encontró el producto con id '.$request->request->get('producto-id')
             );
         }
+        if($this->checkIdRestauranteIdUserLog($producto)) {
+            $form = $this->createForm(ProductoType::class, $producto);
 
-        $form = $this->createForm(ProductoType::class, $producto);
+            $form->handleRequest($request);
 
-        $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            
-            $this->em->flush();
-            return $this->redirectToRoute('gestion_productos');
+                $this->em->flush();
+                return $this->redirectToRoute('gestion_productos');
+            }
+
+            return $this->render('ManageCompanyBundle:Restaurante:producto.html.twig', array(
+                'producto' => $producto,
+                'form' => $form->createView()
+            ));
         }
-
-        return $this->render('ManageCompanyBundle:Restaurante:productos_restaurante.html.twig', array(
-            'producto'	=> $producto,
-            'form'  => $form->createView()
-        ));
+        return $this->redirectToRoute('gestion_productos');
     }
 
     /**
@@ -143,70 +142,66 @@ class ProductoController extends Controller
                 'No se encontró el producto con id '.$id_producto
             );
         }
-
-        $this->em->remove($producto);
-        $this->em->flush();
+        if($this->checkIdRestauranteIdUserLog($producto)) {
+            $this->em->remove($producto);
+            $this->em->flush();
+        }
         return $this->redirectToRoute('gestion_productos');
     }
 
     /**
-     * @Route("/listar/imagenes", name="listar_imagenes")
-     * @param  Request $request [description]
-     * @return [type]           [description]
+     * @Route("/productos/{id_producto}/{value}", name="activar_producto")
+     *
+     * @param  [type]  $id_trabajador [description]
+     * @return [type]              [description]
      */
-    public function findImages(Request $request){
-        $baseUrl = $request->getSchemeAndHttpHost();
-        $directory = new \RecursiveDirectoryIterator($this->container->getParameter('kernel.root_dir') .'/../web/uploads/');
-        $iterator = new \RecursiveIteratorIterator($directory);
-        $regex = new \RegexIterator($iterator, '/.[(png)|(jpg)|(gif)]+$/i', \RecursiveRegexIterator::GET_MATCH);
-
-        $toRet = [
-            'f' => '',
-        ];
-
-        foreach ($regex as $url => $value) {
-            $toRet['f'][] = $baseUrl . substr($url, strpos($url, '/web') + 4);
+    public function activarAction($id_producto, $value)
+    {
+        $this->initialize();
+        $producto = $this->em->getRepository('AppBundle:Producto')
+            ->findOneBy([
+                'id' => $id_producto
+            ]);
+        if (!$producto) {
+            throw $this->createNotFoundException(
+                'No se encontró el producto con id ' .$id_producto
+            );
         }
-
-        return new JsonResponse($toRet);
+        if($this->checkIdRestauranteIdUserLog($producto)) {
+            $producto->setDisponible($value);
+            $this->em->persist($producto);
+            $this->em->flush();
+        }
+        return $this->redirectToRoute('gestion_productos');
     }
 
     /**
-     * @Route("/subir/imagen", name="subir_imagen")
-     * @param  Request $request [description]
-     * @return [type]           [description]
+     * Obtengo el id del restaurante logeado (Tabla Restaurante)
+     *
+     * @return mixed
      */
-    public function uploadImage(Request $request){
-        $toRet = [
-            'Ok' => false
-        ];
-        $allowed = array('png', 'jpg', 'gif');
-
-        if(isset($_FILES['upl']) && $_FILES['upl']['error'] == 0){
-
-            $extension = pathinfo($_FILES['upl']['name'], PATHINFO_EXTENSION);
-
-            if(in_array(strtolower($extension), $allowed)){
-                $date = new \DateTime();
-                $destinationFolder = $this->container->getParameter('kernel.root_dir') .'/../web/uploads/' . $date->format('Y')  . '/' . $date->format('m');
-                if (!file_exists($destinationFolder)){
-                    mkdir($destinationFolder, 0774, true);
-                }
-
-                if(move_uploaded_file($_FILES['upl']['tmp_name'], $destinationFolder . "/" . $_FILES['upl']['name'])){
-                    $toRet['Ok'] = true;
-                    $toRet['route'] = $request->getSchemeAndHttpHost() . '/uploads/' . $date->format('Y')  . '/' . $date->format('m') . '/' . $_FILES['upl']['name'];
-                }
-            }
-        }
-
-        return new JsonResponse($toRet);
-    }
-
     private function getIdRestaurante(){
-        $user = $this->getUser()->getId();
-        return $user;
+        $user = $this->em->getRepository("AppBundle:Usuario")
+            ->findOneBy([
+                "id" => $this->getUser()->getId()
+            ]);
+        return  $this->em->getRepository('AppBundle:Restaurante')
+            ->findOneBy([
+                'id' => $user->getIdRestaurante()->getId()
+            ])->getId();
     }
+
+    /**
+     * Compruebo que id del usuario logeado sea el id del restaurante con el que estoy trabajando
+     *
+     * @param $producto
+     * @return bool
+     */
+    private function checkIdRestauranteIdUserLog($producto){
+        return $producto->getRestaurante()->getId() == $this->getIdRestaurante();
+    }
+
+
 
     private function initialize(){
         $this->params = [];

@@ -1,0 +1,42 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/trabajadores.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+		<p>
+			<br />
+			<a href="{{ path('add_trabajador') }}" class="btn btn-success">Añadir trabajador</a>
+        </p>
+		<div class="be-panel col-sm-12">
+            <table id="platos-table" class="table display responsive nowrap">
+                <thead>
+                <tr>
+					<th>Nombre</th>
+					<th>Apellidos</th>
+					<th>Usuario</th>
+                    <th>Email</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+				{% for trabajador in trabajadores %}
+					<tr>
+                        {% if trabajador is defined %} <td>{{ trabajador.name }}</td> {% endif %}
+                        {% if trabajador is defined %} <td>{{ trabajador.apellidos }}</td> {% endif %}
+                         {% if trabajador is defined %} <td>{{ trabajador.username }}</td> {% endif %}
+                         {% if trabajador is defined %} <td>{{ trabajador.email }}</td> {% endif %}
+                        <td>
+                            <a href="{{ path('edit_trabajador', {'id_trabajador': trabajador.id}) }}" class="btn btn-primary">Editar</a>
+							{% if trabajador.enabled %}
+								<a href="{{ path('activar_trabajador', {'id_trabajador': trabajador.id, 'value': 0} ) }}" class="btn btn-warning">Desactivar</a>
+							{% else %}
+								<a href="{{ path('activar_trabajador', {'id_trabajador': trabajador.id , 'value': 1} ) }}" class="btn btn-warning">Activar</a>
+							{% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
