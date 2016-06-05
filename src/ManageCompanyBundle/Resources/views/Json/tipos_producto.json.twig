@@ -1,0 +1,5 @@
+[
+    {% for tipo_producto in tipos_producto %}
+    "{{ tipo_producto.nombre }}"{% if not loop.last %},{% endif %}
+    {%  endfor %}
+]

@@ -168,11 +168,11 @@
 				minuteStep: 10,
 				showMeridian: false,
 				defaultTime: false
-			})
+			});
 
 			jQuery.fn.resetear = function () {
 				$(this).each (function() { this.reset(); });
-			}
+			};
 
 			$('.button-reset').on('click', function(){
 				$('#form-account').resetear();

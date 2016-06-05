@@ -1,7 +1,7 @@
 {# src/ManageCompanyBundle/Resources/views/Restaurante/mesas_restaurante.html.twig #}
 {% extends 'ManageCompanyBundle:Page:base.html.twig' %}
-
 {% block body %}
+	{% include 'ManageCompanyBundle:Dialog:confirm_delete.php.twig' %}
 	<div class="container">
     	{{ form_start(form) }}
 
@@ -24,9 +24,14 @@
     		<button type="submit" class="btn btn-primary">Aceptar</button>
 			<a href="{{ path('gestion_mesas') }}" class="btn btn-danger">Cancelar</a>
 			{% if mesa is defined %}
-				<a href="{{ path('delete_mesa', {'id_mesa': mesa.id}) }}" class="btn btn-danger">Eliminar</a>
+				<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_mesa', {'id_mesa': mesa.id}) }}" data-target="#confirmDelete" data-title="Eliminar la mesa '{{ mesa.codMesa }}'" data-message="¿Estás seguro?">
+					<i class="glyphicon glyphicon-trash"></i> Eliminar
+				</button>
 			{% endif %}
     	</div>
     	{{ form_end(form) }}
     </div>
+{% endblock %}
+{% block javascripts %}
+	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
 {% endblock %}

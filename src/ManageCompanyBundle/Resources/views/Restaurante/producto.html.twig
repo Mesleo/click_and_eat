@@ -1,6 +1,6 @@
 {% extends 'ManageCompanyBundle:Page:base.html.twig' %}
-
 {% block body %}
+	{% include 'ManageCompanyBundle:Dialog:confirm_delete.php.twig' %}
 	<div class="container">
 		{{ form_start(form) }}
 
@@ -8,7 +8,12 @@
 
 		<input type="hidden" name="id_restaurante" value="5">
 
-		{{ form_row(form.tipo) }}
+		<div >
+			<label class="control-label">Tipo producto</label>
+				<input type="text" class="tm-input tm-input-typeahead form-control " id="tipo-producto" name="tipo-producto" placeholder="Pizza, hamburguesa...">
+				<input type="hidden" id="txthid" name="id">
+		</div>
+
 		{{ form_row(form.nombre) }}
 		{{ form_row(form.descripcion) }}
 		{{ form_row(form.precio) }}
@@ -17,26 +22,73 @@
 		{{ form_row(form.disponible) }}
 		<input type="text" class="hidden" name="producto-id" id="producto-id" {% if producto is defined %} value="{{ producto.id }}" {% endif %}>
 		<div class="foto">
-			{% if producto is defined %}
-				<img src="upload/{{ producto.foto }}" alt="">
+			{% if producto.foto is defined and producto.foto != null %}
+				{#<img src="upload/{{ producto.foto }}" alt="">#}
 			{% endif %}
 		</div>
 
 		<div class="form-group">
 			<button type="submit" class="btn btn-primary">Guardar</button>
+			<a href="{{ path('gestion_productos') }}" class="btn btn-danger">Cancelar</a>
 			{% if producto is defined %}
-				<a href="{{ path('delete_producto', {'id_producto': producto.id}) }}" class="btn btn-danger">Eliminar</a>
+				<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_producto', {'id_producto': producto.id}) }}" data-target="#confirmDelete" data-title="Eliminar el producto '{{ producto.nombre }}'" data-message="¿Estás seguro?">
+					<i class="glyphicon glyphicon-trash"></i> Eliminar
+				</button>
 			{% endif %}
 		</div>
 		{{ form_end(form) }}
 	</div>
 {% endblock %}
-
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('manage/css/tagmanager.css') }}">
+{% endblock %}
 {% block javascripts %}
 	{{ parent() }}
-	<script src="/js/main.js"></script>
+	<script src="{{ asset('manage/js/bloodhound.min.js') }}"></script>
+	<script src="{{ asset('manage/js/tagmanager.js') }}"></script>
+	<script src="{{ asset('manage/js/typeahead.js') }}"></script>
+	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
 	<script>
 		(function(){
+
+			var tagApi;
+
+			function tagManager(){
+				var categories = new Bloodhound({
+					datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+					queryTokenizer: Bloodhound.tokenizers.whitespace,
+					limit: 10,
+					prefetch: {
+						url: '{{ path("tipos_producto_json") }}',
+						filter: function (list) {
+							return $.map(list, function (value) {
+								return { name: value };
+							});
+						}
+					}
+				});
+
+				categories.initialize();
+				{% if producto is defined %}
+					tagApi = jQuery(".tm-input.tm-input-typeahead").tagsManager({
+						prefilled: [{% for tipoproducto in producto.tipoProducto %}
+							"{{ tipoproducto.nombre }}"{% if not loop.last %},{% endif %}
+							{% endfor %}]
+					});
+				{% else %}
+					tagApi = null;
+				{% endif %}
+				jQuery(".tm-input.tm-input-typeahead").typeahead(null, {
+					name: 'categories',
+					displayKey: 'name',
+					source: categories.ttAdapter()
+				}).on('typeahead:selected', function (e, d) {
+					tagApi.tagsManager("pushTag", d.name);
+				});
+			} tagManager();
+
+
 			$('ul').css("padding", "0");
 			$('li:not(.item-not-style)').addClass("alert alert-danger");
 			$('li:not(.item-not-style)').css("listStyle", "none");

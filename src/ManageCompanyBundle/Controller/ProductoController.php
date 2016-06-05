@@ -61,14 +61,9 @@ class ProductoController extends Controller
                     ]);
             }
             $producto->setFoto(' ');
-            $disponible = $request->request->has("producto_disponible");
+            $this->addTiposProducto($request, $producto);
             $producto->setRestaurante($restaurante);
-            if(!$request->request->has('producto-tipo')){
-                $tipo = "Entrante";
-            }else $tipo = $request->request->get("producto_tipo");
-            $producto->setTipo($tipo);
             $restaurante->addProducto($producto);
-            $producto->setDisponible($disponible);
             $this->em->persist($producto);
             $this->em->flush();
 
@@ -108,7 +103,7 @@ class ProductoController extends Controller
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-
+                $this->addTiposProducto($request, $producto);
                 $this->em->flush();
                 return $this->redirectToRoute('gestion_productos');
             }
@@ -206,5 +201,35 @@ class ProductoController extends Controller
     private function initialize(){
         $this->params = [];
         $this->em = $this->getDoctrine()->getManager();
+    }
+
+    /**
+     * @param Request $request
+     * @param $producto
+     */
+    public function addTiposProducto(Request $request, $producto)
+    {
+        $tiposProductos = $producto->getTipoProducto();
+        $repoTiposProductos = $this->em->getRepository('AppBundle:TipoProducto');
+        $tiPro = $request->request->get('hidden-tipo-producto');
+        $tiposProductoArray = explode(',', $tiPro);
+        foreach ($tiposProductoArray as $tc) {
+            $dbTiposProducto = $repoTiposProductos->findOneBy([
+                'nombre' => $tc,
+            ]);
+            if (empty($dbTiposProducto)) {
+                $dbTiposProducto = new \AppBundle\Entity\TipoProducto();
+                $dbTiposProducto->setNombre($tc);
+                $this->em->persist($dbTiposProducto);
+            }
+            if (!$tiposProductos->contains($dbTiposProducto)) {
+                $producto->addTipoProducto($dbTiposProducto);
+            }
+        }
+        foreach ($tiposProductos as $tipProducto) {
+            if (!in_array($tipProducto->getNombre(), $tiposProductoArray)) {
+                $producto->removeTipoProducto($tipProducto);
+            }
+        }
     }
 }

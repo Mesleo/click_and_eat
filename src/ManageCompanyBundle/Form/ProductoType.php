@@ -29,33 +29,6 @@ class ProductoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
     	$builder
-            ->add('tipo', ChoiceType::class, array(
-                "required" => true,
-                'choices'  => array(
-                    'Entrante' => 'Entrante',
-                    'Hamburguesa' => 'Hamburguesa',
-                    'Sandwich' => 'Sandwich',
-                    'Bocadillo' => 'Bocadillo',
-                    'Pizza' => 'Pizza',
-                    'Plato combinado' => 'Plato combinado',
-                    'Carne' => 'Carne',
-                    'Pescado' => 'Pescado',
-                    'Kebab' => 'Kebab',
-                    'Durum' => 'Durum',
-                    'Falafel' => 'Falafel',
-                    'Arroz' => 'Arroz',
-                    'Pasta' => 'Pasta',
-                    'Sopa' => 'Sopa',
-                    'Revuelto' => 'Revuelto',
-                    'Ensalada' => 'Ensalada',
-                    'Montado' => 'Montado',
-                    'Refresco' => 'Refresco',
-                    'Cerveza' => 'Cerveza',
-                    'Vino' => 'Vino',
-                    'Otro' => 'Otro',
-            ),
-                "attr" => array('class' => 'form-control')
-            ))
             ->add('nombre', TextType::class, array(
                     "required" => true,
             		"attr" => array('class' => 'form-control')

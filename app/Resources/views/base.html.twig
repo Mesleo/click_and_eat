@@ -3,11 +3,26 @@
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap-centered.css') }}">
+        {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        {% block body %}{% endblock %}
+    <div class="container">
+        <div class="panel">
+            <div class="row row-centered">
+                <div class="col-xs-6 col-centered col-fixed">
+                    <div class="item">
+                        <div class="content">
+                            {% block body %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
         {% block javascripts %}{% endblock %}
     </body>
 </html>

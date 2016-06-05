@@ -19,6 +19,13 @@ body {
 	background: #EEEEEE;
 }
 
+span.twitter-typeahead {
+	display: block !important;
+	width: 100% !important;
+}
+
+
+
 .btn-buscar {
 	background: #FFA000;
 	color: #FFFFFF;

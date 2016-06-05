@@ -21,7 +21,7 @@ class DefaultController extends Controller
 
     /**
      * @Route("/", name="gestion")
-     * @Security("has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_MANAGE')")
      */
     public function indexAction()
     {

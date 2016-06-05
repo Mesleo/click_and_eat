@@ -96,9 +96,9 @@ class CuentaController extends Controller
                         $restaurante->addTipoComida($dbTiposComidas);
                     }
                 }
-                foreach ($tiposComidaRestaurante as $catNot) {
-                    if (!in_array($catNot->getNombre(), $tiposComidaArray)) {
-                        $restaurante->removeTipoComida($catNot);
+                foreach ($tiposComidaRestaurante as $tipComida) {
+                    if (!in_array($tipComida->getNombre(), $tiposComidaArray)) {
+                        $restaurante->removeTipoComida($tipComida);
                     }
                 }
 
