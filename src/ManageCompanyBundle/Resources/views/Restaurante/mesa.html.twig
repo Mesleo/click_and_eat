@@ -1,0 +1,40 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/mesa.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
+{% block body %}
+	{% include 'ManageCompanyBundle:Dialog:confirm_delete.php.twig' %}
+	<div class="container">
+    	{{ form_start(form) }}
+
+		{% if mesa is defined %}
+			<h2>Modificar mesa</h2>
+		{% else %}
+			<h2>Añadir mesa</h2>
+		{% endif %}
+
+		{{ form_row(form.descripcion) }}
+		<div class="row">
+			<div class="col-md-6">
+				{{ form_row(form.codMesa) }}
+			</div>
+			<div class="col-md-6">
+				{{ form_row(form.numPersonas) }}
+			</div>
+		</div>
+
+    	<div class="form-group">
+    		<br />
+    		<button type="submit" class="btn btn-primary">Aceptar</button>
+			<a href="{{ path('gestion_mesas') }}" class="btn btn-danger">Cancelar</a>
+			{% if mesa is defined %}
+				<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_mesa', {'id_mesa': mesa.id}) }}" data-target="#confirmDelete" data-title="Eliminar la mesa '{{ mesa.codMesa }}'" data-message="¿Estás seguro?">
+					<i class="glyphicon glyphicon-trash"></i> Eliminar
+				</button>
+			{% endif %}
+    	</div>
+    	{{ form_end(form) }}
+    </div>
+{% endblock %}
+{% block javascripts %}
+	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+{% endblock %}

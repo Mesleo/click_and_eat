@@ -39,13 +39,14 @@ class Provincia
      * @ORM\OneToMany(targetEntity="Restaurante", mappedBy="provincia")
      */
     protected $restaurantes;
-
+	
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->localidades = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->restaurantes = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**

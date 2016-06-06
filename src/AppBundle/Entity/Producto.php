@@ -15,29 +15,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class Producto
 {
-    const TIPO_ENTRANTE = 'Entrante';
-    const TIPO_HAMBURGUESA = 'Hamburguesa';
-    const TIPO_SANDWICHES = 'Sandwich';
-    const TIPO_BOCADILLO = 'Bocadillo';
-    const TIPO_MONTADO = 'Montado';
-    const TIPO_PLATO_COMBINADO = 'Plato combinado';
-    const TIPO_CARNES = 'Carne';
-    const TIPO_PESCADOS = 'Pescado';
-    const TIPO_ENSALADAS = 'Ensalada';
-    const TIPO_KEBAB = 'Kebab';
-    const TIPO_DURUM = 'Durum';
-    const TIPO_FALAFEL = 'Falafel';
-    const TIPO_ARROCES = 'Arroz';
-    const TIPO_PASTA = 'Pasta';
-    const TIPO_SOPAS = 'Sopa';
-    const TIPO_REVUELTOS = 'Revuelto';
-    const TIPO_PIZZAS = 'Pizza';
-
-    const TIPO_REFRESCOS = 'Refresco';
-    const TIPO_CERVEZAS = 'Cerveza';
-    const TIPO_VINOS = 'Vino';
-    const TIPO_OTRO = 'Otro';
-
     /**
      * @var integer
      *
@@ -80,12 +57,14 @@ class Producto
      */
     protected $foto;
 	
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="tipo", type="string", length=255, nullable=false)
+	/**
+     * @ORM\ManyToMany(targetEntity="TipoProducto", inversedBy="productos")
+     * @ORM\JoinTable(name="producto_tipo_producto",
+     *      joinColumns={@ORM\JoinColumn(name="idProducto", referencedColumnName="id", nullable=false)},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="idTipoProducto", referencedColumnName="id", nullable=false)}
+     *      )
      */
-	protected $tipo;
+    protected $tipoProducto;
 
     /**
      * @var boolean 
@@ -131,6 +110,7 @@ class Producto
      */
     public function __construct()
     {
+		$this->tipoProducto = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pedido_producto = new \Doctrine\Common\Collections\ArrayCollection();
 		
 		$this->setDisponible(true);
@@ -429,26 +409,36 @@ class Producto
     }
 
     /**
-     * Set tipo
+     * Add tipoProducto
      *
-     * @param string $tipo
+     * @param \AppBundle\Entity\TipoProducto $tipoProducto
      *
      * @return Producto
      */
-    public function setTipo($tipo)
+    public function addTipoProducto(\AppBundle\Entity\TipoProducto $tipoProducto)
     {
-        $this->tipo = $tipo;
+        $this->tipoProducto[] = $tipoProducto;
 
         return $this;
     }
 
     /**
-     * Get tipo
+     * Remove tipoProducto
      *
-     * @return string
+     * @param \AppBundle\Entity\TipoProducto $tipoProducto
      */
-    public function getTipo()
+    public function removeTipoProducto(\AppBundle\Entity\TipoProducto $tipoProducto)
     {
-        return $this->tipo;
+        $this->tipoProducto->removeElement($tipoProducto);
+    }
+
+    /**
+     * Get tipoProducto
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTipoProducto()
+    {
+        return $this->tipoProducto;
     }
 }

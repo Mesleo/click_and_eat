@@ -8,7 +8,7 @@
 			<a href="{{ path('add_producto') }}" class="btn btn-success">Añadir producto</a>
         </p>
 		<div class="be-panel col-sm-12">
-            <table id="platos-table" class="table display responsive nowrap">
+            <table id="productos-table" class="table display responsive nowrap">
                 <thead>
                 <tr>
 					<th>Nombre</th>
@@ -23,13 +23,11 @@
                         <td>{{ producto.nombre }}</td>
                         <td>{{ producto.descripcion }}</td>
 						<td>
-							<a href="{{ path('status_producto', {'id_producto': producto.id}) }}">
-								{% if producto.disponible %}
-									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-								{% else %}
-									<span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-								{% endif %}
-							</a>
+							{% if producto.disponible %}
+								<a href="{{ path('activar_producto', {'id_producto': producto.id, 'value': 0} ) }}"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
+							{% else %}
+								<a href="{{ path('activar_producto', {'id_producto': producto.id, 'value': 1} ) }}"><span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span></a>
+							{% endif %}
 						</td>
                         <td>
                             <a href="{{ path('edit_producto', {'id_producto': producto.id}) }}" class="btn btn-primary">Editar</a>

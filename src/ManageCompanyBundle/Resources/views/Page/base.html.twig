@@ -31,11 +31,21 @@
                          otro elemento que se pueda ocultar al minimizar la barra -->
                     <div class="collapse navbar-collapse navbar-ex1-collapse">
                         <ul class="nav navbar-nav">
-                            <li><a href="{{ path('gestion_productos') }}">Productos</a></li>
-                            <li><a href="{{ path('gestion_mesas') }}">Mesas</a></li>
-                            <li><a href="{{ path('gestion_trabajadores') }}">Trabajadores</a></li>
-                            <li><a href="#">Pedidos</a></li>
-                            <li><a href="#">Reservas</a></li>
+                            <li class="item-not-style"><a href="{{ path('gestion_productos') }}">Productos</a></li>
+                            <li class="item-not-style"><a href="{{ path('gestion_mesas') }}">Mesas</a></li>
+                            <li class="item-not-style"><a href="{{ path('gestion_trabajadores') }}">Trabajadores</a></li>
+                            <li class="item-not-style"><a href="#">Pedidos</a></li>
+                            <li class="item-not-style"><a href="#">Reservas</a></li>
+                            <li class="divider item-not-style"></li>
+                            <li role="presentation" class="dropdown item-not-style">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    Mi cuenta <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="item-not-style"><a href="{{ path('cuenta') }}">Configuración de cuenta</a></li>
+									<li class="item-not-style"><a href="{{ path('gestion_horarios') }}">Horarios</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                 </nav>
@@ -47,9 +57,9 @@
                 {% endblock %}
             </section>
         </section>
+        <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+        <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
         {% block javascripts %}
-            <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-            <script src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.min.js') }}"></script>
         {% endblock %}
     </body>
 </html>

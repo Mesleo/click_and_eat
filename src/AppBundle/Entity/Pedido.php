@@ -132,6 +132,7 @@ class Pedido
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
+
     /**
      * Constructor
      */

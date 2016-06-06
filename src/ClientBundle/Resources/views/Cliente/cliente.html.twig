@@ -1,0 +1,18 @@
+{# src/Manage/CompanyBundle/Resources/views/Page/form.html.twig #}
+{% extends 'ClientBundle:Base:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+		<h1>Configuración de tu cuenta</h1>
+		{% if info is defined %}
+			<div class="row">
+				<p class="alert{% if ok is not defined %} alert-danger{% else %} alert-success{% endif %}">{{ info }}</p>
+			</div>
+		{% endif %}
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+{% block javascripts %}
+{% endblock %}

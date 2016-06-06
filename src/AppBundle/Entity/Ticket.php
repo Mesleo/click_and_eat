@@ -108,8 +108,10 @@ class Ticket
      */
     public function setFormaPago($formaPago)
     {
+        if (!in_array($formaPago, array(self::PAGO_EFECTIVO, self::PAGO_PAYPAL, self::PAGO_TARJETA))) {
+            throw new \InvalidArgumentException("Forma de pago no válida");
+        }
         $this->formaPago = $formaPago;
-
         return $this;
     }
 

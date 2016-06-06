@@ -26,44 +26,9 @@ class Cliente
     /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
-     */
-    protected $nombre;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="apellidos", type="string", length=100, nullable=false)
      */
     protected $apellidos;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="usuario", type="string", length=45, nullable=false)
-     */
-    protected $usuario;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=45, nullable=false)
-     */
-    protected $password;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=100, nullable=false)
-     */
-    protected $email;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
-     */
-    protected $telefono;
 
     /**
      * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente")
@@ -111,6 +76,9 @@ class Cliente
      */
     public function __construct()
     {
+		parent::__construct();
+        $this->addRole("ROLE_CLIENT");
+		
         $this->domicilios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
@@ -128,27 +96,27 @@ class Cliente
     }
 
     /**
-     * Set nombre
+     * Set name
      *
-     * @param string $nombre
+     * @param string $name
      *
      * @return Cliente
      */
-    public function setNombre($nombre)
+    public function setName($name)
     {
-        $this->nombre = $nombre;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get nombre
+     * Get name
      *
      * @return string
      */
-    public function getNombre()
+    public function getName()
     {
-        return $this->nombre;
+        return $this->name;
     }
 
     /**
@@ -176,78 +144,6 @@ class Cliente
     }
 
     /**
-     * Set usuario
-     *
-     * @param string $usuario
-     *
-     * @return Cliente
-     */
-    public function setUsuario($usuario)
-    {
-        $this->usuario = $usuario;
-
-        return $this;
-    }
-
-    /**
-     * Get usuario
-     *
-     * @return string
-     */
-    public function getUsuario()
-    {
-        return $this->usuario;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return Cliente
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return Cliente
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
      * Set telefono
      *
      * @param string $telefono
@@ -269,6 +165,30 @@ class Cliente
     public function getTelefono()
     {
         return $this->telefono;
+    }
+	
+	/**
+     * Set typeUser
+     *
+     * @param integer $typeUser
+     *
+     * @return Cliente
+     */
+    public function setTypeUser($typeUser)
+    {
+        $this->typeUser = $typeUser;
+
+        return $this;
+    }
+
+    /**
+     * Get typeUser
+     *
+     * @return integer
+     */
+    public function getTypeUser()
+    {
+        return $this->typeUser;
     }
 
     /**

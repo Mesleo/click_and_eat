@@ -18,6 +18,15 @@
 			<a href="{{ path('fos_user_security_logout') }}">
 				{{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
 			</a>
+		{% else %}
+			{#<a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>#}
+			{% block navigation %}
+				<nav role="navigation" class="navbar navbar-default">
+					<div class="navbar-header">
+						<a href="#" class="navbar-brand">Click & Eat</a>
+					</div>
+				</nav>
+			{% endblock %}
 		{% endif %}
 	</div>
 

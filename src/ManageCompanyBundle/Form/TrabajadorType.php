@@ -13,8 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 class TrabajadorType extends AbstractType
 {
     /**
-     * 
-     *
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -35,10 +33,8 @@ class TrabajadorType extends AbstractType
             ->add('email', EmailType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-            ->add('nombre', TextType::class, array(
-            		"attr" => array('class' => 'form-control')
-            	))
-            ->add('apellidos', TextType::class, array(
+            ->add('name', TextType::class, array(
+					'label' => 'Nombre',
             		"attr" => array('class' => 'form-control')
             	))
             ->add('telefono', TextType::class, array(
@@ -66,7 +62,7 @@ class TrabajadorType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Trabajador'
+            'data_class' => 'AppBundle\Entity\Usuario'
         ));
     }
 }

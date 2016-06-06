@@ -15,15 +15,6 @@ class ProductoController extends Controller
 {
 	private $em = null;
 	private $params = null;
-	
-	/**
-     * @Route("/", name="gestion")
-     * @Security("has_role('ROLE_ADMIN')")
-     */
-    public function indexAction()
-    {
-        return $this->render('ManageCompanyBundle:Page:base.html.twig');
-    }
 
 	/**
      * Muestra la lista de productos
@@ -34,7 +25,7 @@ class ProductoController extends Controller
 	{
         $this->initialize();
 
-        $this->params['productos'] = $this->em->getRepository('AppBundle:Producto')
+        $this->params['productos'] = $this->em->getRepository("AppBundle:Producto")
             ->findBy(
 				['restaurante' => $this->getIdRestaurante()], 
 				['nombre' => 'ASC']
@@ -60,18 +51,12 @@ class ProductoController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 			
-			$restaurante = $this->em->getRepository('AppBundle:Restaurante')
+			$restaurante = $this->em->getRepository("AppBundle:Restaurante")
 				->findOneBy([
 					'id' => $this->getIdRestaurante()
 				]);
 			$producto->setFoto('');
-			if (!$request->request->has('producto-tipo')) {
-				$tipo = "Entrante";
-			} else {
-				$tipo = $request->request->get("producto_tipo");
-			}
-			$producto->setTipo($tipo);
-			//$producto->setDisponible($request->request->has("producto_disponible"));
+			$this->addTiposProducto($request, $producto);
 			$producto->setRestaurante($restaurante);
 			$restaurante->addProducto($producto);
 
@@ -84,7 +69,7 @@ class ProductoController extends Controller
 			return $this->redirectToRoute('gestion_productos');
         }
 		
-		return $this->render('ManageCompanyBundle:Restaurante:productos_restaurante.html.twig', array(
+		return $this->render('ManageCompanyBundle:Restaurante:producto.html.twig', array(
             'form' => $form->createView()
         ));
 	}
@@ -100,7 +85,7 @@ class ProductoController extends Controller
 	{
 		$this->initialize();
 		
-		$producto = $this->em->getRepository('AppBundle:Producto')
+		$producto = $this->em->getRepository("AppBundle:Producto")
 			->findOneBy([
                 'id' => $id_producto
             ]);
@@ -111,20 +96,24 @@ class ProductoController extends Controller
 			);
 		}
 		
-		$form = $this->createForm(ProductoType::class, $producto);
-		
-		$form->handleRequest($request);
-		
-		if ($form->isSubmitted() && $form->isValid()) {
-			$producto->uploadImg();
-			$this->em->flush();
-			return $this->redirectToRoute('gestion_productos');
+		if ($this->checkRestaurante($producto)) {
+			$form = $this->createForm(ProductoType::class, $producto);
+			
+			$form->handleRequest($request);
+			
+			if ($form->isSubmitted() && $form->isValid()) {
+				$producto->uploadImg();
+				$this->addTiposProducto($request, $producto);
+				$this->em->flush();
+				return $this->redirectToRoute('gestion_productos');
+			}
+			
+			return $this->render('ManageCompanyBundle:Restaurante:producto.html.twig', array(
+				'producto' => $producto,
+				'form' => $form->createView()
+			));
 		}
-		
-		return $this->render('ManageCompanyBundle:Restaurante:productos_restaurante.html.twig', array(
-			'producto' => $producto,
-            'form' => $form->createView()
-        ));
+		return $this->redirectToRoute('gestion_productos');
 	}
 	
 	/**
@@ -138,7 +127,7 @@ class ProductoController extends Controller
 	{
 		$this->initialize();
 		
-		$producto = $this->em->getRepository('AppBundle:Producto')
+		$producto = $this->em->getRepository("AppBundle:Producto")
 			->findOneBy([
                 'id' => $id_producto
             ]);
@@ -149,29 +138,32 @@ class ProductoController extends Controller
 			);
 		}
 		
-		$restaurante = $this->em->getRepository('AppBundle:Restaurante')
-			->findOneBy([
-				'id' => $this->getIdRestaurante()
-			]);
-		$restaurante->removeProducto($producto);
-		
-		$this->em->remove($producto);
-		$this->em->flush();
+		if ($this->checkRestaurante($producto)) {
+			$restaurante = $this->em->getRepository("AppBundle:Restaurante")
+				->findOneBy([
+					'id' => $this->getIdRestaurante()
+				]);
+			$restaurante->removeProducto($producto);
+			
+			$this->em->remove($producto);
+			$this->em->flush();
+		}
 		return $this->redirectToRoute('gestion_productos');
 	}
 	
 	/**
-     * @Route("/productos/{id_producto}", name="status_producto")
+     * @Route("/productos/{id_producto}/{value}", name="activar_producto")
      * 
      * @param  Request $request    [description]
      * @param  [type]  $id_producto [description]
+	 * @param  [type]  $value [description]
      * @return [type]              [description]
      */
-	public function statusAction(Request $request, $id_producto)
+	public function activarAction(Request $request, $id_producto, $value)
 	{
 		$this->initialize();
 		
-		$producto = $this->em->getRepository('AppBundle:Producto')
+		$producto = $this->em->getRepository("AppBundle:Producto")
 			->findOneBy([
                 'id' => $id_producto
             ]);
@@ -182,25 +174,74 @@ class ProductoController extends Controller
 			);
 		}
 		
-		if ($producto->getDisponible()) {
-			$producto->setDisponible(false);
-		} else {
-			$producto->setDisponible(true);
+		if ($this->checkRestaurante($producto)) {
+			$producto->setDisponible($value);
+			$this->em->flush();
 		}
-		
-		$this->em->flush();
 		return $this->redirectToRoute('gestion_productos');
 	}
 	
-	private function getIdRestaurante()
+	/**
+     * Obtengo el id del restaurante logeado (Tabla Restaurante)
+     *
+     * @return mixed
+     */
+    private function getIdRestaurante()
 	{
-		$user = $this->getUser()->getId();
-		return $user;
+        $user = $this->em->getRepository("AppBundle:Usuario")
+            ->findOneBy([
+                'id' => $this->getUser()->getId()
+            ]);
+        return  $this->em->getRepository("AppBundle:Restaurante")
+            ->findOneBy([
+                'id' => $user->getRestaurante()->getId()
+            ])->getId();
+    }
+	
+	/**
+     * Compruebo que id del usuario logeado sea el id del restaurante con el que estoy trabajando
+     *
+     * @param $producto
+     * @return bool
+     */
+    private function checkRestaurante($producto)
+	{
+        return $producto->getRestaurante()->getId() == $this->getIdRestaurante();
     }
 
 	private function initialize()
 	{
         $this->params = [];
         $this->em = $this->getDoctrine()->getManager();
+    }
+	
+	/**
+     * @param  Request $request    [description]
+     * @param  [type]  $producto [description]
+     */
+    public function addTiposProducto(Request $request, $producto)
+    {
+        $tiposProductos = $producto->getTipoProducto();
+        $repoTiposProductos = $this->em->getRepository("AppBundle:TipoProducto");
+        $tipoProducto = $request->request->get('hidden-tipo-producto');
+        $tiposProductoArray = explode(',', $tipoProducto);
+        foreach ($tiposProductoArray as $tp) {
+            $dbTiposProducto = $repoTiposProductos->findOneBy([
+                'nombre' => $tp,
+            ]);
+            if (empty($dbTiposProducto)) {
+                $dbTiposProducto = new \AppBundle\Entity\TipoProducto();
+                $dbTiposProducto->setNombre($tp);
+                $this->em->persist($dbTiposProducto);
+            }
+            if (!$tiposProductos->contains($dbTiposProducto)) {
+                $producto->addTipoProducto($dbTiposProducto);
+            }
+        }
+        foreach ($tiposProductos as $tipProducto) {
+            if (!in_array($tipProducto->getNombre(), $tiposProductoArray)) {
+                $producto->removeTipoProducto($tipProducto);
+            }
+        }
     }
 }

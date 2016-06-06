@@ -3,8 +3,8 @@
 namespace AppBundle\Entity;
 
 use FOS\UserBundle\Model\User as BaseUser;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -38,7 +38,6 @@ class Restaurante extends BaseUser
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
 
     /**
      * @var string
@@ -86,7 +85,6 @@ class Restaurante extends BaseUser
      * @ORM\JoinColumn(name="idProvincia", referencedColumnName="id", nullable=false)
      */
     protected $provincia;
-
 
     /**
      * @var string
@@ -150,11 +148,7 @@ class Restaurante extends BaseUser
     protected $fecha_baja;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Horario", inversedBy="restaurantes")
-     * @ORM\JoinTable(name="horario_restaurante",
-     *      joinColumns={@ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="idHorario", referencedColumnName="id", nullable=false)}
-     *      )
+     * @ORM\OneToMany(targetEntity="Horario", mappedBy="restaurante")
      */
     protected $horarios;
 
@@ -187,7 +181,6 @@ class Restaurante extends BaseUser
      * @ORM\OneToMany(targetEntity="Trabajador", mappedBy="restaurante")
      */
     protected $trabajadores;
-    
 
     /**
      * @var \DateTime
@@ -217,6 +210,7 @@ class Restaurante extends BaseUser
     {
         parent::__construct();
         $this->addRole("ROLE_ADMIN");
+		
         $this->tipoComida = new \Doctrine\Common\Collections\ArrayCollection();
         $this->horarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
@@ -403,7 +397,8 @@ class Restaurante extends BaseUser
         return $this->img;
     }
 
-    public function uploadImg(){
+    public function uploadImg()
+	{
         if (null === $this->img) {
             return;
         }
@@ -412,7 +407,6 @@ class Restaurante extends BaseUser
         $this->img->move($destiny, $nameImg);
         $this->setFoto($nameImg);
     }
-
 
     /**
      * Set precioEnvio
@@ -605,6 +599,30 @@ class Restaurante extends BaseUser
     {
         return $this->localidad;
     }
+	
+	/**
+     * Set provincia
+     *
+     * @param \AppBundle\Entity\Provincia $provincia
+     *
+     * @return Restaurante
+     */
+    public function setProvincia(\AppBundle\Entity\Provincia $provincia)
+    {
+        $this->provincia = $provincia;
+
+        return $this;
+    }
+
+    /**
+     * Get provincia
+     *
+     * @return \AppBundle\Entity\Provincia
+     */
+    public function getProvincia()
+    {
+        return $this->provincia;
+    }
 
     /**
      * Add tipoComida
@@ -783,7 +801,7 @@ class Restaurante extends BaseUser
      *
      * @return Restaurante
      */
-    public function addproducto(\AppBundle\Entity\Producto $producto)
+    public function addProducto(\AppBundle\Entity\Producto $producto)
     {
         $this->productos[] = $producto;
 
@@ -795,7 +813,7 @@ class Restaurante extends BaseUser
      *
      * @param \AppBundle\Entity\Producto $producto
      */
-    public function removeproducto(\AppBundle\Entity\Producto $producto)
+    public function removeProducto(\AppBundle\Entity\Producto $producto)
     {
         $this->productos->removeElement($producto);
     }
@@ -805,7 +823,7 @@ class Restaurante extends BaseUser
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getproductos()
+    public function getProductos()
     {
         return $this->productos;
     }
@@ -902,6 +920,11 @@ class Restaurante extends BaseUser
         return $this->username;
     }
 
+	/**
+     * Returns the password used to authenticate the user.
+     *
+     * @return string The password
+     */
     public function getPassword()
     {
         return $this->password;
@@ -940,30 +963,5 @@ class Restaurante extends BaseUser
             // see section on salt below
             // $this->salt
         ) = unserialize($serialized);
-    }
-
-
-    /**
-     * Set provincia
-     *
-     * @param \AppBundle\Entity\Provincia $provincia
-     *
-     * @return Restaurante
-     */
-    public function setProvincia(\AppBundle\Entity\Provincia $provincia)
-    {
-        $this->provincia = $provincia;
-
-        return $this;
-    }
-
-    /**
-     * Get provincia
-     *
-     * @return \AppBundle\Entity\Provincia
-     */
-    public function getProvincia()
-    {
-        return $this->provincia;
     }
 }

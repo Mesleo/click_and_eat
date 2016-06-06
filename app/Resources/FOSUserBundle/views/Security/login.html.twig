@@ -19,7 +19,7 @@
 						{% if error %}
 							<div class="error">{{ error.messageKey|trans(error.messageData, 'security') }}</div><br />
 						{% endif %}
-						<form action="/app_dev.php/login_check" method="post">
+						<form action="{{ path('admin_check') }}" method="post">
 							<div class="form-group">
 								<label for="username" class="control-label">Usuario</label>
 								<input type="text" class="form-control" id="username" name="_username" value="" placeholder="Usuario">

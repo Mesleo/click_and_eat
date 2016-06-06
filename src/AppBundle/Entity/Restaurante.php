@@ -2,7 +2,6 @@
 // src/AppBundle/Entity/Restaurante.php
 namespace AppBundle\Entity;
 
-use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -15,20 +14,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity
  * @ORM\Table(name="restaurante")
  * @UniqueEntity(
- *     fields={"username"},
- *     message="Ese nombre de usuario ya existe."
- * )
- * @UniqueEntity(
- *     fields={"email"},
- *     message="Ese correo ya ha sido registrado."
- * )
- * @UniqueEntity(
  *     fields={"cif"},
  *     message="Ese CIF ya ha sido registrado."
  * )
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
  */
-class Restaurante extends BaseUser
+class Restaurante
 {
     /**
      * @var integer
@@ -42,16 +33,8 @@ class Restaurante extends BaseUser
     /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
-     * @Assert\NotBlank()
-     * @Assert\Length(min=6)
-     */
-    protected $nombre;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="cif", type="string", length=9, unique=true, nullable=false)
+	 * @Assert\NotBlank(message="Por favor introduce el CIF.")
      * @Assert\Type(
      *     type="string",
      *     message="Este valor debería contener una letra seguida de 7 dígitos y una letra al final"
@@ -87,14 +70,6 @@ class Restaurante extends BaseUser
     protected $provincia;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
-     * @Assert\Length(min=9, max=15)
-     */
-    protected $telefono;
-
-    /**
      * @var UploadedFile
      */
     protected $img;
@@ -127,13 +102,6 @@ class Restaurante extends BaseUser
     protected $precio_envio;
 
     /**
-     * @var blob
-     *
-     * @ORM\Column(name="mapa", type="blob", length=100)
-     */
-    protected $mapa;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="fecha_alta", type="datetime", nullable=false)
@@ -148,11 +116,7 @@ class Restaurante extends BaseUser
     protected $fecha_baja;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Horario", inversedBy="restaurantes")
-     * @ORM\JoinTable(name="horario_restaurante",
-     *      joinColumns={@ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="idHorario", referencedColumnName="id", nullable=false)}
-     *      )
+     * @ORM\OneToMany(targetEntity="Horario", mappedBy="restaurante")
      */
     protected $horarios;
 
@@ -212,9 +176,6 @@ class Restaurante extends BaseUser
      */
     public function __construct()
     {
-        parent::__construct();
-        $this->addRole("ROLE_ADMIN");
-		
         $this->tipoComida = new \Doctrine\Common\Collections\ArrayCollection();
         $this->horarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
@@ -242,27 +203,27 @@ class Restaurante extends BaseUser
     }
 
     /**
-     * Set nombre
+     * Set name
      *
-     * @param string $nombre
+     * @param string $name
      *
      * @return Restaurante
      */
-    public function setNombre($nombre)
+    public function setName($name)
     {
-        $this->nombre = $nombre;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get nombre
+     * Get name
      *
      * @return string
      */
-    public function getNombre()
+    public function getName()
     {
-        return $this->nombre;
+        return $this->name;
     }
 
     /**
@@ -434,30 +395,6 @@ class Restaurante extends BaseUser
     public function getPrecioEnvio()
     {
         return $this->precio_envio;
-    }
-
-    /**
-     * Set mapa
-     *
-     * @param string $mapa
-     *
-     * @return Restaurante
-     */
-    public function setMapa($mapa)
-    {
-        $this->mapa = $mapa;
-
-        return $this;
-    }
-
-    /**
-     * Get mapa
-     *
-     * @return string
-     */
-    public function getMapa()
-    {
-        return $this->mapa;
     }
 
     /**
@@ -898,6 +835,30 @@ class Restaurante extends BaseUser
     public function getTrabajadores()
     {
         return $this->trabajadores;
+    }
+
+	/**
+     * Set typeUser
+     *
+     * @param integer $typeUser
+     *
+     * @return Restaurante
+     */
+    public function setTypeUser($typeUser)
+    {
+        $this->typeUser = $typeUser;
+
+        return $this;
+    }
+
+    /**
+     * Get typeUser
+     *
+     * @return integer
+     */
+    public function getTypeUser()
+    {
+        return $this->typeUser;
     }
 
     /**

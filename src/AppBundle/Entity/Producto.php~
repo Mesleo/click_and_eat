@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Producto
@@ -14,29 +15,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Producto
 {
-    const TIPO_ENTRANTE = 'Entrante';
-    const TIPO_HAMBURGUESA = 'Hamburguesa';
-    const TIPO_SANDWICHES = 'Sandwich';
-    const TIPO_BOCADILLO = 'Bocadillo';
-    const TIPO_MONTADO = 'Montado';
-    const TIPO_PLATO_COMBINADO = 'Plato combinado';
-    const TIPO_CARNES = 'Carne';
-    const TIPO_PESCADOS = 'Pescado';
-    const TIPO_ENSALADAS = 'Ensalada';
-    const TIPO_KEBAB = 'Kebab';
-    const TIPO_DURUM = 'Durum';
-    const TIPO_FALAFEL = 'Falafel';
-    const TIPO_ARROCES = 'Arroz';
-    const TIPO_PASTA = 'Pasta';
-    const TIPO_SOPAS = 'Sopa';
-    const TIPO_REVUELTOS = 'Revuelto';
-    const TIPO_PIZZAS = 'Pizza';
-
-    const TIPO_REFRESCOS = 'Refresco';
-    const TIPO_CERVEZAS = 'Cerveza';
-    const TIPO_VINOS = 'Vino';
-    const TIPO_OTRO = 'Otro';
-
     /**
      * @var integer
      *
@@ -66,6 +44,11 @@ class Producto
      * @ORM\Column(name="precio", type="float", nullable=false)
      */
     protected $precio;
+	
+	/**
+     * @var UploadedFile
+     */
+    protected $img;
 
     /**
      * @var string
@@ -74,12 +57,14 @@ class Producto
      */
     protected $foto;
 	
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="tipo", type="string", length=255, nullable=false)
+	/**
+     * @ORM\ManyToMany(targetEntity="TipoProducto", inversedBy="productos")
+     * @ORM\JoinTable(name="producto_tipo_producto",
+     *      joinColumns={@ORM\JoinColumn(name="idProducto", referencedColumnName="id", nullable=false)},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="idTipoProducto", referencedColumnName="id", nullable=false)}
+     *      )
      */
-	protected $tipo;
+    protected $tipoProducto;
 
     /**
      * @var boolean 
@@ -89,7 +74,7 @@ class Producto
     protected $disponible;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="platos")
+     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="productos")
      * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
      */
     protected $restaurante;
@@ -125,7 +110,7 @@ class Producto
      */
     public function __construct()
     {
-        $this->pedido_plato = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->pedido_producto = new \Doctrine\Common\Collections\ArrayCollection();
 		
 		$this->setDisponible(true);
 		
@@ -150,7 +135,7 @@ class Producto
      *
      * @param string $nombre
      *
-     * @return Plato
+     * @return Producto
      */
     public function setNombre($nombre)
     {
@@ -174,7 +159,7 @@ class Producto
      *
      * @param string $descripcion
      *
-     * @return Plato
+     * @return Producto
      */
     public function setDescripcion($descripcion)
     {
@@ -198,7 +183,7 @@ class Producto
      *
      * @param float $precio
      *
-     * @return Plato
+     * @return Producto
      */
     public function setPrecio($precio)
     {
@@ -222,7 +207,7 @@ class Producto
      *
      * @param string $foto
      *
-     * @return Plato
+     * @return Producto
      */
     public function setFoto($foto)
     {
@@ -240,13 +225,40 @@ class Producto
     {
         return $this->foto;
     }
+	
+	/**
+     * @param mixed $img
+     */
+    public function setImg(UploadedFile $img)
+    {
+        $this->img = $img;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImg()
+    {
+        return $this->img;
+    }
+
+    public function uploadImg()
+	{
+        if (null === $this->img) {
+            return;
+        }
+        $destiny = __DIR__.'/../../../web/uploads/restaurantes/productos/';
+        $nameImg = $this->id.'.'.$this->img->getClientOriginalExtension();
+        $this->img->move($destiny, $nameImg);
+        $this->setFoto($nameImg);
+    }
 
     /**
      * Set disponible
      *
      * @param boolean $disponible
      *
-     * @return Plato
+     * @return Producto
      */
     public function setDisponible($disponible)
     {
@@ -270,7 +282,7 @@ class Producto
      *
      * @param \DateTime $createdAt
      *
-     * @return Plato
+     * @return Producto
      */
     public function setCreatedAt($createdAt)
     {
@@ -294,7 +306,7 @@ class Producto
      *
      * @param \DateTime $updatedAt
      *
-     * @return Plato
+     * @return Producto
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -318,7 +330,7 @@ class Producto
      *
      * @param boolean $trash
      *
-     * @return Plato
+     * @return Producto
      */
     public function setTrash($trash)
     {
@@ -342,7 +354,7 @@ class Producto
      *
      * @param \AppBundle\Entity\Restaurante $restaurante
      *
-     * @return Plato
+     * @return Producto
      */
     public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
     {

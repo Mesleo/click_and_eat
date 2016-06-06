@@ -12,5 +12,39 @@ register:
     prefix:   /register
     type:     annotation
 
+employee:
+    resource: "@EmployeeBundle/Controller/"
+    prefix:   /empleados
+    type:     annotation
+
+client:
+    resource: "@ClientBundle/Controller/"
+    prefix:   /
+    type:     annotation
+
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+admin_login:
+    path:  /login
+    defaults: { _controller: FOSUserBundle:Security:login }
+
+admin_check:
+    path:  /login_check
+    defaults: { _controller: FOSUserBundle:Security:check }
+
+admin_logout:
+    path:  /logout
+    defaults: { _controller: FOSUserBundle:Security:logout }
+
+client_login:
+    path:  /login
+    defaults: { _controller: FOSUserBundle:Security:login }
+
+client_check:
+    path:  /login_checkCliente
+    defaults: { _controller: FOSUserBundle:Security:check }
+
+client_logout:
+    path:  /logoutCliente
+    defaults: { _controller: FOSUserBundle:Security:logout }

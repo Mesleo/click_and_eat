@@ -3,7 +3,6 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Horario
@@ -22,34 +21,47 @@ class Horario
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+	
+	/**
+     * @var string
+     *
+     * @ORM\Column(name="descripcion", type="string", length=255, nullable=false)
+     */
+	protected $descripcion;
+
+    /**
+     * @var \Time
+     *
+     * @ORM\Column(name="hora_apertura", type="time", nullable=false)
+     */
+    protected $hora_apertura;
+
+    /**
+     * @var \Time
+     *
+     * @ORM\Column(name="hora_cierre", type="time", nullable=false)
+     */
+    protected $hora_cierre;
+	
+	/**
+     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="horarios")
+     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
+     */
+    protected $restaurante;
+	
+	/**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    protected $created_at;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="horario_apertura_local", type="datetime", nullable=false)
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
      */
-    protected $horario_apertura_local;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_cierre_local", type="datetime", nullable=false)
-     */
-    protected $horario_cierre_local;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_apertura_domicilio", type="datetime", nullable=false)
-     */
-    protected $horario_apertura_domicilio;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_cierre_domicilio", type="datetime", nullable=false)
-     */
-    protected $horario_cierre_domicilio;
+    protected $updated_at;
 
     /**
      * @var boolean 
@@ -57,17 +69,16 @@ class Horario
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Restaurante", mappedBy="horarios")
-     */
-    protected $restaurantes;
+	
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->restaurantes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
+        $this->setTrash(false);
     }
 
     /**
@@ -81,99 +92,123 @@ class Horario
     }
 
     /**
-     * Set horarioAperturaLocal
+     * Set descripcion
      *
-     * @param \DateTime $horarioAperturaLocal
+     * @param string $descripcion
      *
      * @return Horario
      */
-    public function setHorarioAperturaLocal($horarioAperturaLocal)
+    public function setDescripcion($descripcion)
     {
-        $this->horario_apertura_local = $horarioAperturaLocal;
+        $this->descripcion = $descripcion;
 
         return $this;
     }
 
     /**
-     * Get horarioAperturaLocal
+     * Get descripcion
      *
-     * @return \DateTime
+     * @return string
      */
-    public function getHorarioAperturaLocal()
+    public function getDescripcion()
     {
-        return $this->horario_apertura_local;
+        return $this->descripcion;
     }
 
     /**
-     * Set horarioCierreLocal
+     * Set horaApertura
      *
-     * @param \DateTime $horarioCierreLocal
+     * @param \DateTime $horaApertura
      *
      * @return Horario
      */
-    public function setHorarioCierreLocal($horarioCierreLocal)
+    public function setHoraApertura($horaApertura)
     {
-        $this->horario_cierre_local = $horarioCierreLocal;
+        $this->hora_apertura = $horaApertura;
 
         return $this;
     }
 
     /**
-     * Get horarioCierreLocal
+     * Get horaApertura
      *
      * @return \DateTime
      */
-    public function getHorarioCierreLocal()
+    public function getHoraApertura()
     {
-        return $this->horario_cierre_local;
+        return $this->hora_apertura;
     }
 
     /**
-     * Set horarioAperturaDomicilio
+     * Set horaCierre
      *
-     * @param \DateTime $horarioAperturaDomicilio
+     * @param \DateTime $horaCierre
      *
      * @return Horario
      */
-    public function setHorarioAperturaDomicilio($horarioAperturaDomicilio)
+    public function setHoraCierre($horaCierre)
     {
-        $this->horario_apertura_domicilio = $horarioAperturaDomicilio;
+        $this->hora_cierre = $horaCierre;
 
         return $this;
     }
 
     /**
-     * Get horarioAperturaDomicilio
+     * Get horaCierre
      *
      * @return \DateTime
      */
-    public function getHorarioAperturaDomicilio()
+    public function getHoraCierre()
     {
-        return $this->horario_apertura_domicilio;
+        return $this->hora_cierre;
     }
 
     /**
-     * Set horarioCierreDomicilio
+     * Set createdAt
      *
-     * @param \DateTime $horarioCierreDomicilio
+     * @param \DateTime $createdAt
      *
      * @return Horario
      */
-    public function setHorarioCierreDomicilio($horarioCierreDomicilio)
+    public function setCreatedAt($createdAt)
     {
-        $this->horario_cierre_domicilio = $horarioCierreDomicilio;
+        $this->created_at = $createdAt;
 
         return $this;
     }
 
     /**
-     * Get horarioCierreDomicilio
+     * Get createdAt
      *
      * @return \DateTime
      */
-    public function getHorarioCierreDomicilio()
+    public function getCreatedAt()
     {
-        return $this->horario_cierre_domicilio;
+        return $this->created_at;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Horario
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updated_at = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
     }
 
     /**
@@ -201,36 +236,26 @@ class Horario
     }
 
     /**
-     * Add restaurante
+     * Set restaurante
      *
      * @param \AppBundle\Entity\Restaurante $restaurante
      *
      * @return Horario
      */
-    public function addRestaurante(\AppBundle\Entity\Restaurante $restaurante)
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante)
     {
-        $this->restaurantes[] = $restaurante;
+        $this->restaurante = $restaurante;
 
         return $this;
     }
 
     /**
-     * Remove restaurante
+     * Get restaurante
      *
-     * @param \AppBundle\Entity\Restaurante $restaurante
+     * @return \AppBundle\Entity\Restaurante
      */
-    public function removeRestaurante(\AppBundle\Entity\Restaurante $restaurante)
+    public function getRestaurante()
     {
-        $this->restaurantes->removeElement($restaurante);
-    }
-
-    /**
-     * Get restaurantes
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getRestaurantes()
-    {
-        return $this->restaurantes;
+        return $this->restaurante;
     }
 }

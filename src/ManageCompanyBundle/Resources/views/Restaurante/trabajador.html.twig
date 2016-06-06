@@ -1,0 +1,53 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/trabajador.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
+{% block body %}
+	{% include 'ManageCompanyBundle:Dialog:confirm_delete.php.twig' %}
+	<div class="container">
+    	{{ form_start(form) }}
+
+		{% if usuario is defined %}
+			<h2>Modificar trabajador</h2>
+		{% else %}
+			<h2>Añadir trabajador</h2>
+		{% endif %}
+		
+		{{ form_errors(form) }}
+		
+		{{ form_row(form._token) }}
+		
+		{{ form_row(form.username) }}
+		<div class="row">
+			<div class="col-md-6">
+				{{ form_row(form.password.first) }}
+			</div>
+			<div class="col-md-6">
+				{{ form_row(form.password.second) }}
+			</div>
+		</div>
+		{{ form_row(form.email) }}
+    	{{ form_row(form.name) }}
+		<div class="row">
+			<div class="col-md-12">
+				<label for="apellidos">Apellidos</label>
+				<input type="text" class="form-control" name="apellidos" id="apellidos" {% if trabajador is defined %} value="{{ trabajador.apellidos }}" {% endif %} >
+			</div>
+		</div>
+		{{ form_row(form.telefono) }}
+
+    	<div class="form-group">
+    		<br />
+    		<button type="submit" class="btn btn-primary">Aceptar</button>
+			<a href="{{ path('gestion_trabajadores') }}" class="btn btn-danger">Cancelar</a>
+			{% if trabajador is defined %}
+				<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_trabajador', {'id_trabajador': trabajador.id}) }}" data-target="#confirmDelete" data-title="Eliminar el trabajador '{{ trabajador.apellidos }}'" data-message="¿Estás seguro?">
+					<i class="glyphicon glyphicon-trash"></i> Eliminar
+				</button>
+			{% endif %}
+    	</div>
+    	{{ form_end(form) }}
+    </div>
+{% endblock %}
+{% block javascripts %}
+	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+{% endblock %}

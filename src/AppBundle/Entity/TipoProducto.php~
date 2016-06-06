@@ -1,0 +1,58 @@
+<?php
+// src/AppBundle/Entity/TipoProducto.php
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+
+/**
+ * TipoProducto
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="tipo_producto")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TipoProductoRepository")
+ */
+class TipoProducto
+{
+	/**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+	
+	/**
+     * @var string
+     *
+     * @ORM\Column(name="nombre", type="string", length=255, nullable=false)
+     */
+    protected $nombre;
+	
+	/**
+     * @ORM\ManyToMany(targetEntity="Producto", mappedBy="tipoProducto")
+     */
+    protected $productos;
+	
+	/**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    protected $created_at;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     */
+    protected $updated_at;
+
+    /**
+     * @var boolean 
+     *
+     * @ORM\Column(name="trash", type="boolean", options={"default":0})
+     */
+    protected $trash;
+}

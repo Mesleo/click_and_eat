@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Mesa
@@ -22,11 +23,32 @@ class Mesa
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+	
+	/**
+     * @var string
+     *
+     * @ORM\Column(name="descripcion", type="string", length=255, nullable=false)
+	 * @Assert\NotBlank()
+     */
+	protected $descripcion;
+	
+	/**
+     * @var string
+     *
+     * @ORM\Column(name="codMesa", type="string", length=255, nullable=false)
+     * @Assert\NotBlank()
+     */
+    protected $codMesa;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="numPersonas", type="integer", nullable=false)
+	 * @Assert\Type(
+     *     type="integer",
+     *     message="Este valor debe ser un número"
+     * )
+     * @Assert\NotBlank()
      */
     protected $numPersonas;
 
@@ -83,6 +105,54 @@ class Mesa
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set descripcion
+     *
+     * @param string $descripcion
+     *
+     * @return Mesa
+     */
+    public function setDescripcion($descripcion)
+    {
+        $this->descripcion = $descripcion;
+
+        return $this;
+    }
+
+    /**
+     * Get descripcion
+     *
+     * @return string
+     */
+    public function getDescripcion()
+    {
+        return $this->descripcion;
+    }
+
+    /**
+     * Set codMesa
+     *
+     * @param string $codMesa
+     *
+     * @return Mesa
+     */
+    public function setCodMesa($codMesa)
+    {
+        $this->codMesa = $codMesa;
+
+        return $this;
+    }
+
+    /**
+     * Get codMesa
+     *
+     * @return string
+     */
+    public function getCodMesa()
+    {
+        return $this->codMesa;
     }
 
     /**
@@ -222,7 +292,7 @@ class Mesa
      *
      * @return Mesa
      */
-    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante)
     {
         $this->restaurante = $restaurante;
 

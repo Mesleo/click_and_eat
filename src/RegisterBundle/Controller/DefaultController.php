@@ -3,8 +3,8 @@
 namespace RegisterBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use AppBundle\Entity\Restaurante;
-use RegisterBundle\Form\RestauranteType;
+use AppBundle\Entity\Usuario;
+use RegisterBundle\Form\UsuarioType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,35 +35,57 @@ class DefaultController extends Controller
     public function registerAction(Request $request)
     {
         $this->initialize();
-
-        $restaurante = new Restaurante();
-        $form = $this->createForm(RestauranteType::class, $restaurante);
-
-        $form->handleRequest($request);
+		
+		$usuario = new Usuario();
+		$form = $this->createForm(UsuarioType::class, $usuario);
+		
+		$form->handleRequest($request);
+		
+		$this->params['provincias'] = $this->getProvincias();
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $restaurante->setMapa('mapa');
-            $restaurante->addRole(1);
+			
+			$restaurante = new \AppBundle\Entity\Restaurante();
+			
+			$restaurante->setCif($request->request->get('cif'));
+			$restaurante->setDireccion($request->request->get('direccion'));
+			$restaurante->setCoordenadas($request->request->get('coordenadas'));
+			$restaurante->setPrecioEnvio($request->request->get('precioEnvio'));
+            
             $localidad = $this->em->getRepository("AppBundle:Localidad")
                 ->findOneBy([
-                    "id" => $request->request->get("localidad")
+                    'id' => $request->request->get('localidad')
                 ]);
             $restaurante->setLocalidad($localidad);
+			
+			$provincia = $this->em->getRepository("AppBundle:Provincia")
+                ->findOneBy([
+                    'id' => $request->request->get('provincia')
+                ]);
+			$restaurante->setProvincia($provincia);
+			
+			if ($request->files->get('foto') != null) {
+				$restaurante->setImg($request->files->get('foto'));
+			}
+			$restaurante->uploadImg();
+            $this->em->persist($restaurante);
 
             $password = $this->get('security.password_encoder')
-                ->encodePassword($restaurante, $restaurante->getPassword());
-            $restaurante->setPassword($password);
+                ->encodePassword($usuario, $usuario->getPassword());
+            $usuario->setPassword($password);
+			$usuario->addRole(1);
+            $usuario->setTypeUser(1);
+            $usuario->setRestaurante($restaurante);
 
-            $restaurante->uploadImg();
-            $this->em->persist($restaurante);
+            $this->em->persist($usuario);
             $this->em->flush();
 
             return $this->redirectToRoute('homepage');
         }
 
         return $this->render('RegisterBundle:Web:registro.html.twig', array(
-            'restaurante' => $restaurante,
+            'restaurante' => $usuario,
+			'provincias' => $this->params['provincias'],
             'form' => $form->createView(),
         ));
     }
@@ -105,6 +127,15 @@ class DefaultController extends Controller
                 'nombre' => 'DESC'
             ]);
         return $this->render('RegisterBundle:Json:localidades.json.twig', $this->params);
+    }
+	
+	private function getProvincias()
+	{
+        $this->initialize();
+        return $this->em->getRepository("AppBundle:Provincia")
+            ->findAll([],[
+                'nombre' => 'ASC'
+            ]);
     }
 
     private function initialize()

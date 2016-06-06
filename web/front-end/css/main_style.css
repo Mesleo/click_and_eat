@@ -1,0 +1,22 @@
+.navbar-default .navbar-brand,
+.navbar-default .navbar-brand:focus,
+.navbar-default .navbar-brand:hover,
+.navbar-nav>li>a {
+  color: #fffffa !important;
+}
+.navbar-default .navbar-brand:active,
+.navbar-default .navbar-brand:focus:active,
+.navbar-default .navbar-brand:hover:active,
+.navbar-nav>li>a:active {
+  color: #000;
+}
+.primary-color {
+  background-color: #8bc34a;
+}
+.form-search {
+  width: 80%;
+  margin: 0 auto;
+}
+.form-search .btn-large {
+  width: 100%;
+}

@@ -1,0 +1,154 @@
+{% macro datatables_css() %}
+	<link rel="stylesheet" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css" crossorigin="anonymous">
+{% endmacro %}
+
+{% macro datatables_js() %}
+	<script src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+	<script src="//cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdn.datatables.net/responsive/2.0.1/js/dataTables.responsive.min.js" crossorigin="anonymous"></script>
+{% endmacro %}
+
+{% macro ventanasImagenes() %}
+<div class="modal fade" id="wndUpload" tabindex="-1" role="dialog" aria-labelledby="wndUploadTitle">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="wndUploadTitle">Subir imagen</h4>
+			</div>
+			<div class="modal-body">
+				<form id="upload" method="post" action="{{ path('subir_imagen')}}" enctype="multipart/form-data">
+					<input type="hidden" id="lastImage">
+						<div id="drop">Arrastra aquí la imagen
+							<a>o búscala</a>
+							<input type="file" name="upl" multiple />
+						</div>
+					<ul></ul>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary" id="asignarImagen">Continuar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="wndMediaLibrary" tabindex="-1" role="dialog" aria-labelledby="wndMediaLibraryTitle">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="wndMediaLibraryTitle">Biblioteca multimedia</h4>
+			</div>
+			<div class="modal-body">
+				<ul id="listMediaLibrary"></ul>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary" id="seleccionarImagen">Continuar</button>
+			</div>
+	</div>
+</div>
+{% endmacro %}
+
+{% macro tinymce_scripts() %}
+	<script src="/node_modules/tinymce/tinymce.jquery.min.js"></script>
+
+	<script>
+	tinymce.init({
+		selector:'textarea',
+		language:'es',
+		relative_urls: false,
+		remove_script_host: false,
+		language_url: '/node_modules/tinymce/langs/es.js',
+		plugins: 'code advlist colorpicker image imagetools media link paste table textcolor searchreplace visualblocks contextmenu fullpage fullscreen hr nonbreaking wordcount textpattern responsivefilemanager',
+		height: 400,
+		imagetools_cors_hosts: ['vorticesoft.vorticesoft.local', 'vorticesoft.com'],
+		toolbar1: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | styleselect",
+		toolbar2: "| responsivefilemanager | link unlink anchor | image media | forecolor backcolor  | print preview code ",
+		image_advtab: true ,
+
+		external_filemanager_path:"/filemanager/",
+		filemanager_title:"Gestor de archivos" ,
+		external_plugins: { "filemanager" : "/node_modules/tinymce/plugins/responsivefilemanager/plugin.min.js"}
+	});</script>
+{% endmacro %}
+
+{% macro imagenes_scripts() %}
+	<script src="/lib/jquery.knob.js"></script>
+	<script src="/lib/jquery.ui.widget.js"></script>
+	<script src="/lib/jquery.iframe-transport.js"></script>
+	<script src="/lib/jquery.fileupload.js"></script>
+{% endmacro %}
+
+{% macro gestion_imagenes_script() %}
+	var inputImagen = null;
+	var imageList = null;
+
+	$('#asignarImagen').on('click', function(){
+		var u = document.getElementById('lastImage').value;
+		if (u != ""){
+			inputImagen.val(u);
+			imageList = null;
+		}
+		$('#wndUpload').modal('hide');
+	});
+
+	$('#seleccionarImagen').on('click', function(){
+		var u = document.getElementById('lastImage').value;
+		if (u != ""){
+			inputImagen.val(u);
+		}
+		$('#wndMediaLibrary').modal('hide');
+	});
+
+	$('.findImage').on('click', function(e){
+		getImages();
+		$('#wndMediaLibrary').modal('show');
+		inputImagen = $(e.currentTarget).parent().prev();
+	});
+
+	$('.uploadImage').on('click', function(e){
+		$('#wndUpload #upload ul').html('');
+		$('#wndUpload').modal('show');
+		inputImagen = $(e.currentTarget).parents('.input-group').find('input');
+	})
+
+	function getImages(){
+		if (imageList == null){
+				$.ajax({
+					url: "{{ path('listar_imagenes') }}",
+					dataType: 'json'
+				}).done(function(d){
+					if (d.f){
+						imageList = d.f;
+					}
+					showImages();
+				})
+			}
+		};
+
+	function showImages(){
+		$('#listMediaLibrary').html('');
+		var h = "";
+		if (imageList != null){
+			var nI = imageList.length;
+			for (var i = 0; i < nI; i++){
+				h += '<li><img src="' + imageList[i] + '"></li>';
+			}
+			$('#listMediaLibrary').html(h);
+		}
+	}
+{% endmacro %}
+
+{% macro colorpicker() %}
+	<link rel="stylesheet" href="/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+	<script src="/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('.colorize').colorpicker();
+		});
+	</script>
+{% endmacro %}

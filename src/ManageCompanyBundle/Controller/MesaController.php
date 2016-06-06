@@ -25,7 +25,7 @@ class MesaController extends Controller
 	{
         $this->initialize();
 
-        $this->params['mesas'] = $this->em->getRepository('AppBundle:Mesa')
+        $this->params['mesas'] = $this->em->getRepository("AppBundle:Mesa")
             ->findBy(
 				['restaurante' => $this->getIdRestaurante()],
                 ['id' => 'ASC']
@@ -51,7 +51,7 @@ class MesaController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 			
-			$restaurante = $this->em->getRepository('AppBundle:Restaurante')
+			$restaurante = $this->em->getRepository("AppBundle:Restaurante")
 				->findOneBy([
 					'id' => $this->getIdRestaurante()
 				]);
@@ -64,7 +64,7 @@ class MesaController extends Controller
 			return $this->redirectToRoute('gestion_mesas');
         }
 		
-		return $this->render('ManageCompanyBundle:Restaurante:mesas_restaurante.html.twig', array(
+		return $this->render('ManageCompanyBundle:Restaurante:mesa.html.twig', array(
             'form' => $form->createView()
         ));
 	}
@@ -80,7 +80,7 @@ class MesaController extends Controller
 	{
 		$this->initialize();
 		
-		$mesa = $this->em->getRepository('AppBundle:Mesa')
+		$mesa = $this->em->getRepository("AppBundle:Mesa")
 			->findOneBy([
                 'id' => $id_mesa
             ]);
@@ -91,19 +91,22 @@ class MesaController extends Controller
 			);
 		}
 		
-		$form = $this->createForm(MesaType::class, $mesa);
-		
-		$form->handleRequest($request);
-		
-		if ($form->isSubmitted() && $form->isValid()) {
-			$this->em->flush();
-			return $this->redirectToRoute('gestion_mesas');
+		if ($this->checkRestaurante($mesa)) {
+			$form = $this->createForm(MesaType::class, $mesa);
+			
+			$form->handleRequest($request);
+			
+			if ($form->isSubmitted() && $form->isValid()) {
+				$this->em->flush();
+				return $this->redirectToRoute('gestion_mesas');
+			}
+			
+			return $this->render('ManageCompanyBundle:Restaurante:mesa.html.twig', array(
+				'mesa' => $mesa,
+				'form' => $form->createView()
+			));
 		}
-		
-		return $this->render('ManageCompanyBundle:Restaurante:mesas_restaurante.html.twig', array(
-			'mesa' => $mesa,
-            'form' => $form->createView()
-        ));
+		return $this->redirectToRoute('gestion_mesas');
 	}
 	
 	/**
@@ -117,7 +120,7 @@ class MesaController extends Controller
 	{
 		$this->initialize();
 		
-		$mesa = $this->em->getRepository('AppBundle:Mesa')
+		$mesa = $this->em->getRepository("AppBundle:Mesa")
 			->findOneBy([
                 'id' => $id_mesa
             ]);
@@ -128,22 +131,46 @@ class MesaController extends Controller
 			);
 		}
 		
-		$restaurante = $this->em->getRepository('AppBundle:Restaurante')
-			->findOneBy([
-				'id' => $this->getIdRestaurante()
-			]);
-		$restaurante->removeMesa($mesa);
-		
-		$this->em->remove($mesa);
-		$this->em->flush();
+		if ($this->checkRestaurante($mesa)) {
+			$restaurante = $this->em->getRepository("AppBundle:Restaurante")
+				->findOneBy([
+					'id' => $this->getIdRestaurante()
+				]);
+			$restaurante->removeMesa($mesa);
+			
+			$this->em->remove($mesa);
+			$this->em->flush();
+		}
 		return $this->redirectToRoute('gestion_mesas');
 	}
 	
-	private function getIdRestaurante()
+	/**
+     * Obtengo el id del restaurante logeado (Tabla Restaurante)
+     *
+     * @return mixed
+     */
+    private function getIdRestaurante()
 	{
-		$user = $this->getUser()->getId();
-		return $user;
+        $user = $this->em->getRepository("AppBundle:Usuario")
+            ->findOneBy([
+                'id' => $this->getUser()->getId()
+            ]);
+        return  $this->em->getRepository("AppBundle:Restaurante")
+            ->findOneBy([
+                'id' => $user->getRestaurante()->getId()
+            ])->getId();
     }
+	
+	/**
+	 * Compruebo que id del usuario logeado sea el id del restaurante con el que estoy trabajando
+	 *
+	 * @param $mesa
+	 * @return bool
+	 */
+	private function checkRestaurante($mesa)
+	{
+		return $mesa->getRestaurante()->getId() == $this->getIdRestaurante();
+	}
 
 	private function initialize()
 	{

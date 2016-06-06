@@ -25,11 +25,8 @@ class TrabajadorController extends Controller
 	{
         $this->initialize();
 
-        $this->params['trabajadores'] = $this->em->getRepository('AppBundle:Trabajador')
-            ->findBy(
-				['restaurante' => $this->getIdRestaurante()],
-                ['nombre' => 'ASC']
-            );
+        $this->params['trabajadores'] = $this->em->getRepository("AppBundle:Trabajador")
+				->showEmployeesRestaurant($this->getIdRestaurante());
 
         return $this->render('ManageCompanyBundle:Restaurante:trabajadores.html.twig', $this->params);
     }
@@ -44,31 +41,38 @@ class TrabajadorController extends Controller
 	{
 		$this->initialize();
 		
-		$trabajador = new Trabajador();
-        $form = $this->createForm(TrabajadorType::class, $trabajador);
+		$usuario = new \AppBundle\Entity\Usuario();
+		$form = $this->createForm(TrabajadorType::class, $usuario);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 			
-			$restaurante = $this->em->getRepository('AppBundle:Restaurante')
+			$restaurante = $this->em->getRepository("AppBundle:Restaurante")
 				->findOneBy([
 					'id' => $this->getIdRestaurante()
 				]);
+			$trabajador = new Trabajador();
+			$trabajador->setApellidos($request->request->get("apellidos"));
 			$trabajador->setRestaurante($restaurante);
 			$restaurante->addTrabajadore($trabajador);
 			
+			$this->em->persist($trabajador);
+			
 			$password = $this->get('security.password_encoder')
-                ->encodePassword($trabajador, $trabajador->getPassword());
-            $trabajador->setPassword($password);
+                ->encodePassword($usuario, $usuario->getPassword());
+            $usuario->setPassword($password);
+            $usuario->addRole(2);
+            $usuario->setTypeUser(2);
+			$usuario->setTrabajador($trabajador);
 
-        	$this->em->persist($trabajador);
+        	$this->em->persist($usuario);
             $this->em->flush();
 			
 			return $this->redirectToRoute('gestion_trabajadores');
         }
 		
-		return $this->render('ManageCompanyBundle:Restaurante:trabajadores_restaurante.html.twig', array(
+		return $this->render('ManageCompanyBundle:Restaurante:trabajador.html.twig', array(
             'form' => $form->createView()
         ));
 	}
@@ -84,35 +88,44 @@ class TrabajadorController extends Controller
 	{
 		$this->initialize();
 		
-		$trabajador = $this->em->getRepository('AppBundle:Trabajador')
+		$usuario = $this->em->getRepository("AppBundle:Usuario")
 			->findOneBy([
-                'id' => $id_trabajador
+				'trabajador' => $id_trabajador
+			]);
+		$trabajador = $this->em->getRepository("AppBundle:Trabajador")
+			->findOneBy([
+                'id' => $usuario->getTrabajador()->getId()
             ]);
 		
-		if (!$trabajador) {
+		if (!$usuario or !$trabajador) {
 			throw $this->createNotFoundException(
 				'No se encontró el trabajador con id '.$id_trabajador
 			);
 		}
 		
-		$form = $this->createForm(TrabajadorType::class, $trabajador);
-		
-		$form->handleRequest($request);
-		
-		if ($form->isSubmitted() && $form->isValid()) {
+		if ($this->checkRestaurante($trabajador)) {
+			$form = $this->createForm(TrabajadorType::class, $usuario);
 			
-			$password = $this->get('security.password_encoder')
-                ->encodePassword($trabajador, $trabajador->getPassword());
-            $trabajador->setPassword($password);
+			$form->handleRequest($request);
 			
-			$this->em->flush();
-			return $this->redirectToRoute('gestion_trabajadores');
+			if ($form->isSubmitted() && $form->isValid()) {
+				$trabajador->setApellidos($request->request->get("apellidos"));
+				$password = $this->get('security.password_encoder')
+					->encodePassword($usuario, $usuario->getPassword());
+				$usuario->setPassword($password);
+				$usuario->setTypeUser(2);
+				$usuario->setTrabajador($trabajador);
+				$this->em->flush();
+				return $this->redirectToRoute('gestion_trabajadores');
+			}
+			
+			return $this->render('ManageCompanyBundle:Restaurante:trabajador.html.twig', array(
+				'usuario' => $usuario,
+				'trabajador' => $trabajador,
+				'form' => $form->createView()
+			));
 		}
-		
-		return $this->render('ManageCompanyBundle:Restaurante:trabajadores_restaurante.html.twig', array(
-			'trabajador' => $trabajador,
-            'form' => $form->createView()
-        ));
+		return $this->redirectToRoute('gestion_trabajadores');
 	}
 	
 	/**
@@ -126,10 +139,12 @@ class TrabajadorController extends Controller
 	{
 		$this->initialize();
 		
-		$trabajador = $this->em->getRepository('AppBundle:Trabajador')
+		$trabajador = $this->em->getRepository("AppBundle:Trabajador")
 			->findOneBy([
                 'id' => $id_trabajador
             ]);
+		$this->em->getRepository("AppBundle:Trabajador")
+			->showEmployeesRestaurant($id_trabajador);
 		
 		if (!$trabajador) {
 			throw $this->createNotFoundException(
@@ -137,29 +152,32 @@ class TrabajadorController extends Controller
 			);
 		}
 		
-		$restaurante = $this->em->getRepository('AppBundle:Restaurante')
-			->findOneBy([
-				'id' => $this->getIdRestaurante()
-			]);
-		$restaurante->removeTrabajadore($trabajador);
-		
-		$this->em->remove($trabajador);
-		$this->em->flush();
+		if ($this->checkRestaurante($trabajador)) {
+			$restaurante = $this->em->getRepository("AppBundle:Restaurante")
+				->findOneBy([
+					'id' => $this->getIdRestaurante()
+				]);
+			$restaurante->removeTrabajadore($trabajador);
+			
+			$this->em->remove($trabajador);
+			$this->em->flush();
+		}
 		return $this->redirectToRoute('gestion_trabajadores');
 	}
 	
 	/**
-     * @Route("/trabajadores/{id_trabajador}", name="activar_trabajador")
+     * @Route("/trabajadores/{id_trabajador}/{value}", name="activar_trabajador")
      * 
      * @param  Request $request    [description]
      * @param  [type]  $id_trabajador [description]
+	 * @param  [type]  $value [description]
      * @return [type]              [description]
      */
-	public function activarAction(Request $request, $id_trabajador)
+	public function activarAction(Request $request, $id_trabajador, $value)
 	{
 		$this->initialize();
 		
-		$trabajador = $this->em->getRepository('AppBundle:Trabajador')
+		$trabajador = $this->em->getRepository("AppBundle:Trabajador")
 			->findOneBy([
                 'id' => $id_trabajador
             ]);
@@ -170,44 +188,57 @@ class TrabajadorController extends Controller
 			);
 		}
 		
-		$trabajador->setEnabled(true);
-		
-		$this->em->flush();
+		if ($this->checkRestaurante($trabajador)) {
+			$usuario = $this->em->getRepository("AppBundle:Usuario")
+				->findOneBy([
+					'trabajador' => $trabajador->getId()
+				]);
+			$usuario->setEnabled($value);
+			$this->em->flush();
+		}
 		return $this->redirectToRoute('gestion_trabajadores');
 	}
+
+	/**
+     * Obtengo el id del usuario logeado (Tabla Usuarios)
+     *
+     * @return mixed
+     */
+    private function getIdUser()
+    {
+        $user = $this->em->getRepository("AppBundle:Usuario")
+            ->findOneBy([
+                'id' => $this->getUser()->getId()
+            ]);
+        return $this->getIdRestaurante($user->getId());
+    }
 	
 	/**
-     * @Route("/trabajadores/{id_trabajador}", name="desactivar_trabajador")
-     * 
-     * @param  Request $request    [description]
-     * @param  [type]  $id_trabajador [description]
-     * @return [type]              [description]
+     * Obtengo el id del restaurante logeado (Tabla Restaurante)
+     *
+     * @return mixed
      */
-	public function desactivarAction(Request $request, $id_trabajador)
+    private function getIdRestaurante()
 	{
-		$this->initialize();
-		
-		$trabajador = $this->em->getRepository('AppBundle:Trabajador')
-			->findOneBy([
-                'id' => $id_trabajador
+        $user = $this->em->getRepository("AppBundle:Usuario")
+            ->findOneBy([
+                'id' => $this->getUser()->getId()
             ]);
-		
-		if (!$trabajador) {
-			throw $this->createNotFoundException(
-				'No se encontró el trabajador con id '.$id_trabajador
-			);
-		}
-		
-		$trabajador->setEnabled(false);
-		
-		$this->em->flush();
-		return $this->redirectToRoute('gestion_trabajadores');
-	}
+        return  $this->em->getRepository("AppBundle:Restaurante")
+            ->findOneBy([
+                'id' => $user->getRestaurante()->getId()
+            ])->getId();
+    }
 	
-	private function getIdRestaurante()
+	/**
+     * Compruebo que id del usuario logeado sea el id del restaurante con el que estoy trabajando
+     *
+     * @param $trabajador
+     * @return bool
+     */
+    private function checkRestaurante($trabajador)
 	{
-		$user = $this->getUser()->getId();
-		return $user;
+        return $trabajador->getRestaurante()->getId() == $this->getIdRestaurante();
     }
 
 	private function initialize()
