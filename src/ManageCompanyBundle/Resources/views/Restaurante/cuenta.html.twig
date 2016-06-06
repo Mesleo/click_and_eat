@@ -5,7 +5,9 @@
 	<div class="container">
 		<h1>Configuración de tu cuenta</h1>
 		{% if info is defined %}
-			<h2>{{ info }}</h2>
+			<div class="row">
+				<p class="alert{% if ok is not defined %} alert-danger{% else %} alert-success{% endif %}">{{ info }}</p>
+			</div>
 		{% endif %}
 		<form method="post" id="form-account" action="{{ path('cuenta_guardar') }}">
 			<h2>Datos usuario</h2>
@@ -74,17 +76,18 @@
     		</div>
     		<div class="row">
     			<div class="col-md-6">
-    				<div class="form-group">
+    				<div class="form-group alig">
         				<label class="control-label">Tipo de comida</label>
 						<input type="text" class="form-control tm-input tm-input-typeahead" id="tipo-comida" name="tipo-comida" placeholder="Española">
 						<input type="hidden" id="txthid" name="id">
         			</div>
     			</div>
-    			<div class="col-md-3">
-    				<label class="control-label">Precio envío</label>
-    				<input type="text" class="form-control" name="inputEnvio" id="inputEnvio" {% if usuarioRestaurante is defined %} value="{{ usuarioRestaurante.precioEnvio }}" {% endif %} placeholder="Precio envio">
+    			<div class="col-md-3 {% if usuarioRestaurante is defined and usuarioRestaurante.tipoComida[1] is defined %}align-ceil{% endif %}">
+    				<label class="control-label required">Precio envío</label>
+    				<input type="text" title="El campo debe contener un número" pattern="^\d*([\.|,]\d)?" class="form-control"
+						   name="inputEnvio" id="inputEnvio" {% if usuarioRestaurante is defined %} value="{{ usuarioRestaurante.precioEnvio }}" {% endif %} placeholder="Precio envio">
     			</div>
-    			<div class="col-md-3">
+    			<div class="col-md-3 {% if usuarioRestaurante is defined and usuarioRestaurante.tipoComida[1] is defined %}align-ceil{% endif %}">
     				<div class="form-group">
         				<label class="control-label">Teléfono</label>
             			<input type="text" class="form-control" name="inputTelefono" id="inputTelefono" {% if userLog is defined %} value="{{ userLog.telefono }}" {% endif %} placeholder="Telefono">
@@ -93,6 +96,7 @@
     		</div>
         	<div class="form-group">
 	        	<input type="submit" class="btn btn-primary" name="save-account" value="Enviar">
+				<a href="{{ path('gestion') }}" class="btn btn-warning">Cancelar</a>
             	<input type="reset" class="btn btn-default button-reset" value="Limpiar">
         	</div>
 		</form>

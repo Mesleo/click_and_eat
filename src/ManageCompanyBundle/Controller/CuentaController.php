@@ -1,14 +1,12 @@
 <?php
 
 namespace ManageCompanyBundle\Controller;
+
+//para probar el envio de emails
 error_reporting(E_ALL);
 ini_set('display_errors','On');
-use AppBundle\AppBundle;
-use AppBundle\Entity\Horario;
-use AppBundle\Entity\TipoComida;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use AppBundle\Entity\Producto;
-use ManageCompanyBundle\Form\ProductoType;
 use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -28,10 +26,7 @@ class CuentaController extends Controller
      */
     public function configAccoutAction(){
         $this->initialize();
-        $this->params['userLog'] = $this->em->getRepository("AppBundle:Usuario")
-            ->findOneBy([
-                "id" => $this->getUser()->getId()
-            ]);
+        $this->params['userLog'] = $this->getUserLog();
         $restaurante = $this->getRestaurante();
         if($this->checkIdRestauranteIdUserLog($restaurante)) {
             $this->params['usuarioRestaurante'] = $restaurante;
@@ -42,27 +37,34 @@ class CuentaController extends Controller
     }
 
     /**
+     * Guardar los datos de la vista edición del restaurante
+     *
      * @Route("/cuenta/guardar", name="cuenta_guardar")
      */
     public function accountSaveAction(Request $request){
         if($request->request->has('save-account')){
             $this->initialize();
+            $this->params['info'] = null;
             $usuarioRestaurante = $this->em->getRepository('AppBundle:Usuario')
                 ->findOneBy([
                     "id" => $this->getUser()->getId()
                 ]);
-            $restaurante = $this->em->getRepository('AppBundle:Restaurante')
-                ->findOneBy([
-                    "id" => $this->getRestaurante()
-                ]);
+            $this->params['userLog'] = $this->getUserLog();
+            $restaurante = $this->getRestaurante();
             if($this->checkIdRestauranteIdUserLog($restaurante)) {
-
-                $precioEnvio = 0.00;
+                $this->params['usuarioRestaurante'] = $restaurante;
+                $this->params['provincias'] = $this->getProvincias();
                 $usuarioRestaurante->setUsername($request->request->get('inputUserName'));
-                $usuarioRestaurante->setEmail($request->request->get('inputEmail'));
+                if(filter_var($request->request->get('inputEmail'), FILTER_VALIDATE_EMAIL)) {
+                    $usuarioRestaurante->setEmail($request->request->get('inputEmail'));
+                }else {
+                    $this->params['info'] = "Dirección de correo no válida";
+                }
                 $usuarioRestaurante->setName($request->request->get('inputNombre'));
                 $usuarioRestaurante->setTelefono($request->request->get('inputTelefono'));
-                $restaurante->setCif($request->request->get('inputCIF'));
+                if(!$this->isValidCif($request->request->get('inputCIF'))){
+                    $this->params['info'] = "Formato CIF no válido";
+                }else $restaurante->setCif($request->request->get('inputCIF'));
                 $restaurante->setDireccion($request->request->get('inputDireccion'));
                 $provincia = $this->em->getRepository('AppBundle:Provincia')
                     ->findOneBy([
@@ -74,11 +76,8 @@ class CuentaController extends Controller
                     ]);
                 $restaurante->setProvincia($provincia);
                 $restaurante->setLocalidad($localidad);
-                if(is_float($request->request->get('inputEnvio'))){
-                    $precioEnvio = $request->request->get('inputEnvio');
-                }
+                $precioEnvio = $request->request->get('inputEnvio');
                 $restaurante->setPrecioEnvio($precioEnvio);
-
                 $tiposComidaRestaurante = $restaurante->getTipoComida();
                 $repoTiposComida = $this->em->getRepository('AppBundle:TipoComida');
                 $tiposComida = $request->request->get('hidden-tipo-comida');
@@ -101,12 +100,15 @@ class CuentaController extends Controller
                         $restaurante->removeTipoComida($tipComida);
                     }
                 }
-
-                $this->em->persist($restaurante);
-                $this->em->flush();
+                if($this->params['info'] == null){
+                    $this->em->persist($restaurante);
+                    $this->em->flush();
+                    $this->params['info'] = "Datos actualizados correctamente";
+                    $this->params['ok'] = true;
+                }
             }
         }
-        return $this->render('ManageCompanyBundle:Page:base.html.twig');
+        return $this->render('ManageCompanyBundle:Restaurante:cuenta.html.twig', $this->params);
     }
 
 
@@ -174,7 +176,19 @@ class CuentaController extends Controller
     }
 
     /**
-     * Obtengo el id del restaurante logeado (Tabla Restaurante)
+     * Obtengo el restaurante logeado (Tabla Usuarios)
+     *
+     * @return mixed
+     */
+    private function getUserLog(){
+        return $this->em->getRepository("AppBundle:Usuario")
+            ->findOneBy([
+                "id" => $this->getUser()->getId()
+            ]);
+    }
+
+    /**
+     * Obtengo el restaurante logeado (Tabla Restaurante)
      *
      * @return mixed
      */
@@ -187,6 +201,11 @@ class CuentaController extends Controller
             ->findOneBy([
                 'id' => $user->getIdRestaurante()->getId()
             ]);
+    }
+
+
+    private function isValidCif($string){
+        return preg_match("/^[a|b|c|d|e|f|g|h|j|n|p|q|r|s|u|v|w]{1}\\d{7}[\\d|\\w]{1}$/i", $string);
     }
 
     /**

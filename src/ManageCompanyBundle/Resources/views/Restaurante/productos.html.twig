@@ -1,20 +1,16 @@
 {# @GestionBundle/Default/index.html.twig #}
 {% extends 'ManageCompanyBundle:Page:base.html.twig' %}
-
-{% block breadcrumb %}
-    <li><a href="{{ path('gestion_productos')}}">Producto</a></li>
-    <li><a href="javascript:;">Edición de página</a></li>
-{% endblock %}
-
+{% import '@ManageCompany/Librerias/librerias.html.twig' as librerias %}
 {% block body %}
     <div class="row">
     </div>
         <div class="container">
-
             <p>
                 <br />
                 <a href="{{ path('add_producto') }}" class="btn btn-primary">Añadir producto</a>
             </p>
+            <h3>Productos</h3>
+            <div class="panel panel-body panel-success">
             <div class="be-panel col-sm-12">
                 <table id="productos-table" class="table display responsive nowrap">
                     <thead>
@@ -26,17 +22,11 @@
                     </thead>
                     <tbody>
                     {% for producto in productos %}
-                    <form action="{{ path('edit_producto') }}" method="post">
                         <tr>
                             <td>{{ producto.nombre }}</td>
                             <td>{{ producto.descripcion }}</td>
                             <td>
-                            <input type="text" class="hidden" name="producto-id" id="producto-id" value="{{ producto.id }}">
-                            </td>
-                            <td>
-                                <button type="submit"  class="btn btn-primary">Editar</button>
-                            </td>
-                            <td>
+                                <a href="{{ path('edit_producto', {'id_producto': producto.id, 'value': 0} ) }}" class="btn btn-primary">Editar</a>
                                 {% if producto.disponible %}
                                     <a href="{{ path('activar_producto', {'id_producto': producto.id, 'value': 0} ) }}" class="btn btn-warning">Desactivar</a>
                                 {% else %}
@@ -44,10 +34,27 @@
                                 {% endif %}
                             </td>
                         </tr>
-                    </form>
                     {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ librerias.datatables_js() }}
+    <script>
+        $(document).ready(function() {
+            $('#productos-table').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.10/i18n/Spanish.json",
+                    "decimal": ",",
+                    "thousands": "."
+                },
+                "scrollY":        "600px",
+                "scrollCollapse": true,
+                "lengthMenu": [[10, 15, 20, 30, 50, -1], [10, 15, 20, 30, 50,"Todos"]]
+            });
+        });
+    </script>
 {% endblock %}

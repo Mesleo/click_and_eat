@@ -30,10 +30,10 @@ security:
         gestion:
               pattern: ^/
               form_login:
+                  success_handler: authentication.handler.login_success_handler
                   provider: fos_userbundle
                   login_path: /login
                   check_path: /login_check
-                  default_target_path:            /gestion
 
               logout:
                   path:           /logout
@@ -54,3 +54,4 @@ security:
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/gestion, role: ROLE_MANAGE }
         - { path: ^/empleados, role: ROLE_EMPLOYEE }
+        - { path: ^/clientes, role: ROLE_USER }

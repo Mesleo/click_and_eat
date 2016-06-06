@@ -1,13 +1,14 @@
-employee:
-    resource: "@EmployeeBundle/Controller/"
-    type:     annotation
-    prefix:   /empleados
-
 client:
     resource: "@ClientBundle/Controller/"
     type:     annotation
     host:     clickandeat.cliente.local
     prefix:   /
+
+employee:
+    resource: "@EmployeeBundle/Controller/"
+    type:     annotation
+    host:     clickandeat.restaurante.local
+    prefix:   /empleados
 
 app:
     resource: "@AppBundle/Controller/"
@@ -39,4 +40,17 @@ admin_check:
 
 admin_logout:
     path:  /logout
+    defaults: { _controller: FOSUserBundle:Security:logout }
+
+
+client_login:
+    path:  /login
+    defaults: { _controller: FOSUserBundle:Security:login }
+
+client_check:
+    path:  /login_checkCliente
+    defaults: { _controller: FOSUserBundle:Security:check }
+
+client_logout:
+    path:  /logoutCliente
     defaults: { _controller: FOSUserBundle:Security:logout }

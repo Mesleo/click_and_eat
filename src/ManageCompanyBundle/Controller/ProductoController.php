@@ -77,19 +77,19 @@ class ProductoController extends Controller
     }
 
     /**
-     * @Route("/productos/edit", name="edit_producto")
+     * @Route("/productos/{id_producto}/edit", name="edit_producto")
      *
      * @param  Request $request    [description]
      * @param  [type]  $id_producto [description]
      * @return [type]              [description]
      * Method({POST})
      */
-    public function updateAction(Request $request)
+    public function updateAction(Request $request, $id_producto)
     {
         $this->initialize();
         $producto = $this->em->getRepository('AppBundle:Producto')
             ->findOneBy([
-                "id" => $request->request->get('producto-id'),
+                "id" => $id_producto
             ]);
 
         if (!$producto) {
