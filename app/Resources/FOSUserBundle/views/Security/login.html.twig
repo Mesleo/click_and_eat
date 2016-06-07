@@ -8,13 +8,26 @@
         {% block fos_user_content %}
     <div class="container" id="content">
         <div class="row">
+            {% if url(app.request.attributes.get('_route')) == "https://clickandeat.restaurante.local/app_dev.php/login" %}
             <div class="col-md-6" id="infor">
                 <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Gestiona tus reservas</p>
                 <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Gestiona tus pedidos online</p>
                 <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Administra la configuración de tu cuenta</p>
             </div>
+            {% else %}
+                <div class="col-md-6" id="infor">
+                    <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Haz tu pedido o reserva en 5 minutos</p>
+                    <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Busca restaurantes por tu zona</p>
+                    <p><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Busca el tipo de comida que te apetezca</p>
+                </div>
+            {% endif %}
             <div class="col-md-6" id="login">
-                <h3>Mi Restaurante</h3>
+                <h3>{% if url(app.request.attributes.get('_route')) == "https://clickandeat.restaurante.local/app_dev.php/login" %}
+                    Mi Restaurante
+                    {% else %}
+                        Acceso clientes
+                    {% endif %}
+                </h3>
                 <hr>
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
                 {% if error %}
@@ -33,8 +46,9 @@
                         <input type="checkbox" name="remember"> Recordar contraseña
                     </div>
                     <div class="form-group">
-                        <a class="btn btn-success" href="{{ path('registro_restaurante') }}" role="button">Registrarme</a>
-                        <button type="submit" class="btn btn-connect">Conectar</button>
+                        <a class="btn btn-success "
+                           href="{% if url(app.request.attributes.get('_route')) == "https://clickandeat.restaurante.local/app_dev.php/login" %}{{ path('registro_restaurante') }}{% else %}{{ path('controlador_registro_cliente') }}{% endif %}" role="button">Registrarme</a>
+                        <button type="submit" class="btn btn-connect ">Conectar</button>
                     </div>
                 </form>
             </div>

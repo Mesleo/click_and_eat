@@ -267,4 +267,52 @@ class Mesa
     {
         return $this->restaurante;
     }
+
+    /**
+     * Set codMesa
+     *
+     * @param string $codMesa
+     *
+     * @return Mesa
+     */
+    public function setCodMesa($codMesa)
+    {
+        $this->codMesa = $codMesa;
+
+        return $this;
+    }
+
+    /**
+     * Get codMesa
+     *
+     * @return string
+     */
+    public function getCodMesa()
+    {
+        return $this->codMesa;
+    }
+
+    /**
+     * Set descripcion
+     *
+     * @param string $descripcion
+     *
+     * @return Mesa
+     */
+    public function setDescripcion($descripcion)
+    {
+        $this->descripcion = $descripcion;
+
+        return $this;
+    }
+
+    /**
+     * Get descripcion
+     *
+     * @return string
+     */
+    public function getDescripcion()
+    {
+        return $this->descripcion;
+    }
 }

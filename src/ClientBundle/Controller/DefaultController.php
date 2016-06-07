@@ -28,10 +28,24 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/loginClientes", name="client_login")
+     * @Route("/restaurantes", name="show_restaurantes")
      */
-    public function loginAction(){
-        return $this->render('FOSUserBundle:Security:login_cliente.html.twig');
+    public function showAction()
+    {
+        $this->initialize();
+        $this->params['restaurantes'] = $this->em->getRepository("AppBundle:Restaurante")
+            ->showRestaurantes();
+        return $this->render('ClientBundle:Restaurante:show.html.twig', $this->params);
+
+    }
+
+    /**
+     * @Route("/registroClientes", name="controlador_registro_cliente")
+     */
+    public function registerClienteAction()
+    {
+
+        return $this->redirectToRoute('registro_restaurante');
     }
 
     private function initialize()

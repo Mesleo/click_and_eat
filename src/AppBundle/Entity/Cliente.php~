@@ -25,13 +25,13 @@ class Cliente
     /**
      * @var string
      *
-     * @ORM\Column(name="apellidos", type="string", length=100, nullable=false)
+     * @ORM\Column(name="apellidos", type="string", length=100, nullable=true)
      */
     protected $apellidos;
 
 
     /**
-     * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente")
+     * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente", cascade={"persist"})
      */
     protected $domicilios;
 
@@ -51,20 +51,6 @@ class Cliente
     protected $comentarios;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime", nullable=false)
-     */
-    protected $created_at;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
-     */
-    protected $updated_at;
-
-    /**
      * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
@@ -76,12 +62,11 @@ class Cliente
      */
     public function __construct()
     {
-        parent::__construct();
-        $this->addRole("ROLE_CLIENT");
         $this->domicilios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->setTrash(false);
     }
 
 
@@ -107,54 +92,6 @@ class Cliente
     public function getApellidos()
     {
         return $this->apellidos;
-    }
-
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     *
-     * @return Cliente
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->created_at = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->created_at;
-    }
-
-    /**
-     * Set updatedAt
-     *
-     * @param \DateTime $updatedAt
-     *
-     * @return Cliente
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updated_at = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get updatedAt
-     *
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updated_at;
     }
 
     /**
@@ -205,53 +142,6 @@ class Cliente
         return $this->name;
     }
 
-    /**
-     * Set telefono
-     *
-     * @param string $telefono
-     *
-     * @return Cliente
-     */
-    public function setTelefono($telefono)
-    {
-        $this->telefono = $telefono;
-
-        return $this;
-    }
-
-    /**
-     * Get telefono
-     *
-     * @return string
-     */
-    public function getTelefono()
-    {
-        return $this->telefono;
-    }
-
-    /**
-     * Set typeUser
-     *
-     * @param integer $typeUser
-     *
-     * @return Cliente
-     */
-    public function setTypeUser($typeUser)
-    {
-        $this->typeUser = $typeUser;
-
-        return $this;
-    }
-
-    /**
-     * Get typeUser
-     *
-     * @return integer
-     */
-    public function getTypeUser()
-    {
-        return $this->typeUser;
-    }
 
     /**
      * Add domicilio

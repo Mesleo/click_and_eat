@@ -32,7 +32,7 @@ class Domicilio
     /**
      * @var string
      *
-     * @ORM\Column(name="direccion_extra", type="string", length=255, nullable=false)
+     * @ORM\Column(name="direccion_extra", type="string", length=255, nullable=true)
      */
     protected $direccionExtra;
 
@@ -76,6 +76,14 @@ class Domicilio
      */
     protected $trash;
 
+    public function __construct()
+    {
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
+        $this->setTrash(false);
+    }
+
     /**
      * Get id
      *
@@ -84,30 +92,6 @@ class Domicilio
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set direccion
-     *
-     * @param string $direccion
-     *
-     * @return Domicilio
-     */
-    public function setDireccion($direccion)
-    {
-        $this->direccion = $direccion;
-
-        return $this;
-    }
-
-    /**
-     * Get direccion
-     *
-     * @return string
-     */
-    public function getDireccion()
-    {
-        return $this->direccion;
     }
 
     /**

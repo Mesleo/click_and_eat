@@ -10,4 +10,21 @@ namespace AppBundle\Repository;
  */
 class RestauranteRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    /**
+     * Muestra los campos de las tablas usuario y restaurante correspondientes a los restaurantes
+     *
+     * @param $idRestaurante
+     * @return mixed
+     */
+    public function showRestaurantes()
+    {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'SELECT u.name, r FROM AppBundle:Restaurante r, AppBundle:Usuario u
+            	WHERE r.id = u.idRestaurante'
+            );
+        $restaurantes = $query->getResult();
+        return $restaurantes;
+    }
 }

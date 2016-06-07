@@ -1,5 +1,5 @@
 <?php
-// src/RegisterBundle/Form/RestauranteType.php
+// src/RegisterBundle/Form/CLienteType.php
 
 namespace RegisterBundle\Form;
 
@@ -17,7 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
-class RestauranteType extends AbstractType
+class ClienteType extends AbstractType
 {
 
     private $em = null;
@@ -100,7 +100,7 @@ class RestauranteType extends AbstractType
      */
     public function getName()
     {
-        return 'managecompanybundle_restaurantetype';
+        return 'registerbundle_clientetype';
     }
     /**
      * @param OptionsResolver $resolver

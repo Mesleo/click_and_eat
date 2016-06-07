@@ -27,6 +27,12 @@ register:
     host:     clickandeat.restaurante.local
     type:     annotation
 
+register_clientes:
+    resource: "@RegisterBundle/Controller"
+    prefix:   /register
+    host:     clickandeat.cliente.local
+    type:     annotation
+
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
 
@@ -48,9 +54,9 @@ client_login:
     defaults: { _controller: FOSUserBundle:Security:login }
 
 client_check:
-    path:  /login_checkCliente
+    path:  /login_check
     defaults: { _controller: FOSUserBundle:Security:check }
 
 client_logout:
-    path:  /logoutCliente
+    path:  /logout
     defaults: { _controller: FOSUserBundle:Security:logout }

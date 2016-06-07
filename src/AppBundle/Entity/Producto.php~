@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Producto
@@ -12,31 +13,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Table(name="producto")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductoRepository")
  */
-class Producto{
-
-    const TIPO_ENTRANTE = 'Entrante';
-    const TIPO_HAMBURGUESA = 'Hamburguesa';
-    const TIPO_SANDWICHES = 'Sandwich';
-    const TIPO_BOCADILLO = 'Bocadillo';
-    const TIPO_MONTADO = 'Montado';
-    const TIPO_PLATO_COMBINADO = 'Plato combinado';
-    const TIPO_CARNES = 'Carne';
-    const TIPO_PESCADOS = 'Pescado';
-    const TIPO_ENSALADAS = 'Ensalada';
-    const TIPO_KEBAB = 'Kebab';
-    const TIPO_DURUM = 'Durum';
-    const TIPO_FALAFEL = 'Falafel';
-    const TIPO_ARROCES = 'Arroz';
-    const TIPO_PASTA = 'Pasta';
-    const TIPO_SOPAS = 'Sopa';
-    const TIPO_REVUELTOS = 'Revuelto';
-    const TIPO_PIZZAS = 'Pizza';
-
-    const TIPO_REFRESCOS = 'Refresco';
-    const TIPO_CERVEZAS = 'Cerveza';
-    const TIPO_VINOS = 'Vino';
-    const TIPO_OTRO = 'Otro';
-
+class Producto
+{
     /**
      * @var integer
      *
@@ -68,28 +46,35 @@ class Producto{
     protected $precio;
 
     /**
+     * @var UploadedFile
+     */
+    protected $img;
+
+    /**
      * @var string
      *
-     * @ORM\Column(name="foto", type="string", length=255, nullable=true)
+     * @ORM\Column(name="foto", type="string", length=255, nullable=false)
      */
     protected $foto;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="tipo", type="string", length=255)
+     * @ORM\ManyToMany(targetEntity="TipoProducto", inversedBy="productos")
+     * @ORM\JoinTable(name="producto_tipo_producto",
+     *      joinColumns={@ORM\JoinColumn(name="idProducto", referencedColumnName="id", nullable=false)},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="idTipoProducto", referencedColumnName="id", nullable=false)}
+     *      )
      */
-    protected $tipo;
+    protected $tipoProducto;
 
     /**
-     * @var boolean 
+     * @var boolean
      *
      * @ORM\Column(name="disponible", type="boolean", options={"default":1})
      */
     protected $disponible;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="productos",  cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="productos")
      * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
      */
     protected $restaurante;
@@ -109,7 +94,7 @@ class Producto{
     protected $updated_at;
 
     /**
-     * @var boolean 
+     * @var boolean
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
@@ -118,14 +103,16 @@ class Producto{
     /**
      * @ORM\OneToMany(targetEntity="PedidoProducto", mappedBy="producto")
      */
-    protected $pedidoProducto;
-    
+    protected $pedido_producto;
+
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->pedidoProducto = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->tipoProducto = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->pedido_producto = new \Doctrine\Common\Collections\ArrayCollection();
+
         $this->setDisponible(true);
 
         $this->setCreatedAt(new \DateTime());
@@ -238,6 +225,33 @@ class Producto{
     public function getFoto()
     {
         return $this->foto;
+    }
+
+    /**
+     * @param mixed $img
+     */
+    public function setImg(UploadedFile $img)
+    {
+        $this->img = $img;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImg()
+    {
+        return $this->img;
+    }
+
+    public function uploadImg()
+    {
+        if (null === $this->img) {
+            return;
+        }
+        $destiny = __DIR__.'/../../../web/uploads/restaurantes/productos/';
+        $nameImg = $this->id.'.'.$this->img->getClientOriginalExtension();
+        $this->img->move($destiny, $nameImg);
+        $this->setFoto($nameImg);
     }
 
     /**
@@ -369,7 +383,7 @@ class Producto{
      */
     public function addPedidoProducto(\AppBundle\Entity\PedidoProducto $pedidoProducto)
     {
-        $this->pedidoProducto[] = $pedidoProducto;
+        $this->pedido_producto[] = $pedidoProducto;
 
         return $this;
     }
@@ -381,7 +395,7 @@ class Producto{
      */
     public function removePedidoProducto(\AppBundle\Entity\PedidoProducto $pedidoProducto)
     {
-        $this->pedidoProducto->removeElement($pedidoProducto);
+        $this->pedido_producto->removeElement($pedidoProducto);
     }
 
     /**
@@ -391,36 +405,40 @@ class Producto{
      */
     public function getPedidoProducto()
     {
-        return $this->pedidoProducto;
+        return $this->pedido_producto;
     }
 
     /**
-     * Set tipo
+     * Add tipoProducto
      *
-     * @param string $tipo
+     * @param \AppBundle\Entity\TipoProducto $tipoProducto
      *
      * @return Producto
      */
-    public function setTipo($tipo)
+    public function addTipoProducto(\AppBundle\Entity\TipoProducto $tipoProducto)
     {
-//        if (!in_array($tipo, array(self::TIPO_ARROCES, self::TIPO_CARNES, self::TIPO_CERVEZAS, self::TIPO_DURUM,
-//            self::TIPO_ENSALADAS, self::TIPO_ENTRANTE, self::TIPO_FALAFEL, self::TIPO_KEBAB, self::TIPO_HAMBURGUESA,
-//            self::TIPO_PASTA, self::TIPO_PESCADOS, self::TIPO_PLATO_COMBINADO, self::TIPO_PESCADOS, self::TIPO_OTRO,
-//            self::TIPO_REVUELTOS, self::TIPO_REFRESCOS, self::TIPO_SANDWICHES, self::TIPO_SOPAS, self::TIPO_VINOS),
-//            self::TIPO_BOCADILLO, self::TIPO_MONTADO)) {
-//            throw new \InvalidArgumentException("Tipo de producto inválido");
-//        }
-        $this->tipo = $tipo;
+        $this->tipoProducto[] = $tipoProducto;
+
         return $this;
     }
 
     /**
-     * Get tipo
+     * Remove tipoProducto
      *
-     * @return string
+     * @param \AppBundle\Entity\TipoProducto $tipoProducto
      */
-    public function getTipo()
+    public function removeTipoProducto(\AppBundle\Entity\TipoProducto $tipoProducto)
     {
-        return $this->tipo;
+        $this->tipoProducto->removeElement($tipoProducto);
+    }
+
+    /**
+     * Get tipoProducto
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTipoProducto()
+    {
+        return $this->tipoProducto;
     }
 }

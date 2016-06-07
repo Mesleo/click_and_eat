@@ -24,13 +24,16 @@ span.twitter-typeahead {
 	width: 100% !important;
 }
 
-
-
 .btn-buscar {
 	background: #FFA000;
 	color: #FFFFFF;
 	padding: 0.8em 2em;
 	width: 100%;
+}
+
+.btn-custom1{
+	border-radius: 0 !important;
+	box-shadow: .2rem .1rem .1rem .1rem #a7a7a7, .2rem .1rem .1rem .1rem #a7a7a7;
 }
 
 .btn-connect {
@@ -104,8 +107,14 @@ header {
 }
 
 .navbar-default {
-	background: #FFC107;
+	background: #28d55a;
 	margin: 0;
+	box-shadow: .4rem .1rem .1rem .1rem #a7a7a7, .4rem .1rem .1rem .1rem #a7a7a7;
+}
+
+.navbar-default a{
+	color: #eeeeee !important;
+	text-shadow: 1px 1px 0px  #800400;
 }
 
 p {

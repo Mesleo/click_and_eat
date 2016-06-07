@@ -90,11 +90,11 @@ class Restaurante{
     protected $tipoComida;
 
     /**
-     * @var float
+     * @var decimal
      *
-     * @ORM\Column(name="precio_envio", type="float", nullable=false, options={"default":"0.0"})
+     * @ORM\Column(name="precio_envio", type="decimal", nullable=false, options={"default":"0.0"})
      * @Assert\Type(
-     *     type="float",
+     *     type="decimal",
      *     message="Este valor debe ser un número"
      * )
      */
@@ -447,54 +447,6 @@ class Restaurante{
     public function getFechaBaja()
     {
         return $this->fecha_baja;
-    }
-
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     *
-     * @return Restaurante
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->created_at = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->created_at;
-    }
-
-    /**
-     * Set updatedAt
-     *
-     * @param \DateTime $updatedAt
-     *
-     * @return Restaurante
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updated_at = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get updatedAt
-     *
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updated_at;
     }
 
     /**

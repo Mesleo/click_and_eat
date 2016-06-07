@@ -1,0 +1,17 @@
+{# src/ClientBundle/Resources/views/Restaurante/show.html.twig #}
+{#{% extends 'ClientBundle:Base:base.html.twig' %}#}
+
+{% block body %}
+	<ul>
+		{% for restaurante in restaurantes %}
+			<h2>{{ restaurante.name }}</h2>
+			<li>{{ restaurante[0].id }}</li>
+			<li>{{ restaurante[0].direccion }}</li>
+			<li>{{ restaurante[0].localidad.nombre }}</li>
+			<li>{{ restaurante[0].provincia.nombre }}</li>
+			<li>{{ restaurante[0].foto }}</li>
+			<li>{{ restaurante[0].precioEnvio }}</li>
+			<hr>
+		{% endfor %}
+	</ul>
+{% endblock %}
