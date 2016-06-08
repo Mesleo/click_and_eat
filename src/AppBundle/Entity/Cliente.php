@@ -36,11 +36,6 @@ class Cliente
     protected $domicilios;
 
     /**
-     * @ORM\OneToMany(targetEntity="Pedido", mappedBy="cliente")
-     */
-    protected $pedidos;
-
-    /**
      * @ORM\OneToMany(targetEntity="Reserva", mappedBy="cliente")
      */
     protected $reservas;
@@ -76,13 +71,14 @@ class Cliente
      */
     public function __construct()
     {
-		parent::__construct();
-        $this->addRole("ROLE_CLIENT");
-		
         $this->domicilios = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
+		
+		$this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
+        $this->setTrash(false);
     }
 
     /**
@@ -141,54 +137,6 @@ class Cliente
     public function getApellidos()
     {
         return $this->apellidos;
-    }
-
-    /**
-     * Set telefono
-     *
-     * @param string $telefono
-     *
-     * @return Cliente
-     */
-    public function setTelefono($telefono)
-    {
-        $this->telefono = $telefono;
-
-        return $this;
-    }
-
-    /**
-     * Get telefono
-     *
-     * @return string
-     */
-    public function getTelefono()
-    {
-        return $this->telefono;
-    }
-	
-	/**
-     * Set typeUser
-     *
-     * @param integer $typeUser
-     *
-     * @return Cliente
-     */
-    public function setTypeUser($typeUser)
-    {
-        $this->typeUser = $typeUser;
-
-        return $this;
-    }
-
-    /**
-     * Get typeUser
-     *
-     * @return integer
-     */
-    public function getTypeUser()
-    {
-        return $this->typeUser;
     }
 
     /**
@@ -295,40 +243,6 @@ class Cliente
     public function getDomicilios()
     {
         return $this->domicilios;
-    }
-
-    /**
-     * Add pedido
-     *
-     * @param \AppBundle\Entity\Pedido $pedido
-     *
-     * @return Cliente
-     */
-    public function addPedido(\AppBundle\Entity\Pedido $pedido)
-    {
-        $this->pedidos[] = $pedido;
-
-        return $this;
-    }
-
-    /**
-     * Remove pedido
-     *
-     * @param \AppBundle\Entity\Pedido $pedido
-     */
-    public function removePedido(\AppBundle\Entity\Pedido $pedido)
-    {
-        $this->pedidos->removeElement($pedido);
-    }
-
-    /**
-     * Get pedidos
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getPedidos()
-    {
-        return $this->pedidos;
     }
 
     /**

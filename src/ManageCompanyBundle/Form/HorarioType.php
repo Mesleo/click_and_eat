@@ -11,8 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type\TimeType;
 class HorarioType extends AbstractType
 {
 	/**
-     * 
-     * 
      * @param FormBuilderInterface $builder
      * @param array $options
      */

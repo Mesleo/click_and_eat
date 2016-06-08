@@ -1,25 +1,29 @@
-app:
-    resource: "@AppBundle/Controller/"
+client:
+    resource: "@ClientBundle/Controller/"
     type:     annotation
+    host:     clickandeat.cliente.local
+    prefix:   /
 
-manage_company:
-    resource: "@ManageCompanyBundle/Controller/"
-    prefix:   /gestion
-    type:     annotation
-
-register:
+register_restaurante:
     resource: "@RegisterBundle/Controller/"
-    prefix:   /register
     type:     annotation
+    host:     clickandeat.restaurante.local
+    prefix:   /restaurante
+
+manage:
+    resource: "@ManageCompanyBundle/Controller/"
+    type:     annotation
+    host:     clickandeat.restaurante.local
+    prefix:   /gestion
 
 employee:
     resource: "@EmployeeBundle/Controller/"
-    prefix:   /empleados
     type:     annotation
+    host:     clickandeat.restaurante.local
+    prefix:   /empleados
 
-client:
-    resource: "@ClientBundle/Controller/"
-    prefix:   /
+app:
+    resource: "@AppBundle/Controller/"
     type:     annotation
 
 fos_user:
@@ -42,9 +46,9 @@ client_login:
     defaults: { _controller: FOSUserBundle:Security:login }
 
 client_check:
-    path:  /login_checkCliente
+    path:  /login_check
     defaults: { _controller: FOSUserBundle:Security:check }
 
 client_logout:
-    path:  /logoutCliente
+    path:  /logout
     defaults: { _controller: FOSUserBundle:Security:logout }

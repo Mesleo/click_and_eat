@@ -1,18 +1,19 @@
 {# src/ManageCompanyBundle/Resources/views/Restaurante/mesas.html.twig #}
 {% extends 'ManageCompanyBundle:Page:base.html.twig' %}
-
+{% import '@ManageCompany/Librerias/librerias.html.twig' as librerias %}
 {% block body %}
     <div class="container">
 		<p>
 			<br />
 			<a href="{{ path('add_mesa') }}" class="btn btn-success">Añadir mesa</a>
         </p>
-		<div class="be-panel col-sm-12">
+        <div class="panel panel-body panel-default">
+        <div class="be-panel col-sm-12">
             <table id="mesas-table" class="table display responsive nowrap">
                 <thead>
                 <tr>
-					<th>Cod Mesa</th>
-					<th>Descripcion</th>
+				    <th>Cod Mesa</th>
+				    <th>Descripcion</th>
                     <th>Nº Personas</th>
                     <th></th>
                 </tr>
@@ -31,5 +32,23 @@
                 </tbody>
             </table>
         </div>
+        </div>
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ librerias.datatables_js() }}
+    <script>
+        $(document).ready(function() {
+            $('#mesas-table').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.10/i18n/Spanish.json",
+                    "decimal": ",",
+                    "thousands": "."
+                },
+                "scrollY":        "600px",
+                "scrollCollapse": true,
+                "lengthMenu": [[5, 10, 15, 20, -1], [5, 10, 15, 20,"Todos"]]
+            });
+        });
+    </script>
 {% endblock %}

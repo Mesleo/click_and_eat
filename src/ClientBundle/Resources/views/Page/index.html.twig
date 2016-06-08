@@ -1,0 +1,53 @@
+{# src/ClientBundle/Resources/views/Page/index.html.twig #}
+{% extends 'ClientBundle:Page:base.html.twig' %}
+
+{% block body %}
+    <header>
+        <h1 class="titulo">Pide comida a domicilio online</h1>
+        <h3 class="subtitulo">Además reserva mesa en los mejores restaurantes de la zona</h3>
+        <div class="container" id="buscar">
+            <form>
+                <div class="row">
+					<div class="col-md-3">
+					</div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">Código postal</label>
+                            <input type="text" class="form-control" name="direccion" id="direccion" placeholder="Código postal">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <br />
+                            <input type="submit" class="btn btn-buscar" value="Búscar">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="container" id="wrap">
+            <div class="contenido">
+                <span class="glyphicon glyphicon-map-marker" id="icon" aria-hidden="true"></span><br />
+                <p>1. Localización</p>
+                Introduce tu ciudad y tu dirección para encontrar los restaurantes más cercanos.
+            </div>
+            <div class="contenido">
+                <span class="glyphicon glyphicon-cutlery" id="icon" aria-hidden="true"></span><br />
+                <p>2. Selecciona restaurante</p>
+                Elige entre cientos de menús de comida en miles de restaurantes.
+            </div>
+            <div class="contenido">
+                <span class="glyphicon glyphicon-credit-card" id="icon" aria-hidden="true"></span><br />
+                <p>3. Paga</p>
+                Paga de forma rápida y segura, a través de tarjeta, en efectivo o PayPal.
+            </div>
+        </div>
+    </header>
+    <section id="registro">
+		<div class="container" id="company">
+			<h2>¿Eres propietario/a de un restaurante y te gustaría formar parte de Click & Eat?</h2>
+			<a href="{{ path('registro_restaurante') }}" class="btn btn-register">¡AFILIATE!</a>
+			<span><br />¿Ya trabajas con nosotros? <a href="http://clickandeat.restaurante.local/app_dev.php/login">Gestiona tu restaurante</a></span>
+		</div>
+    </section>
+{% endblock %}

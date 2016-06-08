@@ -91,11 +91,11 @@ class Restaurante
     protected $tipoComida;
 
     /**
-     * @var float
+     * @var decimal
      *
-     * @ORM\Column(name="precio_envio", type="float", nullable=false, options={"default":"0.0"})
+     * @ORM\Column(name="precio_envio", type="decimal", nullable=false, options={"default":"0.0"})
      * @Assert\Type(
-     *     type="float",
+     *     type="decimal",
      *     message="Este valor debe ser un número"
      * )
      */
@@ -376,7 +376,7 @@ class Restaurante
     /**
      * Set precioEnvio
      *
-     * @param float $precioEnvio
+     * @param decimal $precioEnvio
      *
      * @return Restaurante
      */
@@ -390,7 +390,7 @@ class Restaurante
     /**
      * Get precioEnvio
      *
-     * @return float
+     * @return decimal
      */
     public function getPrecioEnvio()
     {

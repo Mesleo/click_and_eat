@@ -1,5 +1,5 @@
 <?php
-
+// src/ClientBundle/Controller/DefaultController.php
 namespace ClientBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -24,14 +24,20 @@ class DefaultController extends Controller
                     "id" => $this->getUser()->getId()
                 ]);
         }
-        return $this->render('ClientBundle:Cliente:cliente.html.twig', $this->params);
+        return $this->render('ClientBundle:Page:index.html.twig', $this->params);
     }
 
     /**
-     * @Route("/loginClientes", name="client_login")
+     * @Route("/restaurantes", name="show_restaurantes")
      */
-    public function loginAction(){
-        return $this->render('FOSUserBundle:Security:login_cliente.html.twig');
+    public function showAction()
+    {
+        $this->initialize();
+        $this->params['restaurantes'] = $this->em->getRepository("AppBundle:Restaurante")
+                ->showRestaurantes();
+
+        return $this->render('ClientBundle:Restaurante:show.html.twig', $this->params);
+
     }
 
     private function initialize()

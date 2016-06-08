@@ -1,12 +1,13 @@
 {# src/ManageCompanyBundle/Resources/views/Restaurante/productos.html.twig #}
 {% extends 'ManageCompanyBundle:Page:base.html.twig' %}
-
+{% import '@ManageCompany/Librerias/librerias.html.twig' as librerias %}
 {% block body %}
     <div class="container">
 		<p>
 			<br />
 			<a href="{{ path('add_producto') }}" class="btn btn-success">Añadir producto</a>
         </p>
+		<div class="panel panel-body panel-default">
 		<div class="be-panel col-sm-12">
             <table id="productos-table" class="table display responsive nowrap">
                 <thead>
@@ -37,5 +38,23 @@
                 </tbody>
             </table>
         </div>
+		</div>
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ librerias.datatables_js() }}
+    <script>
+        $(document).ready(function() {
+            $('#productos-table').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.10/i18n/Spanish.json",
+                    "decimal": ",",
+                    "thousands": "."
+                },
+                "scrollY":        "600px",
+                "scrollCollapse": true,
+                "lengthMenu": [[10, 15, 20, 30, 50, -1], [10, 15, 20, 30, 50,"Todos"]]
+            });
+        });
+    </script>
 {% endblock %}

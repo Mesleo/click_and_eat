@@ -14,13 +14,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Pedido
 {
-    const STATUS_ESPERA_PAGO = 'espera de pago';
-    const STATUS_PAGO = 'pagado';
-    const STATUS_CANCELADO = 'cancelado';
-    const STATUS_EN_CURSO = 'en curso';
-    const STATUS_ENTREGADO = 'entregado';
-    const STATUS_REEMBOLSADO = 'reembolsado';
-
     /**
      * @var integer
      *
@@ -36,18 +29,25 @@ class Pedido
      * @ORM\Column(name="numPedido", type="integer", nullable=false)
      */
     protected $numPedido;
+	
+	/**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_hora_realizado", type="datetime", nullable=false)
+     */
+    protected $fechaHoraRealizado;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fecha_hora_salida", type="datetime", nullable=false)
+     * @ORM\Column(name="fecha_hora_salida", type="datetime", nullable=true)
      */
     protected $fechaHoraSalida;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fecha_hora_llegada", type="datetime", nullable=false)
+     * @ORM\Column(name="fecha_hora_llegada", type="datetime", nullable=true)
      */
     protected $fechaHoraLlegada;
 
@@ -78,9 +78,17 @@ class Pedido
      * @ORM\Column(name="email", type="string", length=100, nullable=false)
      */
     protected $email;
+	
+	/**
+     * @var boolean
+     *
+     * @ORM\Column(name="pagado", type="boolean", nullable=false, options={"default":false})
+     */
+    protected $pagado;
 
     /**
-     * @ORM\Column(name="estado", type="string", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Estado", inversedBy="pedidos")
+     * @ORM\JoinColumn(name="idEstado", referencedColumnName="id", nullable=false)
      */
     protected $estado;
 
@@ -89,12 +97,6 @@ class Pedido
      * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
      */
     protected $restaurante;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="pedidos")
-     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=false)
-     */
-    protected $cliente;
 
     /**
      * @ORM\ManyToOne(targetEntity="Trabajador", inversedBy="pedidos")
@@ -132,7 +134,7 @@ class Pedido
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-
+	
     /**
      * Constructor
      */
@@ -173,6 +175,30 @@ class Pedido
     public function getNumPedido()
     {
         return $this->numPedido;
+    }
+
+    /**
+     * Set fechaHoraRealizado
+     *
+     * @param \DateTime $fechaHoraRealizado
+     *
+     * @return Pedido
+     */
+    public function setFechaHoraRealizado($fechaHoraRealizado)
+    {
+        $this->fechaHoraRealizado = $fechaHoraRealizado;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaHoraRealizado
+     *
+     * @return \DateTime
+     */
+    public function getFechaHoraRealizado()
+    {
+        return $this->fechaHoraRealizado;
     }
 
     /**
@@ -320,27 +346,27 @@ class Pedido
     }
 
     /**
-     * Set estado
+     * Set pagado
      *
-     * @param string $estado
+     * @param boolean $pagado
      *
      * @return Pedido
      */
-    public function setEstado($estado)
+    public function setPagado($pagado)
     {
-        $this->estado = $estado;
+        $this->pagado = $pagado;
 
         return $this;
     }
 
     /**
-     * Get estado
+     * Get pagado
      *
-     * @return string
+     * @return boolean
      */
-    public function getEstado()
+    public function getPagado()
     {
-        return $this->estado;
+        return $this->pagado;
     }
 
     /**
@@ -416,6 +442,30 @@ class Pedido
     }
 
     /**
+     * Set estado
+     *
+     * @param \AppBundle\Entity\Estado $estado
+     *
+     * @return Pedido
+     */
+    public function setEstado(\AppBundle\Entity\Estado $estado)
+    {
+        $this->estado = $estado;
+
+        return $this;
+    }
+
+    /**
+     * Get estado
+     *
+     * @return \AppBundle\Entity\Estado
+     */
+    public function getEstado()
+    {
+        return $this->estado;
+    }
+
+    /**
      * Set restaurante
      *
      * @param \AppBundle\Entity\Restaurante $restaurante
@@ -437,30 +487,6 @@ class Pedido
     public function getRestaurante()
     {
         return $this->restaurante;
-    }
-
-    /**
-     * Set cliente
-     *
-     * @param \AppBundle\Entity\Cliente $cliente
-     *
-     * @return Pedido
-     */
-    public function setCliente(\AppBundle\Entity\Cliente $cliente)
-    {
-        $this->cliente = $cliente;
-
-        return $this;
-    }
-
-    /**
-     * Get cliente
-     *
-     * @return \AppBundle\Entity\Cliente
-     */
-    public function getCliente()
-    {
-        return $this->cliente;
     }
 
     /**

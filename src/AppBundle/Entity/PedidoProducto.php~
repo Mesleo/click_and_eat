@@ -56,13 +56,6 @@ class PedidoProducto
     protected $descuento;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="total", type="float", nullable=false)
-     */
-    protected $total;
-
-    /**
      * Get id
      *
      * @return integer
@@ -142,30 +135,6 @@ class PedidoProducto
     public function getDescuento()
     {
         return $this->descuento;
-    }
-
-    /**
-     * Set total
-     *
-     * @param float $total
-     *
-     * @return PedidoProducto
-     */
-    public function setTotal($total)
-    {
-        $this->total = $total;
-
-        return $this;
-    }
-
-    /**
-     * Get total
-     *
-     * @return float
-     */
-    public function getTotal()
-    {
-        return $this->total;
     }
 
     /**
