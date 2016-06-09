@@ -56,6 +56,7 @@ class MesaController extends Controller
 					'id' => $this->getIdRestaurante()
 				]);
 			$mesa->setRestaurante($restaurante);
+			$mesa->setDescripcion($request->request->get("descripcion"));
 			$restaurante->addMesa($mesa);
 
         	$this->em->persist($mesa);
@@ -92,11 +93,12 @@ class MesaController extends Controller
 		}
 		
 		if ($this->checkRestaurante($mesa)) {
-			$form = $this->createForm(MesaType::class, $mesa);
 			
+			$form = $this->createForm(MesaType::class, $mesa);
 			$form->handleRequest($request);
 			
 			if ($form->isSubmitted() && $form->isValid()) {
+				$mesa->setDescripcion($request->request->get("descripcion"));
 				$this->em->flush();
 				return $this->redirectToRoute('gestion_mesas');
 			}
@@ -145,7 +147,7 @@ class MesaController extends Controller
 	}
 	
 	/**
-     * Obtengo el id del restaurante logeado (Tabla Restaurante)
+     * Obtengo el id del restaurante logeado
      *
      * @return mixed
      */
@@ -157,7 +159,7 @@ class MesaController extends Controller
             ]);
         return  $this->em->getRepository("AppBundle:Restaurante")
             ->findOneBy([
-                'id' => $user->getRestaurante()->getId()
+                'usuario' => $user->getId()
             ])->getId();
     }
 	

@@ -28,7 +28,6 @@ class Mesa
      * @var string
      *
      * @ORM\Column(name="descripcion", type="string", length=255, nullable=false)
-	 * @Assert\NotBlank()
      */
 	protected $descripcion;
 	
@@ -46,7 +45,7 @@ class Mesa
      * @ORM\Column(name="numPersonas", type="integer", nullable=false)
 	 * @Assert\Type(
      *     type="integer",
-     *     message="Este valor debe ser un número"
+     *     message="Este valor debe ser un número."
      * )
      * @Assert\NotBlank()
      */

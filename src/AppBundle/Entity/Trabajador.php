@@ -42,6 +42,12 @@ class Trabajador
     protected $recorridos;
 
     /**
+     * @ORM\OneToOne(targetEntity="Usuario")
+     * @ORM\JoinColumn(name="idUsuario", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    protected $usuario;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="trabajadores")
      * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
      */
@@ -67,7 +73,7 @@ class Trabajador
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-	
+
     /**
      * Constructor
      */
@@ -75,8 +81,8 @@ class Trabajador
     {
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->recorridos = new \Doctrine\Common\Collections\ArrayCollection();
-		
-		$this->setCreatedAt(new \DateTime());
+
+        $this->setCreatedAt(new \DateTime());
         $this->setUpdatedAt(new \DateTime());
 
         $this->setTrash(false);
@@ -162,30 +168,6 @@ class Trabajador
     public function getTelefono()
     {
         return $this->telefono;
-    }
-
-	/**
-     * Set typeUser
-     *
-     * @param integer $typeUser
-     *
-     * @return Trabajador
-     */
-    public function setTypeUser($typeUser)
-    {
-        $this->typeUser = $typeUser;
-
-        return $this;
-    }
-
-    /**
-     * Get typeUser
-     *
-     * @return integer
-     */
-    public function getTypeUser()
-    {
-        return $this->typeUser;
     }
 
     /**
@@ -326,6 +308,30 @@ class Trabajador
     public function getRecorridos()
     {
         return $this->recorridos;
+    }
+
+    /**
+     * Set usuario
+     *
+     * @param \AppBundle\Entity\Usuario $usuario
+     *
+     * @return Trabajador
+     */
+    public function setUsuario(\AppBundle\Entity\Usuario $usuario)
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \AppBundle\Entity\Usuario
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
     }
 
     /**

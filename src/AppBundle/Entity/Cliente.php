@@ -31,9 +31,20 @@ class Cliente
     protected $apellidos;
 
     /**
+     * @ORM\OneToOne(targetEntity="Usuario")
+     * @ORM\JoinColumn(name="idUsuario", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    protected $usuario;
+
+    /**
      * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente")
      */
     protected $domicilios;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Pedido", mappedBy="cliente")
+     */
+    protected $pedidos;
 
     /**
      * @ORM\OneToMany(targetEntity="Reserva", mappedBy="cliente")
@@ -65,17 +76,18 @@ class Cliente
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-    
+
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->domicilios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
-		
-		$this->setCreatedAt(new \DateTime());
+
+        $this->setCreatedAt(new \DateTime());
         $this->setUpdatedAt(new \DateTime());
 
         $this->setTrash(false);
@@ -212,6 +224,30 @@ class Cliente
     }
 
     /**
+     * Set usuario
+     *
+     * @param \AppBundle\Entity\Usuario $usuario
+     *
+     * @return Cliente
+     */
+    public function setUsuario(\AppBundle\Entity\Usuario $usuario)
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \AppBundle\Entity\Usuario
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
+    }
+
+    /**
      * Add domicilio
      *
      * @param \AppBundle\Entity\Domicilio $domicilio
@@ -243,6 +279,40 @@ class Cliente
     public function getDomicilios()
     {
         return $this->domicilios;
+    }
+
+    /**
+     * Add pedido
+     *
+     * @param \AppBundle\Entity\Pedido $pedido
+     *
+     * @return Cliente
+     */
+    public function addPedido(\AppBundle\Entity\Pedido $pedido)
+    {
+        $this->pedidos[] = $pedido;
+
+        return $this;
+    }
+
+    /**
+     * Remove pedido
+     *
+     * @param \AppBundle\Entity\Pedido $pedido
+     */
+    public function removePedido(\AppBundle\Entity\Pedido $pedido)
+    {
+        $this->pedidos->removeElement($pedido);
+    }
+
+    /**
+     * Get pedidos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPedidos()
+    {
+        return $this->pedidos;
     }
 
     /**

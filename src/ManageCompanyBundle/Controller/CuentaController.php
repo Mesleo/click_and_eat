@@ -21,13 +21,13 @@ class CuentaController extends Controller
     public function configAccoutAction()
 	{
         $this->initialize();
-        $this->params['userLog'] = $this->em->getRepository("AppBundle:Usuario")
+        $this->params['user'] = $this->em->getRepository("AppBundle:Usuario")
             ->findOneBy([
                 'id' => $this->getUser()->getId()
             ]);
         $restaurante = $this->getRestaurante();
         if ($this->checkRestaurante($restaurante)) {
-            $this->params['usuarioRestaurante'] = $restaurante;
+            $this->params['restaurante'] = $restaurante;
             $this->params['provincias'] = $this->getProvincias();
             return $this->render('ManageCompanyBundle:Restaurante:cuenta.html.twig', $this->params);
         }
@@ -156,7 +156,7 @@ class CuentaController extends Controller
     }
 
     /**
-     * Obtengo el id del restaurante logeado (Tabla Restaurante)
+     * Obtengo el id del restaurante logeado
      *
      * @return mixed
      */
@@ -168,7 +168,7 @@ class CuentaController extends Controller
             ]);
         return  $this->em->getRepository("AppBundle:Restaurante")
             ->findOneBy([
-                'id' => $user->getRestaurante()->getId()
+                'usuario' => $user->getId()
             ]);
     }
 

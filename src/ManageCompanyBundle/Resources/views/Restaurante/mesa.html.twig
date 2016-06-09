@@ -12,7 +12,6 @@
 			<h2>Añadir mesa</h2>
 		{% endif %}
 
-		{{ form_row(form.descripcion) }}
 		<div class="row">
 			<div class="col-md-6">
 				{{ form_row(form.codMesa) }}
@@ -21,13 +20,19 @@
 				{{ form_row(form.numPersonas) }}
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<label for="descripcion">Descripción</label>
+				<input type="text" class="form-control" name="descripcion" id="descripcion" {% if mesa is defined %} value="{{ mesa.descripcion }} {% endif %}">
+			</div>
+		</div>
 
     	<div class="form-group">
     		<br />
     		<button type="submit" class="btn btn-primary">Aceptar</button>
 			<a href="{{ path('gestion_mesas') }}" class="btn btn-danger">Cancelar</a>
 			{% if mesa is defined %}
-				<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_mesa', {'id_mesa': mesa.id}) }}" data-target="#confirmDelete" data-title="Eliminar la mesa '{{ mesa.codMesa }}'" data-message="¿Estás seguro?">
+				<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_mesa', {'id_mesa': mesa.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas eliminar la mesa '{{ mesa.codMesa }}'?">
 					<i class="glyphicon glyphicon-trash"></i> Eliminar
 				</button>
 			{% endif %}

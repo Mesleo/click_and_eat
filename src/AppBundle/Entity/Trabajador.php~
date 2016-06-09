@@ -2,28 +2,18 @@
 // src/AppBundle/Entity/Trabajador.php
 namespace AppBundle\Entity;
 
-use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Trabajador
  *
  * @ORM\Entity
  * @ORM\Table(name="trabajador")
- * @UniqueEntity(
- *     fields={"username"},
- *     message="Ese nombre de usuario ya existe."
- * )
- * @UniqueEntity(
- *     fields={"email"},
- *     message="Ese correo ya ha sido registrado."
- * )
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TrabajadorRepository")
  */
-class Trabajador extends BaseUser
+class Trabajador
 {
     /**
      * @var integer
@@ -37,26 +27,9 @@ class Trabajador extends BaseUser
     /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
-	 * @Assert\NotBlank()
-     * @Assert\Length(min=6)
-     */
-    protected $nombre;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="apellidos", type="string", length=100, nullable=false)
      */
     protected $apellidos;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
-	 * @Assert\Length(min=9, max=15)
-     */
-    protected $telefono;
 
     /**
      * @ORM\OneToMany(targetEntity="Pedido", mappedBy="trabajador")
@@ -67,6 +40,12 @@ class Trabajador extends BaseUser
      * @ORM\OneToMany(targetEntity="Recorrido", mappedBy="trabajador")
      */
     protected $recorridos;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Usuario")
+     * @ORM\JoinColumn(name="idUsuario", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    protected $usuario;
 
     /**
      * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="trabajadores")
@@ -94,19 +73,16 @@ class Trabajador extends BaseUser
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-	
+
     /**
      * Constructor
      */
     public function __construct()
     {
-		parent::__construct();
-        $this->addRole("ROLE_ADMIN");
-		
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->recorridos = new \Doctrine\Common\Collections\ArrayCollection();
-		
-		$this->setCreatedAt(new \DateTime());
+
+        $this->setCreatedAt(new \DateTime());
         $this->setUpdatedAt(new \DateTime());
 
         $this->setTrash(false);
@@ -123,27 +99,27 @@ class Trabajador extends BaseUser
     }
 
     /**
-     * Set nombre
+     * Set name
      *
-     * @param string $nombre
+     * @param string $name
      *
      * @return Trabajador
      */
-    public function setNombre($nombre)
+    public function setName($name)
     {
-        $this->nombre = $nombre;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get nombre
+     * Get name
      *
      * @return string
      */
-    public function getNombre()
+    public function getName()
     {
-        return $this->nombre;
+        return $this->name;
     }
 
     /**
@@ -332,6 +308,30 @@ class Trabajador extends BaseUser
     public function getRecorridos()
     {
         return $this->recorridos;
+    }
+
+    /**
+     * Set usuario
+     *
+     * @param \AppBundle\Entity\Usuario $usuario
+     *
+     * @return Trabajador
+     */
+    public function setUsuario(\AppBundle\Entity\Usuario $usuario)
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \AppBundle\Entity\Usuario
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
     }
 
     /**

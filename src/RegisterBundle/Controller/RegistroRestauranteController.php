@@ -45,6 +45,13 @@ class RegistroRestauranteController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            $password = $this->get('security.password_encoder')
+                ->encodePassword($usuario, $usuario->getPassword());
+            $usuario->setPassword($password);
+            $usuario->addRole(1);
+
+            $this->em->persist($usuario);
+
             $restaurante = new Restaurante();
 
             $restaurante->setCif($request->request->get('cif'));
@@ -68,23 +75,17 @@ class RegistroRestauranteController extends Controller
                 $restaurante->setImg($request->files->get('foto'));
             }
             $restaurante->uploadImg();
+
+            $restaurante->setUsuario($usuario);
+
             $this->em->persist($restaurante);
-
-            $password = $this->get('security.password_encoder')
-                ->encodePassword($usuario, $usuario->getPassword());
-            $usuario->setPassword($password);
-            $usuario->addRole(1);
-            $usuario->setTypeUser(1);
-            $usuario->setRestaurante($restaurante);
-
-            $this->em->persist($usuario);
             $this->em->flush();
 
             return $this->redirectToRoute('homepage');
         }
 
         return $this->render('RegisterBundle:Web:registro.html.twig', array(
-            'restaurante' => $usuario,
+            'usuario' => $usuario,
             'provincias' => $this->params['provincias'],
             'form' => $form->createView(),
         ));
@@ -101,7 +102,7 @@ class RegistroRestauranteController extends Controller
     public function getLocalidades(Request $request)
     {
         $this->initialize();
-        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
+        $this->params['localidades'] = $this->em->getRepository("AppBundle:Localidad")
             ->findBy(
                 array('provincia' => $request->query->get('provincia')),
                 array('nombre' => 'ASC')
@@ -121,7 +122,7 @@ class RegistroRestauranteController extends Controller
     {
         $this->initialize();
         $provincia = $request->request->get('idProvincia');
-        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
+        $this->params['localidades'] = $this->em->getRepository("AppBundle:Localidad")
             ->findAll([],[
                 'idProvincia' => $provincia,
                 'nombre' => 'DESC'

@@ -1,5 +1,5 @@
 <?php
-
+// src/AppBundle/Repository/TrabajadorRepository.php
 namespace AppBundle\Repository;
 
 /**
@@ -20,8 +20,8 @@ class TrabajadorRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()
             ->createQuery(
-                'SELECT u.name, t.apellidos, t.id, u.username, u.email, u.enabled FROM AppBundle:Trabajador t, AppBundle:Usuario u WHERE t.restaurante = :idRestaurante
-                AND t.id = u.trabajador'
+                'SELECT u.name, t.apellidos, t.id, u.username, u.email, u.enabled FROM AppBundle:Trabajador t, AppBundle:Usuario u 
+                WHERE t.restaurante = :idRestaurante AND t.usuario = u.id'
             );
         $query->setParameter('idRestaurante',$idRestaurante);
         $trabajadores = $query->getResult();

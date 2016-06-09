@@ -110,6 +110,7 @@ class Producto
      */
     public function __construct()
     {
+		$this->tipoProducto = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pedido_producto = new \Doctrine\Common\Collections\ArrayCollection();
 		
 		$this->setDisponible(true);
@@ -408,26 +409,36 @@ class Producto
     }
 
     /**
-     * Set tipo
+     * Add tipoProducto
      *
-     * @param string $tipo
+     * @param \AppBundle\Entity\TipoProducto $tipoProducto
      *
      * @return Producto
      */
-    public function setTipo($tipo)
+    public function addTipoProducto(\AppBundle\Entity\TipoProducto $tipoProducto)
     {
-        $this->tipo = $tipo;
+        $this->tipoProducto[] = $tipoProducto;
 
         return $this;
     }
 
     /**
-     * Get tipo
+     * Remove tipoProducto
      *
-     * @return string
+     * @param \AppBundle\Entity\TipoProducto $tipoProducto
      */
-    public function getTipo()
+    public function removeTipoProducto(\AppBundle\Entity\TipoProducto $tipoProducto)
     {
-        return $this->tipo;
+        $this->tipoProducto->removeElement($tipoProducto);
+    }
+
+    /**
+     * Get tipoProducto
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTipoProducto()
+    {
+        return $this->tipoProducto;
     }
 }

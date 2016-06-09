@@ -99,6 +99,12 @@ class Pedido
     protected $restaurante;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="pedidos")
+     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=true)
+     */
+    protected $cliente;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Trabajador", inversedBy="pedidos")
      * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id", nullable=false)
      */
@@ -134,7 +140,7 @@ class Pedido
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-	
+
     /**
      * Constructor
      */
@@ -487,6 +493,30 @@ class Pedido
     public function getRestaurante()
     {
         return $this->restaurante;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \AppBundle\Entity\Cliente $cliente
+     *
+     * @return Pedido
+     */
+    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * Get cliente
+     *
+     * @return \AppBundle\Entity\Cliente
+     */
+    public function getCliente()
+    {
+        return $this->cliente;
     }
 
     /**

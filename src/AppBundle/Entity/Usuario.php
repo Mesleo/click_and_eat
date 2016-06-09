@@ -64,31 +64,6 @@ class Usuario extends BaseUser
     protected $telefono;
 
     /**
-     * @var integer
-     *
-	 * @ORM\Column(name="tipo_usuario", type="integer", nullable=false)
-     */
-    protected $typeUser;
-
-    /**
-     * @ORM\OneToOne(targetEntity="Restaurante")
-     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    protected $restaurante;
-
-    /**
-     * @ORM\OneToOne(targetEntity="Trabajador")
-     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    protected $trabajador;
-	
-    /**
-     * @ORM\OneToOne(targetEntity="Cliente")
-     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    private $cliente;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
@@ -172,30 +147,6 @@ class Usuario extends BaseUser
     }
 
     /**
-     * Set typeUser
-     *
-     * @param integer $typeUser
-     *
-     * @return Usuario
-     */
-    public function setTypeUser($typeUser)
-    {
-        $this->typeUser = $typeUser;
-
-        return $this;
-    }
-
-    /**
-     * Get typeUser
-     *
-     * @return integer
-     */
-    public function getTypeUser()
-    {
-        return $this->typeUser;
-    }
-
-    /**
      * Set createdAt
      *
      * @param \DateTime $createdAt
@@ -267,78 +218,6 @@ class Usuario extends BaseUser
         return $this->trash;
     }
 
-    /**
-     * Set restaurante
-     *
-     * @param \AppBundle\Entity\Restaurante $restaurante
-     *
-     * @return Usuario
-     */
-    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
-    {
-        $this->restaurante = $restaurante;
-
-        return $this;
-    }
-
-    /**
-     * Get restaurante
-     *
-     * @return \AppBundle\Entity\Restaurante
-     */
-    public function getRestaurante()
-    {
-        return $this->restaurante;
-    }
-
-    /**
-     * Set trabajador
-     *
-     * @param \AppBundle\Entity\Trabajador $trabajador
-     *
-     * @return Usuario
-     */
-    public function setTrabajador(\AppBundle\Entity\Trabajador $trabajador = null)
-    {
-        $this->trabajador = $trabajador;
-
-        return $this;
-    }
-
-    /**
-     * Get trabajador
-     *
-     * @return \AppBundle\Entity\Trabajador
-     */
-    public function getTrabajador()
-    {
-        return $this->trabajador;
-    }
-
-    /**
-     * Set cliente
-     *
-     * @param \AppBundle\Entity\Cliente $cliente
-     *
-     * @return Usuario
-     */
-    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
-    {
-        $this->cliente = $cliente;
-
-        return $this;
-    }
-
-    /**
-     * Get cliente
-     *
-     * @return \AppBundle\Entity\Cliente
-     */
-    public function getCliente()
-    {
-        return $this->cliente;
-    }
-
 	/**
      * Set enabled
      *
@@ -363,11 +242,6 @@ class Usuario extends BaseUser
         return $this->enabled;
     }
 
-	/**
-     * Agrega un rol al usuario.
-     * @throws Exception
-     * @param Rol $rol
-     */
     public function addRole($rol)
     {
         if ($rol == 1) {

@@ -37,7 +37,7 @@ class Restaurante
 	 * @Assert\NotBlank(message="Por favor introduce el CIF.")
      * @Assert\Type(
      *     type="string",
-     *     message="Este valor debería contener una letra seguida de 7 dígitos y una letra al final"
+     *     message="El cif debería contener una letra seguida de 7 dígitos y una letra al final."
      * )
      * @Assert\Length(min=9, max=9)
      */
@@ -53,7 +53,7 @@ class Restaurante
     /**
      * @var string
      *
-     * @ORM\Column(name="coordenadas", type="string", length=100, nullable=false)
+     * @ORM\Column(name="coordenadas", type="string", length=255, nullable=false)
      */
     protected $coordenadas;
 
@@ -96,10 +96,16 @@ class Restaurante
      * @ORM\Column(name="precio_envio", type="decimal", nullable=false, options={"default":"0.0"})
      * @Assert\Type(
      *     type="decimal",
-     *     message="Este valor debe ser un número"
+     *     message="Este valor debe ser un número."
      * )
      */
     protected $precio_envio;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Usuario")
+     * @ORM\JoinColumn(name="idUsuario", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    protected $usuario;
 
     /**
      * @var \DateTime
@@ -352,6 +358,8 @@ class Restaurante
     public function setImg(UploadedFile $img)
     {
         $this->img = $img;
+
+        return $this;
     }
 
     /**
@@ -363,12 +371,12 @@ class Restaurante
     }
 
     public function uploadImg()
-	{
+    {
         if (null === $this->img) {
             return;
         }
         $destiny = __DIR__.'/../../../web/uploads/restaurantes/images/';
-        $nameImg = $this->cif.'image.'.$this->img->getClientOriginalExtension();
+        $nameImg = $this->cif.'.'.$this->img->getClientOriginalExtension();
         $this->img->move($destiny, $nameImg);
         $this->setFoto($nameImg);
     }
@@ -540,8 +548,8 @@ class Restaurante
     {
         return $this->localidad;
     }
-	
-	/**
+
+    /**
      * Set provincia
      *
      * @param \AppBundle\Entity\Provincia $provincia
@@ -597,6 +605,30 @@ class Restaurante
     public function getTipoComida()
     {
         return $this->tipoComida;
+    }
+
+    /**
+     * Set usuario
+     *
+     * @param \AppBundle\Entity\Usuario $usuario
+     *
+     * @return Restaurante
+     */
+    public function setUsuario(\AppBundle\Entity\Usuario $usuario)
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \AppBundle\Entity\Usuario
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
     }
 
     /**
@@ -835,98 +867,5 @@ class Restaurante
     public function getTrabajadores()
     {
         return $this->trabajadores;
-    }
-
-	/**
-     * Set typeUser
-     *
-     * @param integer $typeUser
-     *
-     * @return Restaurante
-     */
-    public function setTypeUser($typeUser)
-    {
-        $this->typeUser = $typeUser;
-
-        return $this;
-    }
-
-    /**
-     * Get typeUser
-     *
-     * @return integer
-     */
-    public function getTypeUser()
-    {
-        return $this->typeUser;
-    }
-
-    /**
-     * Returns the salt that was originally used to encode the password.
-     *
-     * This can return null if the password was not encoded using a salt.
-     *
-     * @return string|null The salt
-     */
-    public function getSalt()
-    {
-        // you *may* need a real salt depending on your encoder
-        // see section on salt below
-        return null;
-    }
-
-    /**
-     * Returns the username used to authenticate the user.
-     *
-     * @return string The username
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-	/**
-     * Returns the password used to authenticate the user.
-     *
-     * @return string The password
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Removes sensitive data from the user.
-     *
-     * This is important if, at any given point, sensitive information like
-     * the plain-text password is stored on this object.
-     */
-    public function eraseCredentials()
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
-
-    /** @see \Serializable::serialize() */
-    public function serialize()
-    {
-        return serialize(array(
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt,
-        ));
-    }
-
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
-    {
-        list (
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt
-        ) = unserialize($serialized);
     }
 }

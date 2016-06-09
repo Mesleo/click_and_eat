@@ -32,7 +32,7 @@ class Domicilio
     /**
      * @var string
      *
-     * @ORM\Column(name="direccion_extra", type="string", length=255, nullable=false)
+     * @ORM\Column(name="direccion_extra", type="string", length=255, nullable=true)
      */
     protected $direccionExtra;
 
@@ -75,6 +75,17 @@ class Domicilio
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
+	
+	/**
+     * Constructor
+     */
+    public function __construct()
+    {
+		$this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
+        $this->setTrash(false);
+    }
 
     /**
      * Get id

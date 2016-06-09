@@ -20,7 +20,7 @@ class RestauranteRepository extends \Doctrine\ORM\EntityRepository
         $query = $this->getEntityManager()
             ->createQuery(
                 'SELECT u.name, r FROM AppBundle:Restaurante r, AppBundle:Usuario u
-                WHERE r.id = u.restaurante'
+                WHERE r.usuario = u.id'
             );
         $restaurantes = $query->getResult();
         return $restaurantes;

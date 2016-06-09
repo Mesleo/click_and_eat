@@ -97,7 +97,6 @@ class HorarioController extends Controller
 				$horario->setDescripcion($request->request->get('descripcion'.$id_horario));
 				$horario->setHoraApertura(\DateTime::createFromFormat('H:i', $request->request->get('hora_apertura'.$id_horario)));
 				$horario->setHoraCierre(\DateTime::createFromFormat('H:i', $request->request->get('hora_cierre'.$id_horario)));
-			
 				$this->em->flush();
 			}
 			return $this->redirectToRoute('gestion_horarios');
@@ -129,7 +128,7 @@ class HorarioController extends Controller
 		}
 		
 		if ($this->checkRestaurante($horario)) {
-			$restaurante = $this->em->getRepository('AppBundle:Restaurante')
+			$restaurante = $this->em->getRepository("AppBundle:Restaurante")
 				->findOneBy([
 					'id' => $this->getIdRestaurante()
 				]);
@@ -142,7 +141,7 @@ class HorarioController extends Controller
 	}
 	
 	/**
-     * Obtengo el id del restaurante logeado (Tabla Restaurante)
+     * Obtengo el id del restaurante logeado
      *
      * @return mixed
      */
@@ -154,7 +153,7 @@ class HorarioController extends Controller
             ]);
         return  $this->em->getRepository("AppBundle:Restaurante")
             ->findOneBy([
-                'id' => $user->getRestaurante()->getId()
+                'usuario' => $user->getId()
             ])->getId();
     }
 	

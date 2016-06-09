@@ -13,7 +13,6 @@
                 <thead>
                 <tr>
 				    <th>Cod Mesa</th>
-				    <th>Descripcion</th>
                     <th>Nº Personas</th>
                     <th></th>
                 </tr>
@@ -22,7 +21,6 @@
 				{% for mesa in mesas %}
 					<tr>
                         <td>{{ mesa.codMesa }}</td>
-						<td>{{ mesa.descripcion }}</td>
                         <td>{{ mesa.numPersonas }}</td>
                         <td>
                             <a href="{{ path('edit_mesa', {'id_mesa': mesa.id}) }}" class="btn btn-primary">Editar</a>

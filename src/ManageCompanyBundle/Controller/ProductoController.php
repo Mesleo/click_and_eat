@@ -97,8 +97,8 @@ class ProductoController extends Controller
 		}
 		
 		if ($this->checkRestaurante($producto)) {
+
 			$form = $this->createForm(ProductoType::class, $producto);
-			
 			$form->handleRequest($request);
 			
 			if ($form->isSubmitted() && $form->isValid()) {
@@ -194,7 +194,7 @@ class ProductoController extends Controller
             ]);
         return  $this->em->getRepository("AppBundle:Restaurante")
             ->findOneBy([
-                'id' => $user->getRestaurante()->getId()
+                'usuario' => $user->getId()
             ])->getId();
     }
 	

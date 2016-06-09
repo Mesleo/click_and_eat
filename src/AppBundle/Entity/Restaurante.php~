@@ -2,7 +2,6 @@
 // src/AppBundle/Entity/Restaurante.php
 namespace AppBundle\Entity;
 
-use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -15,20 +14,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity
  * @ORM\Table(name="restaurante")
  * @UniqueEntity(
- *     fields={"username"},
- *     message="Ese nombre de usuario ya existe."
- * )
- * @UniqueEntity(
- *     fields={"email"},
- *     message="Ese correo ya ha sido registrado."
- * )
- * @UniqueEntity(
  *     fields={"cif"},
  *     message="Ese CIF ya ha sido registrado."
  * )
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
  */
-class Restaurante extends BaseUser
+class Restaurante
 {
     /**
      * @var integer
@@ -42,19 +33,11 @@ class Restaurante extends BaseUser
     /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
-     * @Assert\NotBlank()
-     * @Assert\Length(min=6)
-     */
-    protected $nombre;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="cif", type="string", length=9, unique=true, nullable=false)
+	 * @Assert\NotBlank(message="Por favor introduce el CIF.")
      * @Assert\Type(
      *     type="string",
-     *     message="Este valor debería contener una letra seguida de 7 dígitos y una letra al final"
+     *     message="El cif debería contener una letra seguida de 7 dígitos y una letra al final."
      * )
      * @Assert\Length(min=9, max=9)
      */
@@ -70,7 +53,7 @@ class Restaurante extends BaseUser
     /**
      * @var string
      *
-     * @ORM\Column(name="coordenadas", type="string", length=100, nullable=false)
+     * @ORM\Column(name="coordenadas", type="string", length=255, nullable=false)
      */
     protected $coordenadas;
 
@@ -85,14 +68,6 @@ class Restaurante extends BaseUser
      * @ORM\JoinColumn(name="idProvincia", referencedColumnName="id", nullable=false)
      */
     protected $provincia;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
-     * @Assert\Length(min=9, max=15)
-     */
-    protected $telefono;
 
     /**
      * @var UploadedFile
@@ -116,22 +91,21 @@ class Restaurante extends BaseUser
     protected $tipoComida;
 
     /**
-     * @var float
+     * @var decimal
      *
-     * @ORM\Column(name="precio_envio", type="float", nullable=false, options={"default":"0.0"})
+     * @ORM\Column(name="precio_envio", type="decimal", nullable=false, options={"default":"0.0"})
      * @Assert\Type(
-     *     type="float",
-     *     message="Este valor debe ser un número"
+     *     type="decimal",
+     *     message="Este valor debe ser un número."
      * )
      */
     protected $precio_envio;
 
     /**
-     * @var blob
-     *
-     * @ORM\Column(name="mapa", type="blob", length=100)
+     * @ORM\OneToOne(targetEntity="Usuario")
+     * @ORM\JoinColumn(name="idUsuario", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    protected $mapa;
+    protected $usuario;
 
     /**
      * @var \DateTime
@@ -208,9 +182,6 @@ class Restaurante extends BaseUser
      */
     public function __construct()
     {
-        parent::__construct();
-        $this->addRole("ROLE_ADMIN");
-		
         $this->tipoComida = new \Doctrine\Common\Collections\ArrayCollection();
         $this->horarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
@@ -238,27 +209,27 @@ class Restaurante extends BaseUser
     }
 
     /**
-     * Set nombre
+     * Set name
      *
-     * @param string $nombre
+     * @param string $name
      *
      * @return Restaurante
      */
-    public function setNombre($nombre)
+    public function setName($name)
     {
-        $this->nombre = $nombre;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get nombre
+     * Get name
      *
      * @return string
      */
-    public function getNombre()
+    public function getName()
     {
-        return $this->nombre;
+        return $this->name;
     }
 
     /**
@@ -387,6 +358,8 @@ class Restaurante extends BaseUser
     public function setImg(UploadedFile $img)
     {
         $this->img = $img;
+
+        return $this;
     }
 
     /**
@@ -398,12 +371,12 @@ class Restaurante extends BaseUser
     }
 
     public function uploadImg()
-	{
+    {
         if (null === $this->img) {
             return;
         }
         $destiny = __DIR__.'/../../../web/uploads/restaurantes/images/';
-        $nameImg = $this->cif.'image.'.$this->img->getClientOriginalExtension();
+        $nameImg = $this->cif.'.'.$this->img->getClientOriginalExtension();
         $this->img->move($destiny, $nameImg);
         $this->setFoto($nameImg);
     }
@@ -411,7 +384,7 @@ class Restaurante extends BaseUser
     /**
      * Set precioEnvio
      *
-     * @param float $precioEnvio
+     * @param decimal $precioEnvio
      *
      * @return Restaurante
      */
@@ -425,35 +398,11 @@ class Restaurante extends BaseUser
     /**
      * Get precioEnvio
      *
-     * @return float
+     * @return decimal
      */
     public function getPrecioEnvio()
     {
         return $this->precio_envio;
-    }
-
-    /**
-     * Set mapa
-     *
-     * @param string $mapa
-     *
-     * @return Restaurante
-     */
-    public function setMapa($mapa)
-    {
-        $this->mapa = $mapa;
-
-        return $this;
-    }
-
-    /**
-     * Get mapa
-     *
-     * @return string
-     */
-    public function getMapa()
-    {
-        return $this->mapa;
     }
 
     /**
@@ -599,8 +548,8 @@ class Restaurante extends BaseUser
     {
         return $this->localidad;
     }
-	
-	/**
+
+    /**
      * Set provincia
      *
      * @param \AppBundle\Entity\Provincia $provincia
@@ -656,6 +605,30 @@ class Restaurante extends BaseUser
     public function getTipoComida()
     {
         return $this->tipoComida;
+    }
+
+    /**
+     * Set usuario
+     *
+     * @param \AppBundle\Entity\Usuario $usuario
+     *
+     * @return Restaurante
+     */
+    public function setUsuario(\AppBundle\Entity\Usuario $usuario)
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \AppBundle\Entity\Usuario
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
     }
 
     /**
@@ -894,74 +867,5 @@ class Restaurante extends BaseUser
     public function getTrabajadores()
     {
         return $this->trabajadores;
-    }
-
-    /**
-     * Returns the salt that was originally used to encode the password.
-     *
-     * This can return null if the password was not encoded using a salt.
-     *
-     * @return string|null The salt
-     */
-    public function getSalt()
-    {
-        // you *may* need a real salt depending on your encoder
-        // see section on salt below
-        return null;
-    }
-
-    /**
-     * Returns the username used to authenticate the user.
-     *
-     * @return string The username
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-	/**
-     * Returns the password used to authenticate the user.
-     *
-     * @return string The password
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Removes sensitive data from the user.
-     *
-     * This is important if, at any given point, sensitive information like
-     * the plain-text password is stored on this object.
-     */
-    public function eraseCredentials()
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
-
-    /** @see \Serializable::serialize() */
-    public function serialize()
-    {
-        return serialize(array(
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt,
-        ));
-    }
-
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
-    {
-        list (
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt
-        ) = unserialize($serialized);
     }
 }

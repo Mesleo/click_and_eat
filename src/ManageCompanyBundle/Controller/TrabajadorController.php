@@ -47,6 +47,13 @@ class TrabajadorController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+        	$password = $this->get('security.password_encoder')
+                ->encodePassword($usuario, $usuario->getPassword());
+            $usuario->setPassword($password);
+            $usuario->addRole(2);
+
+            $this->em->persist($usuario);
 			
 			$restaurante = $this->em->getRepository("AppBundle:Restaurante")
 				->findOneBy([
@@ -54,19 +61,11 @@ class TrabajadorController extends Controller
 				]);
 			$trabajador = new Trabajador();
 			$trabajador->setApellidos($request->request->get("apellidos"));
+			$trabajador->setUsuario($usuario);
 			$trabajador->setRestaurante($restaurante);
 			$restaurante->addTrabajadore($trabajador);
 			
 			$this->em->persist($trabajador);
-			
-			$password = $this->get('security.password_encoder')
-                ->encodePassword($usuario, $usuario->getPassword());
-            $usuario->setPassword($password);
-            $usuario->addRole(2);
-            $usuario->setTypeUser(2);
-			$usuario->setTrabajador($trabajador);
-
-        	$this->em->persist($usuario);
             $this->em->flush();
 			
 			return $this->redirectToRoute('gestion_trabajadores');
@@ -88,14 +87,15 @@ class TrabajadorController extends Controller
 	{
 		$this->initialize();
 		
-		$usuario = $this->em->getRepository("AppBundle:Usuario")
-			->findOneBy([
-				'trabajador' => $id_trabajador
-			]);
 		$trabajador = $this->em->getRepository("AppBundle:Trabajador")
 			->findOneBy([
-                'id' => $usuario->getTrabajador()->getId()
+                'id' => $id_trabajador
             ]);
+
+		$usuario = $this->em->getRepository("AppBundle:Usuario")
+			->findOneBy([
+				'id' => $trabajador->getUsuario()
+			]);
 		
 		if (!$usuario or !$trabajador) {
 			throw $this->createNotFoundException(
@@ -104,17 +104,18 @@ class TrabajadorController extends Controller
 		}
 		
 		if ($this->checkRestaurante($trabajador)) {
+
 			$form = $this->createForm(TrabajadorType::class, $usuario);
-			
 			$form->handleRequest($request);
 			
 			if ($form->isSubmitted() && $form->isValid()) {
-				$trabajador->setApellidos($request->request->get("apellidos"));
 				$password = $this->get('security.password_encoder')
 					->encodePassword($usuario, $usuario->getPassword());
 				$usuario->setPassword($password);
-				$usuario->setTypeUser(2);
-				$usuario->setTrabajador($trabajador);
+
+				$trabajador->setApellidos($request->request->get("apellidos"));
+				$trabajador->setUsuario($usuario);
+
 				$this->em->flush();
 				return $this->redirectToRoute('gestion_trabajadores');
 			}
@@ -143,8 +144,6 @@ class TrabajadorController extends Controller
 			->findOneBy([
                 'id' => $id_trabajador
             ]);
-		$this->em->getRepository("AppBundle:Trabajador")
-			->showEmployeesRestaurant($id_trabajador);
 		
 		if (!$trabajador) {
 			throw $this->createNotFoundException(
@@ -191,7 +190,7 @@ class TrabajadorController extends Controller
 		if ($this->checkRestaurante($trabajador)) {
 			$usuario = $this->em->getRepository("AppBundle:Usuario")
 				->findOneBy([
-					'trabajador' => $trabajador->getId()
+					'id' => $trabajador->getUsuario()
 				]);
 			$usuario->setEnabled($value);
 			$this->em->flush();
@@ -200,21 +199,7 @@ class TrabajadorController extends Controller
 	}
 
 	/**
-     * Obtengo el id del usuario logeado (Tabla Usuarios)
-     *
-     * @return mixed
-     */
-    private function getIdUser()
-    {
-        $user = $this->em->getRepository("AppBundle:Usuario")
-            ->findOneBy([
-                'id' => $this->getUser()->getId()
-            ]);
-        return $this->getIdRestaurante($user->getId());
-    }
-	
-	/**
-     * Obtengo el id del restaurante logeado (Tabla Restaurante)
+     * Obtengo el id del restaurante logeado
      *
      * @return mixed
      */
@@ -226,7 +211,7 @@ class TrabajadorController extends Controller
             ]);
         return  $this->em->getRepository("AppBundle:Restaurante")
             ->findOneBy([
-                'id' => $user->getRestaurante()->getId()
+                'usuario' => $user->getId()
             ])->getId();
     }
 	

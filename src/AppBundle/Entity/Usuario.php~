@@ -64,31 +64,6 @@ class Usuario extends BaseUser
     protected $telefono;
 
     /**
-     * @var integer
-     *
-	 * @ORM\Column(name="tipo_usuario", type="integer", nullable=false)
-     */
-    protected $typeUser;
-
-    /**
-     * @ORM\OneToOne(targetEntity="Restaurante")
-     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    protected $restaurante;
-
-    /**
-     * @ORM\OneToOne(targetEntity="Trabajador")
-     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    protected $trabajador;
-	
-    /**
-     * @ORM\OneToOne(targetEntity="Cliente")
-     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    private $cliente;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
@@ -121,5 +96,162 @@ class Usuario extends BaseUser
         $this->setUpdatedAt(new \DateTime());
 
         $this->setTrash(false);
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Usuario
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set telefono
+     *
+     * @param string $telefono
+     *
+     * @return Usuario
+     */
+    public function setTelefono($telefono)
+    {
+        $this->telefono = $telefono;
+
+        return $this;
+    }
+
+    /**
+     * Get telefono
+     *
+     * @return string
+     */
+    public function getTelefono()
+    {
+        return $this->telefono;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Usuario
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->created_at = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Usuario
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updated_at = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * Set trash
+     *
+     * @param boolean $trash
+     *
+     * @return Usuario
+     */
+    public function setTrash($trash)
+    {
+        $this->trash = $trash;
+
+        return $this;
+    }
+
+    /**
+     * Get trash
+     *
+     * @return boolean
+     */
+    public function getTrash()
+    {
+        return $this->trash;
+    }
+
+	/**
+     * Set enabled
+     *
+     * @param boolean $enabled
+     *
+     * @return Usuario
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * Get enabled
+     *
+     * @return boolean
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
+    public function addRole($rol)
+    {
+        if ($rol == 1) {
+            array_push($this->roles, 'ROLE_ADMIN');
+        }
+        else if ($rol == 2) {
+            array_push($this->roles, 'ROLE_EMPLOYEE');
+        }
+        else if ($rol == 3) {
+            array_push($this->roles, 'ROLE_USER');
+        }
     }
 }

@@ -17,13 +17,11 @@ class MesaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
     	$builder
-			->add('descripcion', TextType::class, array(
-            		"attr" => array('class' => 'form-control')
-            	))
 			->add('codMesa', TextType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
             ->add('numPersonas', NumberType::class, array(
+                    'label' => 'Número de personas',
             		"attr" => array('class' => 'form-control')
             	))
         ;

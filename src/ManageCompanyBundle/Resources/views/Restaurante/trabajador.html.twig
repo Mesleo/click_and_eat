@@ -40,7 +40,7 @@
     		<button type="submit" class="btn btn-primary">Aceptar</button>
 			<a href="{{ path('gestion_trabajadores') }}" class="btn btn-danger">Cancelar</a>
 			{% if trabajador is defined %}
-				<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_trabajador', {'id_trabajador': trabajador.id}) }}" data-target="#confirmDelete" data-title="Eliminar el trabajador '{{ trabajador.apellidos }}'" data-message="¿Estás seguro?">
+				<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_trabajador', {'id_trabajador': trabajador.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas eliminar el trabajador '{{ trabajador.apellidos }}'?">
 					<i class="glyphicon glyphicon-trash"></i> Eliminar
 				</button>
 			{% endif %}
