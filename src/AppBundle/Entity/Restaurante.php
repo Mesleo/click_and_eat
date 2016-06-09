@@ -2,8 +2,8 @@
 // src/AppBundle/Entity/Restaurante.php
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -13,19 +13,19 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @ORM\Entity
  * @ORM\Table(name="restaurante")
- *
  * @UniqueEntity(
  *     fields={"cif"},
  *     message="Ese CIF ya ha sido registrado."
  * )
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RestauranteRepository")
  */
-class Restaurante{
-
-
+class Restaurante
+{
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -34,13 +34,29 @@ class Restaurante{
      * @var string
      *
      * @ORM\Column(name="cif", type="string", length=9, unique=true, nullable=false)
+	 * @Assert\NotBlank(message="Por favor introduce el CIF.")
      * @Assert\Type(
      *     type="string",
-     *     message="Este valor debería contener una letra seguida de 7 dígitos y una letra al final"
+     *     message="El cif debería contener una letra seguida de 7 dígitos y una letra al final."
      * )
      * @Assert\Length(min=9, max=9)
      */
     protected $cif;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu nombre.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=3,
+     *     max=255,
+     *     minMessage="El nombre introducido es demasiado corto.",
+     *     maxMessage="El nombre introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $name;
 
     /**
      * @var string
@@ -52,7 +68,22 @@ class Restaurante{
     /**
      * @var string
      *
-     * @ORM\Column(name="coordenadas", type="string", length=100, nullable=false)
+     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu telefono.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=9,
+     *     max=15,
+     *     minMessage="El numero de telefono introducido es demasiado corto.",
+     *     maxMessage="El numero de telefono introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $telefono;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="coordenadas", type="string", length=255, nullable=false)
      */
     protected $coordenadas;
 
@@ -93,19 +124,14 @@ class Restaurante{
      * @var string
      *
      * @ORM\Column(name="precio_envio", type="string", nullable=false, options={"default":"0.0"})
-     * @Assert\Type(
-     *     type="string",
-     *     message="Este valor debe ser un número"
-     * )
      */
     protected $precio_envio;
 
     /**
-     * @var blob
-     *
-     * @ORM\Column(name="mapa", type="blob", length=100)
+     * @ORM\OneToOne(targetEntity="Usuario")
+     * @ORM\JoinColumn(name="idUsuario", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    protected $mapa;
+    protected $usuario;
 
     /**
      * @var \DateTime
@@ -120,6 +146,11 @@ class Restaurante{
      * @ORM\Column(name="fecha_baja", type="datetime", nullable=true)
      */
     protected $fecha_baja;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Horario", mappedBy="restaurante")
+     */
+    protected $horarios;
 
     /**
      * @ORM\OneToMany(targetEntity="Comentario", mappedBy="restaurante")
@@ -152,9 +183,25 @@ class Restaurante{
     protected $trabajadores;
 
     /**
-     * @ORM\OneToMany(targetEntity="Horario", mappedBy="restaurante")
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
-    protected $horarios;
+    protected $created_at;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     */
+    protected $updated_at;
+
+    /**
+     * @var boolean 
+     *
+     * @ORM\Column(name="trash", type="boolean", options={"default":0})
+     */
+    protected $trash;
 
     /**
      * Constructor
@@ -162,14 +209,19 @@ class Restaurante{
     public function __construct()
     {
         $this->tipoComida = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->horarios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mesas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->productos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->trabajadores = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->fecha_alta = new \DateTime();
+
+        $this->setFechaAlta(new \DateTime());
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
+        $this->setTrash(false);
     }
 
     /**
@@ -183,27 +235,27 @@ class Restaurante{
     }
 
     /**
-     * Set nombre
+     * Set name
      *
-     * @param string $nombre
+     * @param string $name
      *
      * @return Restaurante
      */
-    public function setNombre($nombre)
+    public function setName($name)
     {
-        $this->nombre = $nombre;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get nombre
+     * Get name
      *
      * @return string
      */
-    public function getNombre()
+    public function getName()
     {
-        return $this->nombre;
+        return $this->name;
     }
 
     /**
@@ -332,6 +384,8 @@ class Restaurante{
     public function setImg(UploadedFile $img)
     {
         $this->img = $img;
+
+        return $this;
     }
 
     /**
@@ -342,21 +396,21 @@ class Restaurante{
         return $this->img;
     }
 
-    public function uploadImg(){
+    public function uploadImg()
+    {
         if (null === $this->img) {
             return;
         }
         $destiny = __DIR__.'/../../../web/uploads/restaurantes/images/';
-        $nameImg = $this->cif.'image.'.$this->img->getClientOriginalExtension();
+        $nameImg = $this->cif.'.'.$this->img->getClientOriginalExtension();
         $this->img->move($destiny, $nameImg);
         $this->setFoto($nameImg);
     }
 
-
     /**
      * Set precioEnvio
      *
-     * @param float $precioEnvio
+     * @param decimal $precioEnvio
      *
      * @return Restaurante
      */
@@ -370,35 +424,11 @@ class Restaurante{
     /**
      * Get precioEnvio
      *
-     * @return float
+     * @return decimal
      */
     public function getPrecioEnvio()
     {
         return $this->precio_envio;
-    }
-
-    /**
-     * Set mapa
-     *
-     * @param string $mapa
-     *
-     * @return Restaurante
-     */
-    public function setMapa($mapa)
-    {
-        $this->mapa = $mapa;
-
-        return $this;
-    }
-
-    /**
-     * Get mapa
-     *
-     * @return string
-     */
-    public function getMapa()
-    {
-        return $this->mapa;
     }
 
     /**
@@ -450,6 +480,54 @@ class Restaurante{
     }
 
     /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Restaurante
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->created_at = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Restaurante
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updated_at = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
+    }
+
+    /**
      * Set trash
      *
      * @param boolean $trash
@@ -498,6 +576,30 @@ class Restaurante{
     }
 
     /**
+     * Set provincia
+     *
+     * @param \AppBundle\Entity\Provincia $provincia
+     *
+     * @return Restaurante
+     */
+    public function setProvincia(\AppBundle\Entity\Provincia $provincia)
+    {
+        $this->provincia = $provincia;
+
+        return $this;
+    }
+
+    /**
+     * Get provincia
+     *
+     * @return \AppBundle\Entity\Provincia
+     */
+    public function getProvincia()
+    {
+        return $this->provincia;
+    }
+
+    /**
      * Add tipoComida
      *
      * @param \AppBundle\Entity\TipoComida $tipoComida
@@ -529,6 +631,64 @@ class Restaurante{
     public function getTipoComida()
     {
         return $this->tipoComida;
+    }
+
+    /**
+     * Set usuario
+     *
+     * @param \AppBundle\Entity\Usuario $usuario
+     *
+     * @return Restaurante
+     */
+    public function setUsuario(\AppBundle\Entity\Usuario $usuario)
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \AppBundle\Entity\Usuario
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
+    }
+
+    /**
+     * Add horario
+     *
+     * @param \AppBundle\Entity\Horario $horario
+     *
+     * @return Restaurante
+     */
+    public function addHorario(\AppBundle\Entity\Horario $horario)
+    {
+        $this->horarios[] = $horario;
+
+        return $this;
+    }
+
+    /**
+     * Remove horario
+     *
+     * @param \AppBundle\Entity\Horario $horario
+     */
+    public function removeHorario(\AppBundle\Entity\Horario $horario)
+    {
+        $this->horarios->removeElement($horario);
+    }
+
+    /**
+     * Get horarios
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getHorarios()
+    {
+        return $this->horarios;
     }
 
     /**
@@ -640,7 +800,7 @@ class Restaurante{
      *
      * @return Restaurante
      */
-    public function addproducto(\AppBundle\Entity\Producto $producto)
+    public function addProducto(\AppBundle\Entity\Producto $producto)
     {
         $this->productos[] = $producto;
 
@@ -652,7 +812,7 @@ class Restaurante{
      *
      * @param \AppBundle\Entity\Producto $producto
      */
-    public function removeproducto(\AppBundle\Entity\Producto $producto)
+    public function removeProducto(\AppBundle\Entity\Producto $producto)
     {
         $this->productos->removeElement($producto);
     }
@@ -662,7 +822,7 @@ class Restaurante{
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getproductos()
+    public function getProductos()
     {
         return $this->productos;
     }
@@ -733,166 +893,5 @@ class Restaurante{
     public function getTrabajadores()
     {
         return $this->trabajadores;
-    }
-
-    /**
-     * Returns the salt that was originally used to encode the password.
-     *
-     * This can return null if the password was not encoded using a salt.
-     *
-     * @return string|null The salt
-     */
-    public function getSalt()
-    {
-        // you *may* need a real salt depending on your encoder
-        // see section on salt below
-        return null;
-    }
-
-    /**
-     * Returns the username used to authenticate the user.
-     *
-     * @return string The username
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Removes sensitive data from the user.
-     *
-     * This is important if, at any given point, sensitive information like
-     * the plain-text password is stored on this object.
-     */
-    public function eraseCredentials()
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
-
-    /** @see \Serializable::serialize() */
-    public function serialize()
-    {
-        return serialize(array(
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt,
-        ));
-    }
-
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
-    {
-        list (
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt
-        ) = unserialize($serialized);
-    }
-
-
-    /**
-     * Set provincia
-     *
-     * @param \AppBundle\Entity\Provincia $provincia
-     *
-     * @return Restaurante
-     */
-    public function setProvincia(\AppBundle\Entity\Provincia $provincia)
-    {
-        $this->provincia = $provincia;
-
-        return $this;
-    }
-
-    /**
-     * Get provincia
-     *
-     * @return \AppBundle\Entity\Provincia
-     */
-    public function getProvincia()
-    {
-        return $this->provincia;
-    }
-
-    /**
-     * Get horario
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getHorario()
-    {
-        return $this->horario;
-    }
-
-    /**
-     * Set horario
-     *
-     * @param \AppBundle\Entity\Horario $horario
-     *
-     * @return Restaurante
-     */
-    public function setHorario(\AppBundle\Entity\Horario $horario = null)
-    {
-        $this->horario = $horario;
-
-        return $this;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     *
-     * @return Restaurante
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set typeUser
-     *
-     * @param integer $typeUser
-     *
-     * @return Restaurante
-     */
-    public function setTypeUser($typeUser)
-    {
-        $this->typeUser = $typeUser;
-
-        return $this;
-    }
-
-    /**
-     * Get typeUser
-     *
-     * @return integer
-     */
-    public function getTypeUser()
-    {
-        return $this->typeUser;
     }
 }

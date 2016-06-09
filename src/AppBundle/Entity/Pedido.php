@@ -546,4 +546,52 @@ class Pedido
     {
         return $this->ticket;
     }
+
+    /**
+     * Set fechaHoraRealizado
+     *
+     * @param \DateTime $fechaHoraRealizado
+     *
+     * @return Pedido
+     */
+    public function setFechaHoraRealizado($fechaHoraRealizado)
+    {
+        $this->fechaHoraRealizado = $fechaHoraRealizado;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaHoraRealizado
+     *
+     * @return \DateTime
+     */
+    public function getFechaHoraRealizado()
+    {
+        return $this->fechaHoraRealizado;
+    }
+
+    /**
+     * Set pagado
+     *
+     * @param boolean $pagado
+     *
+     * @return Pedido
+     */
+    public function setPagado($pagado)
+    {
+        $this->pagado = $pagado;
+
+        return $this;
+    }
+
+    /**
+     * Get pagado
+     *
+     * @return boolean
+     */
+    public function getPagado()
+    {
+        return $this->pagado;
+    }
 }

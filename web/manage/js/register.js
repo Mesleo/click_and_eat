@@ -3,7 +3,7 @@
     var inputCoords, divLocation, selectProvincia, selectLocalidad;
 
     function initVars(){
-        inputCoords = $("#restaurante_coordenadas");
+        inputCoords = $("#coordenadas");
         divLocation = $('.info-coordenadas');
         selectProvincia = $('#provincias');
         selectLocalidad = $('#localidades');
@@ -24,7 +24,7 @@
 
     function changeLocalidades(b){
         $("#select-localidades select").empty();
-        $.getJSON('localidad?provincia='+b,function(data){
+        $.getJSON('localidades?provincia='+b,function(data){
             $.each(data, function(id,value){
                 $("#select-localidades select").append('<option value="'+value[2]+'">'+value[0]+' ('+value[1]+') </option>');
             });

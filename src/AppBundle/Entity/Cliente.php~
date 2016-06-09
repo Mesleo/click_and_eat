@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Cliente
@@ -14,10 +15,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Cliente
 {
-
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -25,13 +27,41 @@ class Cliente
     /**
      * @var string
      *
-     * @ORM\Column(name="apellidos", type="string", length=100, nullable=true)
+     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu nombre.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=3,
+     *     max=255,
+     *     minMessage="El nombre introducido es demasiado corto.",
+     *     maxMessage="El nombre introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="apellidos", type="string", length=100, nullable=false)
      */
     protected $apellidos;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     *
+     */
+    protected $telefono;
 
     /**
-     * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="Usuario")
+     * @ORM\JoinColumn(name="idUsuario", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    protected $usuario;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente")
      */
     protected $domicilios;
 
@@ -51,12 +81,26 @@ class Cliente
     protected $comentarios;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    protected $created_at;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     */
+    protected $updated_at;
+
+    /**
      * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-    
+
     /**
      * Constructor
      */
@@ -66,9 +110,46 @@ class Cliente
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
+
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
         $this->setTrash(false);
     }
 
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Cliente
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
     /**
      * Set apellidos
@@ -92,6 +173,78 @@ class Cliente
     public function getApellidos()
     {
         return $this->apellidos;
+    }
+
+    /**
+     * Set telefono
+     *
+     * @param string $telefono
+     *
+     * @return Cliente
+     */
+    public function setTelefono($telefono)
+    {
+        $this->telefono = $telefono;
+
+        return $this;
+    }
+
+    /**
+     * Get telefono
+     *
+     * @return string
+     */
+    public function getTelefono()
+    {
+        return $this->telefono;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return Cliente
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->created_at = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Cliente
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updated_at = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
     }
 
     /**
@@ -119,29 +272,28 @@ class Cliente
     }
 
     /**
-     * Set name
+     * Set usuario
      *
-     * @param string $name
+     * @param \AppBundle\Entity\Usuario $usuario
      *
      * @return Cliente
      */
-    public function setName($name)
+    public function setUsuario(\AppBundle\Entity\Usuario $usuario)
     {
-        $this->name = $name;
+        $this->usuario = $usuario;
 
         return $this;
     }
 
     /**
-     * Get name
+     * Get usuario
      *
-     * @return string
+     * @return \AppBundle\Entity\Usuario
      */
-    public function getName()
+    public function getUsuario()
     {
-        return $this->name;
+        return $this->usuario;
     }
-
 
     /**
      * Add domicilio
@@ -277,15 +429,5 @@ class Cliente
     public function getComentarios()
     {
         return $this->comentarios;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 }

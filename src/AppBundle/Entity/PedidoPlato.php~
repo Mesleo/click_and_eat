@@ -195,11 +195,11 @@ class PedidoPlato
     /**
      * Set plato
      *
-     * @param \AppBundle\Entity\Producto $plato
+     * @param \AppBundle\Entity\Plato $plato
      *
      * @return PedidoPlato
      */
-    public function setPlato(\AppBundle\Entity\Producto $plato = null)
+    public function setPlato(\AppBundle\Entity\Plato $plato = null)
     {
         $this->plato = $plato;
 
@@ -209,7 +209,7 @@ class PedidoPlato
     /**
      * Get plato
      *
-     * @return \AppBundle\Entity\Producto
+     * @return \AppBundle\Entity\Plato
      */
     public function getPlato()
     {

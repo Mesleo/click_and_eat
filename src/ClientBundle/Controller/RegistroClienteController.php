@@ -6,11 +6,14 @@ use AppBundle\Entity\Cliente;
 use AppBundle\Entity\Domicilio;
 use AppBundle\Entity\Localidad;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use AppBundle\Entity\Restaurante;
 use RegisterBundle\Form\RestauranteType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 
 class RegistroClienteController extends Controller
@@ -20,7 +23,15 @@ class RegistroClienteController extends Controller
     private $params = null;
 
     /**
-     * @Route("/registro", name="registro_cliente" )
+     * @Route("/")
+     */
+    public function indexAction()
+    {
+        return $this->render('RegisterBundle:Base:base.html.twig');
+    }
+
+    /**
+     * @Route("/cliente", name="registro_cliente")
      */
     public function registerClientAction(Request $request)
     {
@@ -37,15 +48,13 @@ class RegistroClienteController extends Controller
                 ]);
             $domicilio = new Domicilio();
             $domicilio->setDomicilio($request->request->get("direccion"));
-            $domicilio->setDireccionExtra($request->request->get("direccion-extra"));
+            $domicilio->setDomicilio($request->request->get("direccion-extra"));
             $domicilio->setLocalidad($localidad);
             $domicilio->setCodigoPostal($localidad->getCodigoPostal());
             $cliente = new Cliente();
             $cliente->addDomicilio($domicilio);
             $cliente->setApellidos($request->request->get("apellidos"));
-            if(!$this->isValidTelefono($request->request->get("telefono"))){
-                $this->params['info'] = "El número de teléfono no es válido";
-            }else $usuario->setTelefono($request->request->get("telefono"));
+            $cliente->setTelefono($request->request->get("telefono"));
             $domicilio->setCliente($cliente);
             $this->em->persist($cliente);
             $password = $this->get('security.password_encoder')
@@ -53,14 +62,13 @@ class RegistroClienteController extends Controller
             $usuario->setPassword($password);
             $usuario->addRole(3);
             $usuario->setTypeUser(3);
-            $usuario->setIdCliente($cliente);
 
             $this->em->persist($usuario);
             $this->em->flush();
             return $this->redirectToRoute('homepage');
         }
 
-        return $this->render('RegisterBundle:Web:registro_cliente.html.twig', array(
+        return $this->render('ClientBundle:Cliente:registro_cliente.html.twig', array(
             'restaurante' => $usuario,
             'provincias' => $this->params['provincias'],
             'form'    => $form->createView()
@@ -71,7 +79,7 @@ class RegistroClienteController extends Controller
     /**
      * Muestra las localidades a partir de una consulta pasada a JSON
      *
-     * @Route("/localidad", name="localidades_json")
+     * @Route("/cliente/localidad", name="localidades_json")
      * @return [type]              [description]
      */
     public function getLocalidades(Request $request){
@@ -107,10 +115,6 @@ class RegistroClienteController extends Controller
             ->findAll([],[
                 "nombre" => "ASC"
             ]);
-    }
-
-    private function isValidTelefono($value){
-
     }
 
     private function initialize(){

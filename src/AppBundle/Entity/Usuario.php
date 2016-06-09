@@ -1,18 +1,16 @@
 <?php
 // src/AppBundle/Entity/Usuario.php
-
 namespace AppBundle\Entity;
 
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
 
 /**
  * Usuario
+ *
  * @ORM\Entity
  * @ORM\Table(name="usuario")
  * @UniqueEntity(
@@ -26,70 +24,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Usuario extends BaseUser
 {
-    /**
+	/**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     *
-     * @Assert\NotBlank(message="Please enter your name.")
-     * @Assert\Length(
-     *     min=3,
-     *     max=255,
-     *     minMessage="The name is too short.",
-     *     maxMessage="The name is too long.",
-     *     groups={"Registration", "Profile"}
-     * )
-     */
-    protected $name;
-
-    /**
-     * @var string
-     * @ORM\Column(name="telefono", type="string", length=255)
-     *
-     * @Assert\NotBlank(message="Please enter your phone.")
-     * @Assert\Length(
-     *     min=9,
-     *     max=15,
-     *     minMessage="The number phone is too short.",
-     *     maxMessage="The number phone is too long.",
-     *     groups={"Registration", "Profile"}
-     * )
-     */
-    protected $telefono;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="tipo_usuario", type="integer", length=255, nullable=true)
-     */
-    private $typeUser;
-
-    /**
-     * @var integer
-     *
-     * @ORM\OneToOne(targetEntity="Restaurante")
-     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    private $idRestaurante;
-    /**
-     * @var integer
-     *
-     * @ORM\OneToOne(targetEntity="Trabajador")
-     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    private $idTrabajador;
-    /**
-     * @var integer
-     *
-     * @ORM\OneToOne(targetEntity="Cliente")
-     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    private $idCliente;
 
     /**
      * @var \DateTime
@@ -106,11 +48,18 @@ class Usuario extends BaseUser
     protected $updated_at;
 
     /**
-     * @var boolean
+     * @var boolean 
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="tipo_usuario", type="integer")
+     */
+    protected $typeUser;
 
     /**
      * Constructor
@@ -118,85 +67,13 @@ class Usuario extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        $this->addRole("ROLE_ADMIN");
+
         $this->setCreatedAt(new \DateTime());
         $this->setUpdatedAt(new \DateTime());
 
         $this->setTrash(false);
     }
 
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     *
-     * @return Usuario
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set telefono
-     *
-     * @param string $telefono
-     *
-     * @return Usuario
-     */
-    public function setTelefono($telefono)
-    {
-        $this->telefono = $telefono;
-
-        return $this;
-    }
-
-    /**
-     * Get telefono
-     *
-     * @return string
-     */
-    public function getTelefono()
-    {
-        return $this->telefono;
-    }
-
-    /**
-     * Set typeUser
-     *
-     * @param integer $typeUser
-     *
-     * @return Usuario
-     */
-    public function setTypeUser($typeUser)
-    {
-        $this->typeUser = $typeUser;
-
-        return $this;
-    }
-
-    /**
-     * Get typeUser
-     *
-     * @return integer
-     */
-    public function getTypeUser()
-    {
-        return $this->typeUser;
-    }
 
     /**
      * Set createdAt
@@ -270,92 +147,63 @@ class Usuario extends BaseUser
         return $this->trash;
     }
 
-    /**
-     * Set idRestaurante
+	/**
+     * Set enabled
      *
-     * @param \AppBundle\Entity\Restaurante $idRestaurante
+     * @param boolean $enabled
      *
      * @return Usuario
      */
-    public function setIdRestaurante(\AppBundle\Entity\Restaurante $idRestaurante = null)
+    public function setEnabled($enabled)
     {
-        $this->idRestaurante = $idRestaurante;
+        $this->enabled = $enabled;
 
         return $this;
     }
 
     /**
-     * Get idRestaurante
+     * Get enabled
      *
-     * @return \AppBundle\Entity\Restaurante
+     * @return boolean
      */
-    public function getIdRestaurante()
+    public function getEnabled()
     {
-        return $this->idRestaurante;
+        return $this->enabled;
     }
 
     /**
-     * Set idTrabajador
+     * Set $typeUser
      *
-     * @param \AppBundle\Entity\Trabajador $idTrabajador
+     * @param boolean $typeUser
      *
      * @return Usuario
      */
-    public function setIdTrabajador(\AppBundle\Entity\Trabajador $idTrabajador = null)
+    public function setTypeUser($typeUser)
     {
-        $this->idTrabajador = $idTrabajador;
+        $this->typeUser = $typeUser;
 
         return $this;
     }
 
     /**
-     * Get idTrabajador
+     * Get $typeUser
      *
-     * @return \AppBundle\Entity\Trabajador
+     * @return boolean
      */
-    public function getIdTrabajador()
+    public function getTypeUser()
     {
-        return $this->idTrabajador;
+        return $this->$typeUser;
     }
 
-    /**
-     * Set idCliente
-     *
-     * @param \AppBundle\Entity\Cliente $idCliente
-     *
-     * @return Usuario
-     */
-    public function setIdCliente(\AppBundle\Entity\Cliente $idCliente = null)
+    public function addRole($rol)
     {
-        $this->idCliente = $idCliente;
-
-        return $this;
-    }
-
-    /**
-     * Get idCliente
-     *
-     * @return \AppBundle\Entity\Cliente
-     */
-    public function getIdCliente()
-    {
-        return $this->idCliente;
-    }
-
-    /**
-     * Agrega un rol al usuario.
-     * @throws Exception
-     * @param Rol $rol
-     */
-    public function addRole( $rol )
-    {
-        if($rol == 1) {
+        if ($rol == 1) {
             array_push($this->roles, 'ROLE_ADMIN');
         }
-        else if($rol == 2) {
+        else if ($rol == 2) {
             array_push($this->roles, 'ROLE_EMPLOYEE');
         }
-        else if($rol == 3) {
+        else if ($rol == 3) {
             array_push($this->roles, 'ROLE_USER');
         }
     }

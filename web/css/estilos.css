@@ -15,6 +15,19 @@
 	font-style: normal;
 }
 
+.alert-danger{
+	font-size: 1em;
+}
+
+aside {
+	width: 20%;
+	vertical-align: top;
+}
+
+aside, .cont {
+	display: inline-block;
+}
+
 body {
 	background: #EEEEEE;
 }
@@ -24,23 +37,48 @@ span.twitter-typeahead {
 	width: 100% !important;
 }
 
+#button {
+	display: inline-block;
+	margin-left: 2em;
+	width: 20%;
+}
+
 .btn-buscar {
-	background: #FFA000;
+	background: #689F38;
 	color: #FFFFFF;
 	padding: 0.8em 2em;
 	width: 100%;
 }
 
-.btn-custom1{
+.btn-custom1 {
 	border-radius: 0 !important;
 	box-shadow: .2rem .1rem .1rem .1rem #a7a7a7, .2rem .1rem .1rem .1rem #a7a7a7;
 }
 
 .btn-connect {
-	background: #FFA000;
+	background: #689F38;
 	color: #FFFFFF;
 	margin-left: 42%;
 	padding: 0.8em 2em;
+}
+
+.btn-principal {
+	background: #689F38;
+	color: #FFFFFF;
+	display: block;
+	margin-bottom: 1em;
+	padding: 0.8em 2em;
+}
+
+.btn-register {
+	background: #689F38;
+	color: #FFFFFF;
+	font-size: 26px;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	padding-top: 1em;
+	padding-bottom: 1em;
+	width: 40%;
 }
 
 #buscar, #wrap {
@@ -49,12 +87,26 @@ span.twitter-typeahead {
 	padding: 1em 1em;
 }
 
-.container form> div{
+#company {
+	text-align: center;
+	width: 50%;
+}
+
+.cont {
+	margin-left: 1em;
+	width: 75%;
+}
+
+.container form> div {
 	margin-bottom: 15px;
 }
 
 .contenido {
+	background: rgba(190,190,190,0.8);
 	display: inline-block;
+	padding-top: 1em;
+	padding-bottom: 1em;
+	text-align: center;
 	width: 33%;
 }
 
@@ -74,7 +126,7 @@ h1, h3 {
 }
 
 h1 {
-	color: #FFC107;
+	color: #689F38;
 	font-size: 54px;
 	font-weight: bold;
 	margin: 0;
@@ -89,6 +141,14 @@ header {
 	padding-bottom: 3em;
 }
 
+#icon {
+	font-size: 22px;
+}
+
+img {
+	vertical-align: top;
+}
+
 #infor {
 	display: block;
 	margin: 10% 0;
@@ -96,7 +156,6 @@ header {
 
 #login {
 	background: rgba(255,255,255,0.9);
-	*margin: 2em;
 	padding: 2em;
 }
 
@@ -107,13 +166,13 @@ header {
 }
 
 .navbar-default {
-	background: #28d55a;
+	background: #8BC34A;
 	margin: 0;
 	box-shadow: .4rem .1rem .1rem .1rem #a7a7a7, .4rem .1rem .1rem .1rem #a7a7a7;
 }
 
-.navbar-default a{
-	color: #eeeeee !important;
+.navbar-default a {
+	color: #EEEEEE !important;
 	text-shadow: 1px 1px 0px  #800400;
 }
 
@@ -122,28 +181,106 @@ p {
 	margin-bottom: 1em;
 }
 
+#registro {
+	padding-top: 2em;
+	padding-bottom: 2em;
+}
+
 .required:after {
 	content: " (*)";
 }
 
-
-.subtitulo {
-	font-size: 40px;
-	*text-shadow: 1px 1px 1px #FFFFFF;
+.titulo, .subtitulo {
+	text-shadow: 1px 1px 1px #FFFFFF;
 }
 
+.subtitulo {
+	color: #689F38;
+	font-size: 40px;
+}
+
+.table {
+	margin-top: 2em;
+}
+
+#view {
+	display: inline-block;
+	margin-left: 2em;
+	width: 50%;
+}
+
+@media (max-width: 1200px) {
+	#button {
+		text-align: center;
+		display: block;
+		margin-top: 1em;
+		margin-left: 0;
+		width: 100%;
+	}
+	.btn-principal {
+		display: inline-block;
+	}
+} 
 
 @media (max-width: 991px) {
+	#button {
+		text-align: center;
+		display: block;
+		margin-top: 1em;
+		margin-left: 0;
+		width: 100%;
+	}
+	.btn-principal {
+		display: inline-block;
+	}
+	.cont {
+		margin-left: 0;
+	}
+	img {
+		margin-top: 1em;
+	}
 	#infor {
 		display: none;
 	}
 	#login {
 		margin: 0 2em;
 	}
+	#view {
+		width: 60%;
+	}
 }
 
 @media (max-width: 767px) {
+	aside, .cont {
+		display: block;
+		width: 100%;
+	}
+	#button {
+		text-align: center;
+		display: block;
+		margin-top: 1em;
+		margin-left: 0;
+		width: 100%;
+	}
 	.btn-connect {
 		margin-left: 40%;
+	}
+	.btn-principal {
+		display: inline-block;
+	}
+	.cont {
+		margin-left: 0;
+	}
+	h2 {
+		font-size: 20px;
+	}
+	img {
+		margin-top: 1em;
+		height: 30%;
+		width: 30%;
+	}
+	#view {
+		margin-left: 1em;
+		width: 60%;
 	}
 }

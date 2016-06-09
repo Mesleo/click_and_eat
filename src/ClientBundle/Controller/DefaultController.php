@@ -1,5 +1,5 @@
 <?php
-
+// src/ClientBundle/Controller/DefaultController.php
 namespace ClientBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -24,7 +24,7 @@ class DefaultController extends Controller
                     "id" => $this->getUser()->getId()
                 ]);
         }
-        return $this->render('ClientBundle:Cliente:cliente.html.twig', $this->params);
+        return $this->render('ClientBundle:Page:index.html.twig', $this->params);
     }
 
     /**
@@ -34,18 +34,10 @@ class DefaultController extends Controller
     {
         $this->initialize();
         $this->params['restaurantes'] = $this->em->getRepository("AppBundle:Restaurante")
-            ->showRestaurantes();
+                ->showRestaurantes();
+
         return $this->render('ClientBundle:Restaurante:show.html.twig', $this->params);
 
-    }
-
-    /**
-     * @Route("/registroClientes", name="controlador_registro_cliente")
-     */
-    public function registerClienteAction()
-    {
-
-        return $this->redirectToRoute('registro_clientes');
     }
 
     private function initialize()

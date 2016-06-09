@@ -55,12 +55,6 @@ class PedidoProducto
      */
     protected $descuento;
 
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="total", type="float", nullable=false)
-     */
-    protected $total;
 
     /**
      * Get id

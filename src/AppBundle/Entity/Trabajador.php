@@ -5,22 +5,22 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 /**
  * Trabajador
  *
  * @ORM\Entity
  * @ORM\Table(name="trabajador")
- *
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TrabajadorRepository")
  */
 class Trabajador
 {
-
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -28,9 +28,39 @@ class Trabajador
     /**
      * @var string
      *
+     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu nombre.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=3,
+     *     max=255,
+     *     minMessage="El nombre introducido es demasiado corto.",
+     *     maxMessage="El nombre introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $name;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="apellidos", type="string", length=100, nullable=false)
      */
     protected $apellidos;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu telefono.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=9,
+     *     max=15,
+     *     minMessage="El numero de telefono introducido es demasiado corto.",
+     *     maxMessage="El numero de telefono introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $telefono;
 
     /**
      * @ORM\OneToMany(targetEntity="Pedido", mappedBy="trabajador")
@@ -43,11 +73,37 @@ class Trabajador
     protected $recorridos;
 
     /**
+     * @ORM\OneToOne(targetEntity="Usuario")
+     * @ORM\JoinColumn(name="idUsuario", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    protected $usuario;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="trabajadores")
      * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
      */
     protected $restaurante;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    protected $created_at;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     */
+    protected $updated_at;
+
+    /**
+     * @var boolean 
+     *
+     * @ORM\Column(name="trash", type="boolean", options={"default":0})
+     */
+    protected $trash;
 
     /**
      * Constructor
@@ -56,30 +112,21 @@ class Trabajador
     {
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->recorridos = new \Doctrine\Common\Collections\ArrayCollection();
+
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
+        $this->setTrash(false);
     }
 
     /**
-     * Set apellidos
+     * Get id
      *
-     * @param string $apellidos
-     *
-     * @return Trabajador
+     * @return integer
      */
-    public function setApellidos($apellidos)
+    public function getId()
     {
-        $this->apellidos = $apellidos;
-
-        return $this;
-    }
-
-    /**
-     * Get apellidos
-     *
-     * @return string
-     */
-    public function getApellidos()
-    {
-        return $this->apellidos;
+        return $this->id;
     }
 
     /**
@@ -107,6 +154,30 @@ class Trabajador
     }
 
     /**
+     * Set apellidos
+     *
+     * @param string $apellidos
+     *
+     * @return Trabajador
+     */
+    public function setApellidos($apellidos)
+    {
+        $this->apellidos = $apellidos;
+
+        return $this;
+    }
+
+    /**
+     * Get apellidos
+     *
+     * @return string
+     */
+    public function getApellidos()
+    {
+        return $this->apellidos;
+    }
+
+    /**
      * Set telefono
      *
      * @param string $telefono
@@ -131,27 +202,51 @@ class Trabajador
     }
 
     /**
-     * Set typeUser
+     * Set createdAt
      *
-     * @param integer $typeUser
+     * @param \DateTime $createdAt
      *
      * @return Trabajador
      */
-    public function setTypeUser($typeUser)
+    public function setCreatedAt($createdAt)
     {
-        $this->typeUser = $typeUser;
+        $this->created_at = $createdAt;
 
         return $this;
     }
 
     /**
-     * Get typeUser
+     * Get createdAt
      *
-     * @return integer
+     * @return \DateTime
      */
-    public function getTypeUser()
+    public function getCreatedAt()
     {
-        return $this->typeUser;
+        return $this->created_at;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Trabajador
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updated_at = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
     }
 
     /**
@@ -247,6 +342,30 @@ class Trabajador
     }
 
     /**
+     * Set usuario
+     *
+     * @param \AppBundle\Entity\Usuario $usuario
+     *
+     * @return Trabajador
+     */
+    public function setUsuario(\AppBundle\Entity\Usuario $usuario)
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * Get usuario
+     *
+     * @return \AppBundle\Entity\Usuario
+     */
+    public function getUsuario()
+    {
+        return $this->usuario;
+    }
+
+    /**
      * Set restaurante
      *
      * @param \AppBundle\Entity\Restaurante $restaurante
@@ -268,15 +387,5 @@ class Trabajador
     public function getRestaurante()
     {
         return $this->restaurante;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 }

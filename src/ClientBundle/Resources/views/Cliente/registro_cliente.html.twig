@@ -1,3 +1,4 @@
+{# src/ClientBundle/Resources/views/Cliente/registro_cliente.html.twig #}
 {% extends 'RegisterBundle:Base:base.html.twig' %}
 
 {% block body %}
@@ -21,56 +22,61 @@
 
     	{{ form_start(form) }}
 		{{ form_errors(form) }}
+		
 		{{ form_row(form._token) }}
-	<div class="panel-body col-centered">
-		<div class="panel panel-success">
-			<div class="panel-heading">Datos usuario</div>
-			<div class="panel panel-body">
-				<div class="panel-group">
-					<div class="row">
-						<div class="col-md-6">
-							{{ form_row(form.name) }}
-						</div>
-						<div class="col-md-6">
-							<label for="apellidos">Apellidos</label>
-							<input type="text" class="form-control" name="apellidos" id="apellidos">
+		
+		<div class="panel-body col-centered">
+			<div class="panel panel-success">
+				<div class="panel-heading">Datos usuario</div>
+				<div class="panel panel-body">
+					<div class="panel-group">
+						<div class="row">
+							<div class="col-md-6">
+								<label for="nombre">Nombre</label>
+								<input type="text" class="form-control" name="nombre" id="nombre">
+							</div>
+							<div class="col-md-6">
+								<label for="apellidos">Apellidos</label>
+								<input type="text" class="form-control" name="apellidos" id="apellidos">
+							</div>
 						</div>
 					</div>
-				</div>
 					<div class="row">
 						<div class="col-md-6">
-							{{ form_row(form.telefono) }}
+							<label for="telefono">Teléfono</label>
+							<input type="text" class="form-control" name="telefono" id="telefono">
 						</div>
 						<div class="col-md-6">
 							{{ form_row(form.email) }}
 						</div>
 					</div>
 				</div>
-		</div>
+			</div>
 
-		<div class="panel panel-success">
-			<div class="panel-heading">Datos de acceso</div>
+			<div class="panel panel-success">
+				<div class="panel-heading">Datos de acceso</div>
 				<div class="panel panel-body">
 					<div class="panel-group">
 						<div class="row">
-								<div class="col-md-12">
-									{{ form_row(form.username) }}
-								</div>
+							<div class="col-md-12">
+								{{ form_row(form.username) }}
+							</div>
 						</div>
 					</div>
-						<div class="row">
-							<div class="col-md-6">
-								{{ form_row(form.password.first) }}
-							</div>
-							<div class="col-md-6">
-								{{ form_row(form.password.second) }}
-							</div>
-    					</div>
-					</div>
+					<div class="row">
+						<div class="col-md-6">
+							{{ form_row(form.password.first) }}
+						</div>
+						<div class="col-md-6">
+							{{ form_row(form.password.second) }}
+						</div>
+    				</div>
 				</div>
-		<div class="panel panel-success">
-			<div class="panel-heading">Dirección </div>
-			<div class="panel panel-body">
+			</div>
+			
+			<div class="panel panel-success">
+				<div class="panel-heading">Dirección</div>
+				<div class="panel panel-body">
 					<div class="panel-group">
 						<div class="row">
 							<div class="col-md-12">
@@ -79,46 +85,86 @@
 							</div>
 						</div>
 					</div>
-				<div class="panel-group">
 					<div class="row">
-						<div class="col-md-12">
-							<label for="direccion">Dirección Extra</label>
-							<input type="text" class="form-control" name="direccion-extra" id="direccion-extra">
+						<div class="col-md-6">
+							<label for="provincias">Provincia</label>
+							{% if provincias is defined %}
+								<select class="form-control" name="provincia" id="provincias">
+									{% for provincia in provincias %}
+										<option value="{{ provincia.id }}">{{ provincia.nombre }}</option>
+									{% endfor %}
+								</select>
+							{% endif %}
+						</div>
+						<div class="col-md-6" id="select-localidades">
+							<label for="localidades">Localidad</label>
+							<select class="form-control" name="localidad" id="localidad" required></select>
 						</div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-md-6">
-						<label for="provincias">Provincia</label>
-						{% if provincias is defined %}
-							<select class="form-control" name="provincia" id="provincias">
-								{% for provincia in provincias %}
-									<option value="{{ provincia.id }}">{{ provincia.nombre }}</option>
-								{% endfor %}
-							</select>
-						{% endif %}
-					</div>
-					<div class="col-md-6" id="select-localidades">
-						<label for="localidades">Localidad</label>
-						<select name="localidad" id="localidad" class="form-control" required></select>
-					</div>
-				</div>
 			</div>
-		</div>
+			
 			<div>
 				<input id="checkbox-3" class="checkbox-custom" name="checkbox-3" type="checkbox" required>
 				<label for="checkbox-3"class="checkbox-custom-label">Acepto los términos y licencias</label>
 			</div>
-    	<div class="form-group">
-    		<br />
-    		<button type="submit" id="button-submit" class="btn btn-success btn-custom1">Registro</button>
-    		<a href="{{ path('home_client') }}" id="button-submit" class="btn btn-danger btn-custom1">Cancelar</a>
-    	</div>
+			
+			<div class="form-group">
+				<br />
+				<button type="submit" id="button-submit" class="btn btn-success btn-custom1">Registro</button>
+				<a href="{{ path('home_client') }}" id="button-submit" class="btn btn-danger btn-custom1">Cancelar</a>
+			</div>
 
-    	{{ form_end(form) }}
+			{{ form_end(form) }}
+		</div>
 	</div>
-</div>
 {% endblock %}
 {% block javascripts %}
-	<script src="{{ asset('manage/js/register.js') }}"></script>
+	<script>
+		(function(){
+
+			var inputCoords, divLocation, selectProvincia, selectLocalidad;
+
+			function initVars(){
+				inputCoords = $("#restaurante_coordenadas");
+				divLocation = $('.info-coordenadas');
+				selectProvincia = $('#provincias');
+				selectLocalidad = $('#localidades');
+			}
+
+			function checkGeolocation(){
+				if ("geolocation" in navigator) {
+					navigator.geolocation.watchPosition(function(position) {
+						inputCoords.attr("placeholder", position.coords.latitude+"/"+position.coords.longitude);
+						inputCoords.val(position.coords.latitude+"/"+position.coords.longitude);
+						divLocation.html("Las coordenadas de su ubicación actual son: <ul><li class='li-position item-not-style'>Latitud: "+position.coords.latitude+
+								"</li><li class='li-position item-not-style'>Longitud: "+position.coords.longitude+"</li></ul>");
+					});
+				} else {
+					divLocation.html("La localización no está disponible en su navegador");
+				}
+			}
+
+			function changeLocalidades(b){
+				$("#select-localidades select").empty();
+				$.getJSON('localidad?provincia='+b,function(data){
+					$.each(data, function(id,value){
+						$("#select-localidades select").append('<option value="'+value[2]+'">'+value[0]+' ('+value[1]+') </option>');
+					});
+				});
+			}
+
+			initVars();
+			checkGeolocation();
+
+			$('#provincias').change(function() {
+				changeLocalidades($('#provincias').val());
+			});
+
+			$('ul').css("padding", "0");
+			$('li:not(.item-not-style)').addClass("alert alert-danger");
+			$('li:not(.item-not-style)').css("listStyle", "none");
+		})();
+
+	</script>
 {% endblock %}

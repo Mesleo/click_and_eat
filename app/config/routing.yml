@@ -1,23 +1,15 @@
-
 manage:
     resource: "@ManageCompanyBundle/Controller/"
+    type:     annotation
+    host:     clickandeat.restaurante.local
     prefix:   /gestion
-    host:     clickandeat.restaurante.local
-    type:     annotation
-
-
-register_restaurante:
-    resource: "@RegisterBundle/Controller"
-    prefix:   /restaurante
-    host:     clickandeat.restaurante.local
-    type:     annotation
-
 
 client:
     resource: "@ClientBundle/Controller/"
-    prefix:   /
-    host:     clickandeat.cliente.local
     type:     annotation
+    host:     clickandeat.cliente.local
+    prefix:   /
+
 
 employee:
     resource: "@EmployeeBundle/Controller/"
@@ -56,3 +48,10 @@ client_check:
 client_logout:
     path:  /logout
     defaults: { _controller: FOSUserBundle:Security:logout }
+
+register_restaurante:
+    resource: "@RegisterBundle/Controller/"
+    type:     annotation
+    host:     clickandeat.restaurante.local
+    prefix:   /restaurante
+

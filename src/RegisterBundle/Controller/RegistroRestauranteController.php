@@ -37,19 +37,23 @@ class RegistroRestauranteController extends Controller
         $form = $this->createForm(RestauranteType::class, $usuario);
         $form->handleRequest($request);
         $this->params['provincias'] =$this->getProvincias();
+        $this->params['info'] = null;
 
         if ($form->isSubmitted() && $form->isValid()) {
             $restaurante = new Restaurante();
             $restaurante->setDireccion($request->request->get("direccion"));
-            if(!$this->isValidCif($request->request->get('inputCIF'))){
+            if(!$this->isValidCif($request->request->get('cif'))){
                 $this->params['info'] = "Formato CIF no válido";
-            }else $restaurante->setCif($request->request->get('inputCIF'));
-            $usuario->setTelefono($request->request->get("telefono"));
+            }else $restaurante->setCif($request->request->get('cif'));
+            if(strlen($request->request->get('nombre')) < 3){
+                $this->params['info'] = "El nombre debe tener al menos 3 caracteres";
+            }else $restaurante->setName($request->request->get('cif'));
+            $restaurante->setTelefono($request->request->get("telefono"));
             $restaurante->setCoordenadas($request->request->get("coordenadas"));
-            $restaurante->setMapa($request->request->get('foto'));
+            if($request->request->has('precioEnvio')){
+                $restaurante->setPrecioEnvio(0);
+            }else $restaurante->setPrecioEnvio($request->request->get('precioEnvio'));
             $restaurante->setPrecioEnvio($request->request->get('precioEnvio'));
-            $usuario->addRole(1);
-
             $localidad = $this->em->getRepository("AppBundle:Localidad")
                 ->findOneBy([
                     "id" => $request->request->get("localidad")
@@ -58,27 +62,27 @@ class RegistroRestauranteController extends Controller
                 ->findOneBy([
                     "id" => $request->request->get("provincia")
                 ]);
-
             $restaurante->setProvincia($provincia);
             $restaurante->setLocalidad($localidad);
-            $this->em->persist($restaurante);
-
             $password = $this->get('security.password_encoder')
                 ->encodePassword($usuario, $usuario->getPassword());
             $usuario->setPassword($password);
             $usuario->addRole(1);
             $usuario->setTypeUser(1);
-            $usuario->setIdRestaurante($restaurante);
-
-            $this->em->persist($usuario);
-            $this->em->flush();
-            return $this->redirectToRoute('homepage');
+            $restaurante->setUsuario($usuario);
+            if($this->params['info'] == null) {
+                $this->em->persist($restaurante);
+                $this->em->persist($usuario);
+                $this->em->flush();
+                return $this->redirectToRoute('homepage');
+            }
         }
 
         return $this->render('RegisterBundle:Web:registro.html.twig', array(
             'restaurante' => $usuario,
             'provincias' => $this->params['provincias'],
-            'form'    => $form->createView()
+            'form'    => $form->createView(),
+            'info'    => $this->params['info']
         ));
 
     }
@@ -86,7 +90,7 @@ class RegistroRestauranteController extends Controller
     /**
      * Muestra las localidades a partir de una consulta pasada a JSON
      *
-     * @Route("/localidad", name="localidades_json")
+     * @Route("/localidades", name="localidades_json")
      * @return [type]              [description]
      */
     public function getLocalidades(Request $request){
