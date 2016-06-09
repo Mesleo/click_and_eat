@@ -1,0 +1,68 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/horarios.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
+{% block body %}
+	{% include 'ManageCompanyBundle:Dialog:confirm_delete.php.twig' %}
+    <div class="container">
+		{% if horarios is defined %}
+			<p>
+				<br />
+				<a href="{{ path('add_horario') }}" class="btn btn-success">Añadir horario</a>
+			</p>
+			<div class="be-panel col-sm-12">
+				{% for horario in horarios %}
+					<form method="post" id="form-horario" action="{{ path('edit_horario', {'id_horario': horario.id}) }}">
+						<div class="row">
+							<div class="col-md-4">
+								<div><label for="horario_descripcion" class="required">Descripcion</label>
+								<input type="text" id="horario_descripcion" name="descripcion{{ horario.id }}" value="{{ horario.descripcion }}" required="required" class="form-control" /></div>
+							</div>
+							<div class="col-md-3">
+								<div><label for="horario_hora_apertura" class="required">Hora apertura</label>
+								<input type="time" id="horario_hora_apertura" name="hora_apertura{{ horario.id }}" value="{{ horario.horaApertura|date('H:i') }}" required="required" class="form-control input-small timepicker1" /></div>
+							</div>
+							<div class="col-md-3">
+								<div><label for="horario_hora_cierre" class="required">Hora cierre</label>
+								<input type="time" id="horario_hora_cierre" name="hora_cierre{{ horario.id }}" value="{{ horario.horaCierre|date('H:i') }}" required="required" class="form-control input-small timepicker1" /></div>
+							</div>
+							<div class="col-md-1">
+								<div><label></label>
+								<input type="submit" class="btn btn-primary" name="edit-horario" value="Editar"></div>
+							</div>
+							<div class="col-md-1">
+								<div><label></label>
+								<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_horario', {'id_horario': horario.id}) }}" data-target="#confirmDelete" data-title="Eliminar el horario '{{ horario.descripcion }}'" data-message="¿Estás seguro?">
+									<i class="glyphicon glyphicon-trash"></i> Eliminar
+								</button>
+							</div>
+						</div>
+					</form>
+				{% endfor %}
+			</div>
+		{% endif %}
+		{% if form is defined %}
+			{{ form_start(form) }}
+			<h2>Añadir horario</h2>
+			<div class="row">
+				<div class="col-md-6">
+					{{ form_row(form.descripcion) }}
+				</div>
+				<div class="col-md-3">
+					{{ form_row(form.hora_apertura) }}
+				</div>
+				<div class="col-md-3">
+					{{ form_row(form.hora_cierre) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<br />
+				<button type="submit" class="btn btn-primary">Aceptar</button>
+				<a href="{{ path('gestion_horarios') }}" class="btn btn-danger">Cancelar</a>
+			</div>
+			{{ form_end(form) }}
+		{% endif %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+{% endblock %}

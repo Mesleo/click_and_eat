@@ -27,6 +27,15 @@ class DefaultController extends Controller
         return $this->render('ManageCompanyBundle:Page:base.html.twig', $this->params);
     }
 
+    /**
+     * @Route("/registroClientes", name="controlador_registro_restaurante")
+     */
+    public function registerClienteAction()
+    {
+
+        return $this->redirectToRoute('registro_restaurante');
+    }
+
     private function initialize()
     {
         $this->params = [];

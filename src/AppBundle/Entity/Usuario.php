@@ -36,7 +36,7 @@ class Usuario extends BaseUser
     /**
      * @ORM\Column(type="string", length=255)
      *
-     * @Assert\NotBlank(message="Please enter your name.", groups={"Registration", "Profile"})
+     * @Assert\NotBlank(message="Please enter your name.")
      * @Assert\Length(
      *     min=3,
      *     max=255,
@@ -51,7 +51,7 @@ class Usuario extends BaseUser
      * @var string
      * @ORM\Column(name="telefono", type="string", length=255)
      *
-     * @Assert\NotBlank(message="Please enter your phone.", groups={"Registration", "Profile"})
+     * @Assert\NotBlank(message="Please enter your phone.")
      * @Assert\Length(
      *     min=9,
      *     max=15,
@@ -65,7 +65,7 @@ class Usuario extends BaseUser
     /**
      * @var integer
      *
-     * @ORM\Column(name="tipo_usuario", type="integer", length=255)
+     * @ORM\Column(name="tipo_usuario", type="integer", length=255, nullable=true)
      */
     private $typeUser;
 
@@ -355,7 +355,7 @@ class Usuario extends BaseUser
         else if($rol == 2) {
             array_push($this->roles, 'ROLE_EMPLOYEE');
         }
-        else if($rol == 2) {
+        else if($rol == 3) {
             array_push($this->roles, 'ROLE_USER');
         }
     }

@@ -3,13 +3,13 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Horario
  *
  * @ORM\Entity
  * @ORM\Table(name="horario")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\HorarioRepository")
  */
 class Horario
 {
@@ -21,128 +21,47 @@ class Horario
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+	
+	/**
+     * @var string
+     *
+     * @ORM\Column(name="descripcion", type="string", length=255, nullable=false)
+     */
+	protected $descripcion;
+
+    /**
+     * @var \Time
+     *
+     * @ORM\Column(name="hora_apertura", type="time", nullable=false)
+     */
+    protected $hora_apertura;
+
+    /**
+     * @var \Time
+     *
+     * @ORM\Column(name="hora_cierre", type="time", nullable=false)
+     */
+    protected $hora_cierre;
+	
+	/**
+     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="horarios")
+     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
+     */
+    protected $restaurante;
+	
+	/**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    protected $created_at;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="horario_apertura_local_mediodia_no_festivos", type="datetime", nullable=true)
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
      */
-    protected $horarioAperturaLocalMediodiaNF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_cierre_local_mediodia_no_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioCierreLocalMediodiaNF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_apertura_local_noche_no_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioAperturaLocalNocheNF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_cierre_local_noche_no_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioCierreLocalNocheNF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_apertura_local_mediodia_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioAperturaLocalMediodiaF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_cierre_local_mediodia_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioCierreLocalMediodiaF;
-
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_apertura_local_noche_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioAperturaLocalNocheF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_cierre_local_noche_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioCierreLocalNocheF;
-
-
-    // Domicilio
-
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_apertura_Domiclio_mediodia_no_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioAperturaDomicilioMediodiaNF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_cierre_domiclio_mediodia_no_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioCierreDomicilioMediodiaNF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_apertura_domiclio_noche_no_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioAperturaDomicilioNocheNF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_cierre_domiclio_noche_no_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioCierreDomicilioNocheNF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_apertura_domiclio_mediodia_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioAperturaDomicilioMediodiaF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_cierre_domiclio_mediodia_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioCierreDomicilioMediodiaF;
-
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_apertura_domiclio_noche_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioAperturaDomicilioNocheF;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="horario_cierre_domiclio_noche_festivos", type="datetime", nullable=true)
-     */
-    protected $horarioCierreDomicilioNocheF;
-    
-    // Final domicilio
-        
-    
+    protected $updated_at;
 
     /**
      * @var boolean 
@@ -150,11 +69,17 @@ class Horario
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-
+	
     /**
-     * @ORM\OneToMany(targetEntity="Restaurante", mappedBy="horario")
+     * Constructor
      */
-    protected $restaurante;
+    public function __construct()
+    {
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+
+        $this->setTrash(false);
+    }
 
     /**
      * Get id
@@ -165,398 +90,125 @@ class Horario
     {
         return $this->id;
     }
-    
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->restaurantes = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->setTrash(false);
-    }
 
     /**
-     * Set horarioAperturaLocalMediodiaNF
+     * Set descripcion
      *
-     * @param \DateTime $horarioAperturaLocalMediodiaNF
+     * @param string $descripcion
      *
      * @return Horario
      */
-    public function setHorarioAperturaLocalMediodiaNF($horarioAperturaLocalMediodiaNF)
+    public function setDescripcion($descripcion)
     {
-        $this->horarioAperturaLocalMediodiaNF = $horarioAperturaLocalMediodiaNF;
+        $this->descripcion = $descripcion;
 
         return $this;
     }
 
     /**
-     * Get horarioAperturaLocalMediodiaNF
+     * Get descripcion
      *
-     * @return \DateTime
+     * @return string
      */
-    public function getHorarioAperturaLocalMediodiaNF()
+    public function getDescripcion()
     {
-        return $this->horarioAperturaLocalMediodiaNF;
+        return $this->descripcion;
     }
 
     /**
-     * Set horarioCierreLocalMediodiaNF
+     * Set horaApertura
      *
-     * @param \DateTime $horarioCierreLocalMediodiaNF
+     * @param \DateTime $horaApertura
      *
      * @return Horario
      */
-    public function setHorarioCierreLocalMediodiaNF($horarioCierreLocalMediodiaNF)
+    public function setHoraApertura($horaApertura)
     {
-        $this->horarioCierreLocalMediodiaNF = $horarioCierreLocalMediodiaNF;
+        $this->hora_apertura = $horaApertura;
 
         return $this;
     }
 
     /**
-     * Get horarioCierreLocalMediodiaNF
+     * Get horaApertura
      *
      * @return \DateTime
      */
-    public function getHorarioCierreLocalMediodiaNF()
+    public function getHoraApertura()
     {
-        return $this->horarioCierreLocalMediodiaNF;
+        return $this->hora_apertura;
     }
 
     /**
-     * Set horarioAperturaLocalNocheNF
+     * Set horaCierre
      *
-     * @param \DateTime $horarioAperturaLocalNocheNF
+     * @param \DateTime $horaCierre
      *
      * @return Horario
      */
-    public function setHorarioAperturaLocalNocheNF($horarioAperturaLocalNocheNF)
+    public function setHoraCierre($horaCierre)
     {
-        $this->horarioAperturaLocalNocheNF = $horarioAperturaLocalNocheNF;
+        $this->hora_cierre = $horaCierre;
 
         return $this;
     }
 
     /**
-     * Get horarioAperturaLocalNocheNF
+     * Get horaCierre
      *
      * @return \DateTime
      */
-    public function getHorarioAperturaLocalNocheNF()
+    public function getHoraCierre()
     {
-        return $this->horarioAperturaLocalNocheNF;
+        return $this->hora_cierre;
     }
 
     /**
-     * Set horarioCierreLocalNocheNF
+     * Set createdAt
      *
-     * @param \DateTime $horarioCierreLocalNocheNF
+     * @param \DateTime $createdAt
      *
      * @return Horario
      */
-    public function setHorarioCierreLocalNocheNF($horarioCierreLocalNocheNF)
+    public function setCreatedAt($createdAt)
     {
-        $this->horarioCierreLocalNocheNF = $horarioCierreLocalNocheNF;
+        $this->created_at = $createdAt;
 
         return $this;
     }
 
     /**
-     * Get horarioCierreLocalNocheNF
+     * Get createdAt
      *
      * @return \DateTime
      */
-    public function getHorarioCierreLocalNocheNF()
+    public function getCreatedAt()
     {
-        return $this->horarioCierreLocalNocheNF;
+        return $this->created_at;
     }
 
     /**
-     * Set horarioAperturaLocalMediodiaF
+     * Set updatedAt
      *
-     * @param \DateTime $horarioAperturaLocalMediodiaF
+     * @param \DateTime $updatedAt
      *
      * @return Horario
      */
-    public function setHorarioAperturaLocalMediodiaF($horarioAperturaLocalMediodiaF)
+    public function setUpdatedAt($updatedAt)
     {
-        $this->horarioAperturaLocalMediodiaF = $horarioAperturaLocalMediodiaF;
+        $this->updated_at = $updatedAt;
 
         return $this;
     }
 
     /**
-     * Get horarioAperturaLocalMediodiaF
+     * Get updatedAt
      *
      * @return \DateTime
      */
-    public function getHorarioAperturaLocalMediodiaF()
+    public function getUpdatedAt()
     {
-        return $this->horarioAperturaLocalMediodiaF;
-    }
-
-    /**
-     * Set horarioCierreLocalMediodiaF
-     *
-     * @param \DateTime $horarioCierreLocalMediodiaF
-     *
-     * @return Horario
-     */
-    public function setHorarioCierreLocalMediodiaF($horarioCierreLocalMediodiaF)
-    {
-        $this->horarioCierreLocalMediodiaF = $horarioCierreLocalMediodiaF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioCierreLocalMediodiaF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioCierreLocalMediodiaF()
-    {
-        return $this->horarioCierreLocalMediodiaF;
-    }
-
-    /**
-     * Set horarioAperturaLocalNocheF
-     *
-     * @param \DateTime $horarioAperturaLocalNocheF
-     *
-     * @return Horario
-     */
-    public function setHorarioAperturaLocalNocheF($horarioAperturaLocalNocheF)
-    {
-        $this->horarioAperturaLocalNocheF = $horarioAperturaLocalNocheF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioAperturaLocalNocheF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioAperturaLocalNocheF()
-    {
-        return $this->horarioAperturaLocalNocheF;
-    }
-
-    /**
-     * Set horarioCierreLocalNocheF
-     *
-     * @param \DateTime $horarioCierreLocalNocheF
-     *
-     * @return Horario
-     */
-    public function setHorarioCierreLocalNocheF($horarioCierreLocalNocheF)
-    {
-        $this->horarioCierreLocalNocheF = $horarioCierreLocalNocheF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioCierreLocalNocheF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioCierreLocalNocheF()
-    {
-        return $this->horarioCierreLocalNocheF;
-    }
-
-    /**
-     * Set horarioAperturaDomiclioMediodiaNF
-     *
-     * @param \DateTime $horarioAperturaDomiclioMediodiaNF
-     *
-     * @return Horario
-     */
-    public function setHorarioAperturaDomiclioMediodiaNF($horarioAperturaDomiclioMediodiaNF)
-    {
-        $this->horarioAperturaDomiclioMediodiaNF = $horarioAperturaDomiclioMediodiaNF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioAperturaDomiclioMediodiaNF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioAperturaDomiclioMediodiaNF()
-    {
-        return $this->horarioAperturaDomiclioMediodiaNF;
-    }
-
-    /**
-     * Set horarioCierreDomiclioMediodiaNF
-     *
-     * @param \DateTime $horarioCierreDomiclioMediodiaNF
-     *
-     * @return Horario
-     */
-    public function setHorarioCierreDomiclioMediodiaNF($horarioCierreDomiclioMediodiaNF)
-    {
-        $this->horarioCierreDomiclioMediodiaNF = $horarioCierreDomiclioMediodiaNF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioCierreDomiclioMediodiaNF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioCierreDomiclioMediodiaNF()
-    {
-        return $this->horarioCierreDomiclioMediodiaNF;
-    }
-
-    /**
-     * Set horarioAperturaDomiclioNocheNF
-     *
-     * @param \DateTime $horarioAperturaDomiclioNocheNF
-     *
-     * @return Horario
-     */
-    public function setHorarioAperturaDomiclioNocheNF($horarioAperturaDomiclioNocheNF)
-    {
-        $this->horarioAperturaDomiclioNocheNF = $horarioAperturaDomiclioNocheNF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioAperturaDomiclioNocheNF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioAperturaDomiclioNocheNF()
-    {
-        return $this->horarioAperturaDomiclioNocheNF;
-    }
-
-    /**
-     * Set horarioCierreDomiclioNocheNF
-     *
-     * @param \DateTime $horarioCierreDomiclioNocheNF
-     *
-     * @return Horario
-     */
-    public function setHorarioCierreDomiclioNocheNF($horarioCierreDomiclioNocheNF)
-    {
-        $this->horarioCierreDomiclioNocheNF = $horarioCierreDomiclioNocheNF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioCierreDomiclioNocheNF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioCierreDomiclioNocheNF()
-    {
-        return $this->horarioCierreDomiclioNocheNF;
-    }
-
-    /**
-     * Set horarioAperturaDomiclioMediodiaF
-     *
-     * @param \DateTime $horarioAperturaDomiclioMediodiaF
-     *
-     * @return Horario
-     */
-    public function setHorarioAperturaDomiclioMediodiaF($horarioAperturaDomiclioMediodiaF)
-    {
-        $this->horarioAperturaDomiclioMediodiaF = $horarioAperturaDomiclioMediodiaF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioAperturaDomiclioMediodiaF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioAperturaDomiclioMediodiaF()
-    {
-        return $this->horarioAperturaDomiclioMediodiaF;
-    }
-
-    /**
-     * Set horarioCierreDomiclioMediodiaF
-     *
-     * @param \DateTime $horarioCierreDomiclioMediodiaF
-     *
-     * @return Horario
-     */
-    public function setHorarioCierreDomiclioMediodiaF($horarioCierreDomiclioMediodiaF)
-    {
-        $this->horarioCierreDomiclioMediodiaF = $horarioCierreDomiclioMediodiaF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioCierreDomiclioMediodiaF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioCierreDomiclioMediodiaF()
-    {
-        return $this->horarioCierreDomiclioMediodiaF;
-    }
-
-    /**
-     * Set horarioAperturaDomiclioNocheF
-     *
-     * @param \DateTime $horarioAperturaDomiclioNocheF
-     *
-     * @return Horario
-     */
-    public function setHorarioAperturaDomiclioNocheF($horarioAperturaDomiclioNocheF)
-    {
-        $this->horarioAperturaDomiclioNocheF = $horarioAperturaDomiclioNocheF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioAperturaDomiclioNocheF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioAperturaDomiclioNocheF()
-    {
-        return $this->horarioAperturaDomiclioNocheF;
-    }
-
-    /**
-     * Set horarioCierreDomiclioNocheF
-     *
-     * @param \DateTime $horarioCierreDomiclioNocheF
-     *
-     * @return Horario
-     */
-    public function setHorarioCierreDomiclioNocheF($horarioCierreDomiclioNocheF)
-    {
-        $this->horarioCierreDomiclioNocheF = $horarioCierreDomiclioNocheF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioCierreDomiclioNocheF
-     *
-     * @return \DateTime
-     */
-    public function getHorarioCierreDomiclioNocheF()
-    {
-        return $this->horarioCierreDomiclioNocheF;
+        return $this->updated_at;
     }
 
     /**
@@ -584,47 +236,13 @@ class Horario
     }
 
     /**
-     * Add restaurante
-     *
-     * @param \AppBundle\Entity\Restaurante $restaurante
-     *
-     * @return Horario
-     */
-    public function addRestaurante(\AppBundle\Entity\Restaurante $restaurante)
-    {
-        $this->restaurantes[] = $restaurante;
-
-        return $this;
-    }
-
-    /**
-     * Remove restaurante
-     *
-     * @param \AppBundle\Entity\Restaurante $restaurante
-     */
-    public function removeRestaurante(\AppBundle\Entity\Restaurante $restaurante)
-    {
-        $this->restaurantes->removeElement($restaurante);
-    }
-
-    /**
-     * Get restaurantes
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getRestaurantes()
-    {
-        return $this->restaurantes;
-    }
-
-    /**
      * Set restaurante
      *
      * @param \AppBundle\Entity\Restaurante $restaurante
      *
      * @return Horario
      */
-    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante)
     {
         $this->restaurante = $restaurante;
 
@@ -639,197 +257,5 @@ class Horario
     public function getRestaurante()
     {
         return $this->restaurante;
-    }
-
-    /**
-     * Set horarioAperturaDomicilioMediodiaNF
-     *
-     * @param \DateDateTime $horarioAperturaDomicilioMediodiaNF
-     *
-     * @return Horario
-     */
-    public function setHorarioAperturaDomicilioMediodiaNF($horarioAperturaDomicilioMediodiaNF)
-    {
-        $this->horarioAperturaDomicilioMediodiaNF = $horarioAperturaDomicilioMediodiaNF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioAperturaDomicilioMediodiaNF
-     *
-     * @return \DateDateTime
-     */
-    public function getHorarioAperturaDomicilioMediodiaNF()
-    {
-        return $this->horarioAperturaDomicilioMediodiaNF;
-    }
-
-    /**
-     * Set horarioCierreDomicilioMediodiaNF
-     *
-     * @param \DateDateTime $horarioCierreDomicilioMediodiaNF
-     *
-     * @return Horario
-     */
-    public function setHorarioCierreDomicilioMediodiaNF($horarioCierreDomicilioMediodiaNF)
-    {
-        $this->horarioCierreDomicilioMediodiaNF = $horarioCierreDomicilioMediodiaNF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioCierreDomicilioMediodiaNF
-     *
-     * @return \DateDateTime
-     */
-    public function getHorarioCierreDomicilioMediodiaNF()
-    {
-        return $this->horarioCierreDomicilioMediodiaNF;
-    }
-
-    /**
-     * Set horarioAperturaDomicilioNocheNF
-     *
-     * @param \DateDateTime $horarioAperturaDomicilioNocheNF
-     *
-     * @return Horario
-     */
-    public function setHorarioAperturaDomicilioNocheNF($horarioAperturaDomicilioNocheNF)
-    {
-        $this->horarioAperturaDomicilioNocheNF = $horarioAperturaDomicilioNocheNF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioAperturaDomicilioNocheNF
-     *
-     * @return \DateDateTime
-     */
-    public function getHorarioAperturaDomicilioNocheNF()
-    {
-        return $this->horarioAperturaDomicilioNocheNF;
-    }
-
-    /**
-     * Set horarioCierreDomicilioNocheNF
-     *
-     * @param \DateDateTime $horarioCierreDomicilioNocheNF
-     *
-     * @return Horario
-     */
-    public function setHorarioCierreDomicilioNocheNF($horarioCierreDomicilioNocheNF)
-    {
-        $this->horarioCierreDomicilioNocheNF = $horarioCierreDomicilioNocheNF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioCierreDomicilioNocheNF
-     *
-     * @return \DateDateTime
-     */
-    public function getHorarioCierreDomicilioNocheNF()
-    {
-        return $this->horarioCierreDomicilioNocheNF;
-    }
-
-    /**
-     * Set horarioCierreDomicilioMediodiaF
-     *
-     * @param \DateDateTime $horarioCierreDomicilioMediodiaF
-     *
-     * @return Horario
-     */
-    public function setHorarioCierreDomicilioMediodiaF($horarioCierreDomicilioMediodiaF)
-    {
-        $this->horarioCierreDomicilioMediodiaF = $horarioCierreDomicilioMediodiaF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioCierreDomicilioMediodiaF
-     *
-     * @return \DateDateTime
-     */
-    public function getHorarioCierreDomicilioMediodiaF()
-    {
-        return $this->horarioCierreDomicilioMediodiaF;
-    }
-
-    /**
-     * Set horarioAperturaDomicilioNocheF
-     *
-     * @param \DateDateTime $horarioAperturaDomicilioNocheF
-     *
-     * @return Horario
-     */
-    public function setHorarioAperturaDomicilioNocheF($horarioAperturaDomicilioNocheF)
-    {
-        $this->horarioAperturaDomicilioNocheF = $horarioAperturaDomicilioNocheF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioAperturaDomicilioNocheF
-     *
-     * @return \DateDateTime
-     */
-    public function getHorarioAperturaDomicilioNocheF()
-    {
-        return $this->horarioAperturaDomicilioNocheF;
-    }
-
-    /**
-     * Set horarioCierreDomicilioNocheF
-     *
-     * @param \DateDateTime $horarioCierreDomicilioNocheF
-     *
-     * @return Horario
-     */
-    public function setHorarioCierreDomicilioNocheF($horarioCierreDomicilioNocheF)
-    {
-        $this->horarioCierreDomicilioNocheF = $horarioCierreDomicilioNocheF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioCierreDomicilioNocheF
-     *
-     * @return \DateDateTime
-     */
-    public function getHorarioCierreDomicilioNocheF()
-    {
-        return $this->horarioCierreDomicilioNocheF;
-    }
-
-    /**
-     * Set horarioAperturaDomicilioMediodiaF
-     *
-     * @param \DateDateTime $horarioAperturaDomicilioMediodiaF
-     *
-     * @return Horario
-     */
-    public function setHorarioAperturaDomicilioMediodiaF($horarioAperturaDomicilioMediodiaF)
-    {
-        $this->horarioAperturaDomicilioMediodiaF = $horarioAperturaDomicilioMediodiaF;
-
-        return $this;
-    }
-
-    /**
-     * Get horarioAperturaDomicilioMediodiaF
-     *
-     * @return \DateDateTime
-     */
-    public function getHorarioAperturaDomicilioMediodiaF()
-    {
-        return $this->horarioAperturaDomicilioMediodiaF;
     }
 }

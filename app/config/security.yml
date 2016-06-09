@@ -52,6 +52,6 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/gestion, role: ROLE_MANAGE }
+        - { path: clickandeat.restaurante.local/gestion, role: ROLE_MANAGE }
         - { path: ^/empleados, role: ROLE_EMPLOYEE }
         - { path: ^/clientes, role: ROLE_USER }

@@ -34,18 +34,19 @@
                             <li class="item-not-style"><a href="{{ path('gestion_productos') }}">Productos</a></li>
                             <li class="item-not-style"><a href="{{ path('gestion_mesas') }}">Mesas</a></li>
                             <li class="item-not-style"><a href="{{ path('gestion_trabajadores') }}">Trabajadores</a></li>
-                            <li class="item-not-style"><a href="#">Pedidos</a></li>
+                            <li class="item-not-style"><a href="{{ path('gestion_pedidos') }}">Pedidos</a></li>
                             <li class="item-not-style"><a href="#">Reservas</a></li>
                             <li class="divider item-not-style"></li>
                             <li role="presentation" class="dropdown item-not-style">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Mi cuenta <span class="caret"></span>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    Mi cuenta <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li class="item-not-style"><a href="{{ path('cuenta') }}">Configuración de cuenta</a></li>
-                                    <li class="item-not-style"><a href="{{ path('admin_logout') }}">Salir</a></li>
+									<li class="item-not-style"><a href="{{ path('gestion_horarios') }}">Horarios</a></li>
+									<li class="item-not-style"><a href="{{ path('admin_logout') }}">Salir</a></li>
                                 </ul>
                             </li>
-                            {% if userLog is defined %}<li class="item-not-style"><a href="#" >Hola {{ userLog.username }}</a></li>{% endif %}
                         </ul>
                     </div>
                 </nav>

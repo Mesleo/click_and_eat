@@ -45,7 +45,7 @@ class DefaultController extends Controller
     public function registerClienteAction()
     {
 
-        return $this->redirectToRoute('registro_restaurante');
+        return $this->redirectToRoute('registro_clientes');
     }
 
     private function initialize()

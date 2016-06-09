@@ -1,8 +1,23 @@
+
+manage:
+    resource: "@ManageCompanyBundle/Controller/"
+    prefix:   /gestion
+    host:     clickandeat.restaurante.local
+    type:     annotation
+
+
+register_restaurante:
+    resource: "@RegisterBundle/Controller"
+    prefix:   /restaurante
+    host:     clickandeat.restaurante.local
+    type:     annotation
+
+
 client:
     resource: "@ClientBundle/Controller/"
-    type:     annotation
-    host:     clickandeat.cliente.local
     prefix:   /
+    host:     clickandeat.cliente.local
+    type:     annotation
 
 employee:
     resource: "@EmployeeBundle/Controller/"
@@ -12,25 +27,6 @@ employee:
 
 app:
     resource: "@AppBundle/Controller/"
-    type:     annotation
-
-manage:
-    resource: "@ManageCompanyBundle/Controller/"
-    prefix:   /gestion
-    host:     clickandeat.restaurante.local
-    type:     annotation
-
-
-register:
-    resource: "@RegisterBundle/Controller"
-    prefix:   /register
-    host:     clickandeat.restaurante.local
-    type:     annotation
-
-register_clientes:
-    resource: "@RegisterBundle/Controller"
-    prefix:   /register
-    host:     clickandeat.cliente.local
     type:     annotation
 
 fos_user:

@@ -53,7 +53,7 @@ class Producto
     /**
      * @var string
      *
-     * @ORM\Column(name="foto", type="string", length=255, nullable=false)
+     * @ORM\Column(name="foto", type="string", length=255, nullable=true)
      */
     protected $foto;
 

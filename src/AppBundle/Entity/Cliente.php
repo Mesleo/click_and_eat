@@ -36,16 +36,6 @@ class Cliente
     protected $domicilios;
 
     /**
-     * @ORM\OneToMany(targetEntity="Pedido", mappedBy="cliente")
-     */
-    protected $pedidos;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Reserva", mappedBy="cliente")
-     */
-    protected $reservas;
-
-    /**
      * @ORM\OneToMany(targetEntity="Comentario", mappedBy="cliente") 
      */
     protected $comentarios;

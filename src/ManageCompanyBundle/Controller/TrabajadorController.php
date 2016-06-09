@@ -24,7 +24,6 @@ class TrabajadorController extends Controller
     public function showAction()
 	{
         $this->initialize();
-
         $this->params['trabajadores'] = $this->em->getRepository("AppBundle:Trabajador")
 				->showEmployeesRestaurant($this->getIdRestaurante());
 

@@ -90,11 +90,11 @@ class Restaurante{
     protected $tipoComida;
 
     /**
-     * @var decimal
+     * @var string
      *
-     * @ORM\Column(name="precio_envio", type="decimal", nullable=false, options={"default":"0.0"})
+     * @ORM\Column(name="precio_envio", type="string", nullable=false, options={"default":"0.0"})
      * @Assert\Type(
-     *     type="decimal",
+     *     type="string",
      *     message="Este valor debe ser un número"
      * )
      */
@@ -120,11 +120,6 @@ class Restaurante{
      * @ORM\Column(name="fecha_baja", type="datetime", nullable=true)
      */
     protected $fecha_baja;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Horario", inversedBy="restaurante",cascade={"persist"})
-     */
-    protected $horario;
 
     /**
      * @ORM\OneToMany(targetEntity="Comentario", mappedBy="restaurante")
@@ -157,13 +152,18 @@ class Restaurante{
     protected $trabajadores;
 
     /**
+     * @ORM\OneToMany(targetEntity="Horario", mappedBy="restaurante")
+     */
+    protected $horarios;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->tipoComida = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->horarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->comentarios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->horarios = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mesas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->productos = new \Doctrine\Common\Collections\ArrayCollection();
@@ -529,40 +529,6 @@ class Restaurante{
     public function getTipoComida()
     {
         return $this->tipoComida;
-    }
-
-    /**
-     * Add horario
-     *
-     * @param \AppBundle\Entity\Horario $horario
-     *
-     * @return Restaurante
-     */
-    public function addHorario(\AppBundle\Entity\Horario $horario)
-    {
-        $this->horarios[] = $horario;
-
-        return $this;
-    }
-
-    /**
-     * Remove horario
-     *
-     * @param \AppBundle\Entity\Horario $horario
-     */
-    public function removeHorario(\AppBundle\Entity\Horario $horario)
-    {
-        $this->horarios->removeElement($horario);
-    }
-
-    /**
-     * Get horarios
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getHorarios()
-    {
-        return $this->horarios;
     }
 
     /**

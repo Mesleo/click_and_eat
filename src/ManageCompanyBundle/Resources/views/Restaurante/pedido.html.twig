@@ -1,0 +1,114 @@
+{# @ManageCompanyBundle/Restaurante/pedido.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+{% import '@ManageCompany/Librerias/librerias.html.twig' as librerias %}
+{% block body %}
+<div class="row">
+        <div class="container">
+            <div class="panel panel-body">
+            <div class="panel panel-success">
+              <div class="panel-heading">Datos usuario</div>
+                <div class="panel-body">
+                    <table class = "table">
+                        <tr class="row-head">
+                            <th>Cliente</th>
+                            <th>Email</th>
+                            <th>Nombre de usuario</th>
+                        </tr>
+                        <tr>
+                            <td>{{ pedido.cliente }}</td>
+                            <td>{{ pedido.email }}</td>
+                        </tr>
+                        <tr class="row-head">
+                            <th colspan="2">Dirección de envío</th>
+                            <th>Teléfono</th>
+                        </tr>
+                        <tr>
+                            <td colspan="2">{{ pedido.domicilio }}</td>
+                            <td>{{ pedido.telefono }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div class="panel-heading">Datos pedido</div>
+                <div class="panel-body">
+                    <div class="panel panel-body">
+                        <div class="panel-heading panel-success"><h4>Artículos</h4></div>
+                        <table class="table">
+                            <tr class="row-head">
+                                <th>Referencia</th>
+                                <th>P. Unidad</th>
+                                <th>Descripción</th>
+                                <th>Unidades</th>
+                                <th>Descuento</th>
+                                <th>Total</th>
+                            </tr>
+                            {% for lp in linea_pedido %}
+                                <tr>
+                                    <td>{{ lp.idProducto }}</td>
+                                    <td>{{ lp.precio }} €</td>
+                                    <td>{{ lp.nombre }}</td>
+                                    <td>{{ lp.cantidad}}</td>
+                                    <td>{{ lp.descuento }} €</td>
+                                    <td>{{ lp.total }} €</td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td colspan="5">TOTAL</td>
+                                <td>{{ total }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <form action="{{ path('guardar_info_pedido') }}" method="post">
+                    <table class="table">
+                        <tr class="row-head">
+                            <th>Identificador</th>
+                            <th>Fecha pedido</th>
+                            <th><label for="fecha-envio">Fecha/Hora salida</label></th>
+                            <th><label for="fecha-envio">Fecha/Hora llegada</label></th>
+                            <th><label for="estado">Estado</label></th>
+                        </tr>
+                        <tr>
+                            <td>{{ pedido.id }}
+                                <input type="text" class="hidden" name="pedido-id" value="{{ pedido.id }}">
+                            </td>
+                            <td>{{ pedido.fecha_hora_realizado|date("d-m-Y H:i") }}</td>
+                            <td><input class="form-control" type="datetime" name="fecha-salida" id="fecha-salida" value="{{ pedido.fecha_hora_salida|date("Y-m-d H:i") }}"></td>
+                            <td><input class="form-control" type="datetime" name="fecha-llegada" id="fecha-llegada" value="{{ pedido.fecha_hora_llegada|date("Y-m-d H:i") }}"></td>
+                            <td><select class="form-control" name="estado" id="estado">
+                                    {% for estado in estados %}
+                                        <option value="{{ estado.id }}" {% if estado.id == pedido.estado_id %} selected {% endif %}>{{ estado.estado }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Trabajador: </td>
+                            <td colspan="3">
+                                <select class="form-control" name="trabajador-id" id="trabajador-id">
+                                    {{ trabajadores|length }}
+                                    {% for trabajador in trabajadores %}
+                                        <option value="{{ trabajador.id }}"{% if pedido.idTrabajador == trabajador.id %} selected {% endif %}>{{ trabajador.name }} {{ trabajador.apellidos }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-sm-offset-5 col-sm-2 text-center">
+                                    <button type="submit" class="btn btn-success btn-main-action">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+{% endblock %}

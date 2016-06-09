@@ -1,0 +1,56 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/trabajadores_restaurante.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+{% import '@ManageCompany/Librerias/librerias.html.twig' as librerias %}
+{% block body %}
+	{% include 'ManageCompanyBundle:Dialog:confirm_delete.php.twig' %}
+	<div class="container">
+		<h3>Pedidos</h3>
+		<div class="panel panel-body panel-success">
+			<div class="be-panel col-sm-12">
+				<table id="pedidos-table" class="table display responsive nowrap">
+					<thead>
+					<tr>
+						<th>Número pedido</th>
+						<th>Cliente</th>
+						<th>Precio total</th>
+						<th>Realizado</th>
+						<th>Estado</th>
+						<th></th>
+					</tr>
+					</thead>
+					<tbody>
+					{% for pedido in pedidos %}
+						<tr>
+							<td>{{ pedido.numPedido }}</td>
+							<td>{{ pedido.cliente }}</td>
+							<td>{{ pedido.total|number_format(2, ",") }} €</td>
+							<td>{{ pedido.realizado|date("d-m-Y H:i:s") }}</td>
+							<td>{{ pedido.estado }}</td>
+							<td>
+								<a href="{{ path('edit_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-primary">Editar</a>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	{{ librerias.datatables_js() }}
+	<script>
+		$(document).ready(function() {
+			$('#pedidos-table').DataTable({
+				"language": {
+					"url": "//cdn.datatables.net/plug-ins/1.10.10/i18n/Spanish.json",
+					"decimal": ",",
+					"thousands": "."
+				},
+				"scrollY":        "600px",
+				"scrollCollapse": true,
+				"lengthMenu": [[5,10, 15, 20, -1], [5,10, 15, 20, "Todos"]]
+			});
+		});
+	</script>
+{% endblock %}

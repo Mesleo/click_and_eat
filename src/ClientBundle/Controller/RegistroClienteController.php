@@ -1,36 +1,28 @@
 <?php
 
-namespace RegisterBundle\Controller;
+namespace ClientBundle\Controller;
 
+use AppBundle\Entity\Cliente;
+use AppBundle\Entity\Domicilio;
+use AppBundle\Entity\Localidad;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use AppBundle\Entity\Restaurante;
 use RegisterBundle\Form\RestauranteType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 
-class RegistroRestauranteController extends Controller
+class RegistroClienteController extends Controller
 {
 
     private $em = null;
     private $params = null;
 
     /**
-     * @Route("/")
+     * @Route("/registro", name="registro_cliente" )
      */
-    public function indexAction()
-    {
-        return $this->render('RegisterBundle:Base:base.html.twig');
-    }
-
-    /**
-     * @Route("/registro", name="registro_restaurante")
-     */
-    public function registerRestaurantAction(Request $request)
+    public function registerClientAction(Request $request)
     {
         $this->initialize();
         $usuario = new \AppBundle\Entity\Usuario();
@@ -39,43 +31,36 @@ class RegistroRestauranteController extends Controller
         $this->params['provincias'] =$this->getProvincias();
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $restaurante = new Restaurante();
-            $restaurante->setDireccion($request->request->get("direccion"));
-            if(!$this->isValidCif($request->request->get('inputCIF'))){
-                $this->params['info'] = "Formato CIF no válido";
-            }else $restaurante->setCif($request->request->get('inputCIF'));
-            $usuario->setTelefono($request->request->get("telefono"));
-            $restaurante->setCoordenadas($request->request->get("coordenadas"));
-            $restaurante->setMapa($request->request->get('foto'));
-            $restaurante->setPrecioEnvio($request->request->get('precioEnvio'));
-            $usuario->addRole(1);
-
             $localidad = $this->em->getRepository("AppBundle:Localidad")
                 ->findOneBy([
                     "id" => $request->request->get("localidad")
                 ]);
-            $provincia = $this->em->getRepository("AppBundle:Provincia")
-                ->findOneBy([
-                    "id" => $request->request->get("provincia")
-                ]);
-
-            $restaurante->setProvincia($provincia);
-            $restaurante->setLocalidad($localidad);
-            $this->em->persist($restaurante);
-
+            $domicilio = new Domicilio();
+            $domicilio->setDomicilio($request->request->get("direccion"));
+            $domicilio->setDireccionExtra($request->request->get("direccion-extra"));
+            $domicilio->setLocalidad($localidad);
+            $domicilio->setCodigoPostal($localidad->getCodigoPostal());
+            $cliente = new Cliente();
+            $cliente->addDomicilio($domicilio);
+            $cliente->setApellidos($request->request->get("apellidos"));
+            if(!$this->isValidTelefono($request->request->get("telefono"))){
+                $this->params['info'] = "El número de teléfono no es válido";
+            }else $usuario->setTelefono($request->request->get("telefono"));
+            $domicilio->setCliente($cliente);
+            $this->em->persist($cliente);
             $password = $this->get('security.password_encoder')
                 ->encodePassword($usuario, $usuario->getPassword());
             $usuario->setPassword($password);
-            $usuario->addRole(1);
-            $usuario->setTypeUser(1);
-            $usuario->setIdRestaurante($restaurante);
+            $usuario->addRole(3);
+            $usuario->setTypeUser(3);
+            $usuario->setIdCliente($cliente);
 
             $this->em->persist($usuario);
             $this->em->flush();
             return $this->redirectToRoute('homepage');
         }
 
-        return $this->render('RegisterBundle:Web:registro.html.twig', array(
+        return $this->render('RegisterBundle:Web:registro_cliente.html.twig', array(
             'restaurante' => $usuario,
             'provincias' => $this->params['provincias'],
             'form'    => $form->createView()
@@ -124,8 +109,8 @@ class RegistroRestauranteController extends Controller
             ]);
     }
 
-    private function isValidCif($string){
-        return preg_match("/^[a|b|c|d|e|f|g|h|j|n|p|q|r|s|u|v|w]{1}\\d{7}[\\d|\\w]{1}$/i", $string);
+    private function isValidTelefono($value){
+
     }
 
     private function initialize(){

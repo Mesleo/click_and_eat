@@ -10,4 +10,54 @@ namespace AppBundle\Repository;
  */
 class PedidoRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    /**
+     * Muestra una lista con todos los pedidos
+     *
+     * @return array
+     */
+    public function getGeneralInfoOrders($idRestaurante)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT distinct(p.numPedido), p.id, p.nombre as cliente, p.fecha_hora_realizado as realizado, p.estado_id,
+            e.estado, total.total FROM pedido p LEFT JOIN estado AS e ON p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON
+            p.id= pp.idPedido LEFT JOIN (select pp.idPedido ,SUM(pp.precio*pp.cantidad) as total FROM pedido_producto as pp group by
+            pp.idPedido) AS total ON p.id = total.idPedido WHERE p.idRestaurante = :idRestaurante ORDER BY p.estado_id");
+        $stmt->bindParam("idRestaurante", $idRestaurante);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Devuelve toda la información de todos los productos de un pedido
+     *
+     * @param $idPedido
+     * @return array
+     */
+    public function getInfoProductOrder($idPedido)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT p.id as pedido_id, pp.cantidad, pp.idProducto, pr.nombre, pp.precio, pp.descuento, (pp.precio*pp.cantidad)
+            as total FROM usuario u, producto pr ,pedido p RIGHT JOIN pedido_producto AS pp ON p.id = pp.idPedido WHERE p.id = :idPedido AND
+            pr.id = pp.idProducto GROUP BY p.id, p.fecha_hora_realizado, p.estado_id, pp.cantidad, pp.idProducto, pr.nombre, pp.precio, pp.descuento");
+        $stmt->bindParam("idPedido", $idPedido);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Devuelve los datos del usuario y del pedido del idPedido pasado
+     *
+     * @param $idPedido
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function getInfoOrder($idPedido){
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT p.id, p.numPedido, p.fecha_hora_salida, p.fecha_hora_llegada, p.nombre as cliente, p.domicilio, p.telefono,
+            p.email, p.idRestaurante, p.idTrabajador, p.fecha_hora_realizado, p.estado_id, p.pagado FROM pedido p WHERE p.id = :idPedido");
+        $stmt->bindParam("idPedido", $idPedido);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }
