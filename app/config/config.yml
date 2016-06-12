@@ -76,7 +76,6 @@ swiftmailer:
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
-#    user_class: AppBundle\Entity\Restaurante
     user_class: AppBundle\Entity\Usuario
     registration:
         form:
@@ -85,6 +84,7 @@ fos_user:
             from_email:
                 address:        registration@example.com
                 sender_name:    Demo Registration
+            enabled: true
     resetting:
             email:
                 from_email:

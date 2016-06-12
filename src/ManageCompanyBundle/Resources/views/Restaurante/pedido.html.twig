@@ -64,17 +64,19 @@
                         <tr class="row-head">
                             <th>Identificador</th>
                             <th>Fecha pedido</th>
-                            <th><label for="fecha-envio">Fecha/Hora salida</label></th>
-                            <th><label for="fecha-envio">Fecha/Hora llegada</label></th>
+                            <th><label for="fecha-envio"><label for="fecha-salida">Fecha/Hora salida</label></label></th>
+                            <th><label for="fecha-envio"><label for="fecha-llegada">Fecha/Hora llegada</label></label></th>
                             <th><label for="estado">Estado</label></th>
                         </tr>
                         <tr>
                             <td>{{ pedido.id }}
                                 <input type="text" class="hidden" name="pedido-id" value="{{ pedido.id }}">
                             </td>
-                            <td>{{ pedido.fecha_hora_realizado|date("d-m-Y H:i") }}</td>
-                            <td><input class="form-control" type="datetime" name="fecha-salida" id="fecha-salida" value="{{ pedido.fecha_hora_salida|date("Y-m-d H:i") }}"></td>
-                            <td><input class="form-control" type="datetime" name="fecha-llegada" id="fecha-llegada" value="{{ pedido.fecha_hora_llegada|date("Y-m-d H:i") }}"></td>
+                            <td>{{ pedido.fecha_hora_realizado|date("d-m-Y H:i") }}</td>text
+                            <td class="pos-rel"><input class="form-control input-datetime" type="datetime" name="fecha-salida" id="fecha-salida" {% if pedido.fecha_hora_salida != null %}
+                                       value="{{ pedido.fecha_hora_salida|date('d-m-Y')}} {{ pedido.fecha_hora_salida|date('H:i') }}" {% endif %}></td>
+                            <td class="pos-rel"><input class="form-control input-datetime" type="datetime" name="fecha-llegada" id="fecha-llegada" {% if pedido.fecha_hora_llegada != null %}
+                                       value="{{ pedido.fecha_hora_llegada|date('d-m-Y') }}  {{ pedido.fecha_hora_llegada|date('H:i') }}" {% endif %}></td>
                             <td><select class="form-control" name="estado" id="estado">
                                     {% for estado in estados %}
                                         <option value="{{ estado.id }}" {% if estado.id == pedido.estado_id %} selected {% endif %}>{{ estado.estado }}</option>
@@ -108,7 +110,20 @@
     </div>
 </div>
 {% endblock %}
-
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('manage/intimidatetime/Intimidatetime.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('manage/css/style_orders.css') }}">
+{% endblock %}
 {% block javascripts %}
     <script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+    <script src="{{ asset('manage/intimidatetime/Intimidatetime.min.js') }}"></script>
+    <script src="{{ asset('manage/intimidatetime/i18n/Intimidatetime-es.js') }}"></script>
+    <script>
+        $.intimidatetime.setDefaults($.intimidatetime.i18n['es']);
+        $('.input-datetime').intimidatetime({
+            format: 'dd-MM-yyyy H:m',
+            previewFormat: 'dd-MM-yyyy H:m'
+        });
+    </script>
 {% endblock %}

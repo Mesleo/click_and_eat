@@ -1,43 +1,47 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/producto.html.twig #}
 {% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+
 {% block body %}
 	{% include 'ManageCompanyBundle:Dialog:confirm_delete.php.twig' %}
 	<div class="container">
-		{{ form_start(form) }}
+    	{{ form_start(form) }}
 
-		<h2>Insertar producto</h2>
-
-		<input type="hidden" name="id_restaurante" value="5">
-
-		<div >
+		{% if producto is defined %}
+			<h2>Modificar producto</h2>
+		{% else %}
+			<h2>Insertar producto</h2>
+		{% endif %}
+		
+		<div>
 			<label class="control-label">Tipo producto</label>
-				<input type="text" class="tm-input tm-input-typeahead form-control " id="tipo-producto" name="tipo-producto" placeholder="Pizza, hamburguesa...">
-				<input type="hidden" id="txthid" name="id">
+			<input type="text" class="form-control tm-input tm-input-typeahead" id="tipo-producto" name="tipo-producto" placeholder="Pizza, hamburguesa...">
+			<input type="hidden" id="txthid" name="id">
 		</div>
 
-		{{ form_row(form.nombre) }}
-		{{ form_row(form.descripcion) }}
-		{{ form_row(form.precio) }}
-		{{ form_row(form.foto) }}
-
-		{{ form_row(form.disponible) }}
-		<input type="text" class="hidden" name="producto-id" id="producto-id" {% if producto is defined %} value="{{ producto.id }}" {% endif %}>
-		<div class="foto">
-			{% if producto.foto is defined and producto.foto != null %}
-				{#<img src="upload/{{ producto.foto }}" alt="">#}
+    	{{ form_row(form.nombre) }}
+        {{ form_row(form.descripcion) }}
+        {{ form_row(form.precio) }}
+		
+		{% if producto is defined %}
+			{% if producto.foto %}
+				<p><img src="{{ asset('uploads/restaurantes/productos/' ~ producto.foto ) }}" width="300px" alt="Foto de producto" class="img-thumbnail"></p>
 			{% endif %}
-		</div>
+		{% endif %}
+		
+        {{ form_row(form.img) }}
 
-		<div class="form-group">
-			<button type="submit" class="btn btn-primary">Guardar</button>
+    	<div class="form-group">
+    		<br />
+    		<button type="submit" class="btn btn-primary">Aceptar</button>
 			<a href="{{ path('gestion_productos') }}" class="btn btn-danger">Cancelar</a>
 			{% if producto is defined %}
-				<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_producto', {'id_producto': producto.id}) }}" data-target="#confirmDelete" data-title="Eliminar el producto '{{ producto.nombre }}'" data-message="¿Estás seguro?">
+				<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_producto', {'id_producto': producto.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas eliminar el producto '{{ producto.nombre }}'?">
 					<i class="glyphicon glyphicon-trash"></i> Eliminar
 				</button>
 			{% endif %}
-		</div>
-		{{ form_end(form) }}
-	</div>
+    	</div>
+    	{{ form_end(form) }}
+    </div>
 {% endblock %}
 {% block stylesheets %}
 	{{ parent() }}
@@ -52,35 +56,29 @@
 	<script>
 		(function(){
 
-			var tagApi;
-
+			/**
+			 * Gestiona los tipos de productos, muestra sugerencias a partir de una consulta
+			 **/
 			function tagManager(){
 				var categories = new Bloodhound({
 					datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
 					queryTokenizer: Bloodhound.tokenizers.whitespace,
 					limit: 10,
 					prefetch: {
-						url: '{{ path("tipos_producto_json") }}',
+						url: '{{ path('tipos_producto_json') }}',
 						filter: function (list) {
-							return $.map(list, function (value) {
-								return { name: value };
+							return $.map(list, function (country) {
+								return { name: country };
 							});
 						}
 					}
 				});
-
 				categories.initialize();
-				{% if producto is defined %}
-					tagApi = jQuery(".tm-input.tm-input-typeahead").tagsManager({
-						prefilled: [{% for tipoproducto in producto.tipoProducto %}
-							"{{ tipoproducto.nombre }}"{% if not loop.last %},{% endif %}
-							{% endfor %}]
-					});
-				{% else %}
-					tagApi = jQuery(".tm-input.tm-input-typeahead").tagsManager({
-						prefilled: ""
-					});
-				{% endif %}
+				var tagApi = jQuery(".tm-input.tm-input-typeahead").tagsManager({
+					prefilled: {% if producto.tipoProducto is defined %}[{% for tp in producto.tipoProducto %}
+						"{{ tp.nombre }}"{% if not loop.last %},{% endif %}
+						{% endfor %}] {% else %} '' {% endif %}
+				});
 				jQuery(".tm-input.tm-input-typeahead").typeahead(null, {
 					name: 'categories',
 					displayKey: 'name',

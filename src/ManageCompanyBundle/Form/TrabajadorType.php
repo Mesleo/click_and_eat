@@ -36,13 +36,6 @@ class TrabajadorType extends AbstractType
             ->add('email', EmailType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-            ->add('name', TextType::class, array(
-            		"attr" => array('class' => 'form-control'),
-                    "label" => "Nombre"
-            	))
-            ->add('telefono', TextType::class, array(
-            		"attr" => array('class' => 'form-control')
-            	))
         ;
     }
 

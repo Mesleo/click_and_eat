@@ -12,10 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity
  * @ORM\Table(name="mesa")
- * @UniqueEntity(
- *     fields={"numPersonas"},
- *     message="Debe asignar un número de persobas para la mesa."
- * )
+ * 
  * @UniqueEntity(
  *     fields={"codMesa"},
  *     message="Debe asignar un identificador para la mesa."

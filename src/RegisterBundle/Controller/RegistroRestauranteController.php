@@ -74,6 +74,7 @@ class RegistroRestauranteController extends Controller
                 $this->em->persist($restaurante);
                 $this->em->persist($usuario);
                 $this->em->flush();
+                $this->sendEmail($usuario->getEmail());
                 return $this->redirectToRoute('homepage');
             }
         }
@@ -126,6 +127,45 @@ class RegistroRestauranteController extends Controller
             ->findAll([],[
                 "nombre" => "ASC"
             ]);
+    }
+
+
+    private function sendEmail($to)
+    {
+        $message = \Swift_Message::newInstance()
+            ->setSubject('Bienvenido a Click&Eat')
+            ->setFrom('register@clickandeat.com')
+            ->setTo($to)
+            ->setBody(
+                $this->renderView(
+                // app/Resources/views/Emails/registration.html.twig
+                    'Emails/registration.html.twig',
+                    array('email' => $to)
+                ),
+                'text/html'
+            )
+        ;
+        $this->get('mailer')->send($message);
+    }
+
+    /**
+     * @Route("/{email}/check", name="check_user")
+     *
+     * @param  [type] $email [description]
+     * @return [type]           [description]
+     */
+    public function checkUser($email)
+    {
+        $this->initialize();
+
+        $usuario = $this->em->getRepository("AppBundle:Usuario")
+            ->findOneBy([
+                'email' => $email
+            ]);
+        $usuario->setEnabled(1);
+        $this->em->persist($usuario);
+        $this->em->flush();
+        return $this->redirectToRoute('admin_login');
     }
 
     private function isValidCif($string){

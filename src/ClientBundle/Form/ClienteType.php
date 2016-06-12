@@ -93,7 +93,7 @@ class ClienteType extends AbstractType
      */
     public function getName()
     {
-        return 'registerbundle_clientetype';
+        return 'clientbundle_clientetype';
     }
     /**
      * @param OptionsResolver $resolver

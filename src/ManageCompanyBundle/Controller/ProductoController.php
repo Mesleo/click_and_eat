@@ -17,209 +17,223 @@ class ProductoController extends Controller
 	private $params = null;
 
 	/**
-     * Muestra la lista de productos del restaurante
+     * Muestra la lista de productos
      *
      * @Route("/productos", name="gestion_productos")
-     * @return [type]              [description]
      */
-    public function showAction(Request $request){
+    public function showAction()
+	{
         $this->initialize();
-        $this->params['productos'] = $this->em->getRepository('AppBundle:Producto')
-            ->findBy([
-                "restaurante" => $this->getIdRestaurante()
-                ], [
-                "nombre" => "ASC"
-            ]);
 
+        $this->params['productos'] = $this->em->getRepository("AppBundle:Producto")
+            ->findBy(
+				['restaurante' => $this->getIdRestaurante()], 
+				['nombre' => 'ASC']
+			);
+		
         return $this->render('ManageCompanyBundle:Restaurante:productos.html.twig', $this->params);
     }
 
-    /**
+	/**
      * @Route("/productos/insertar", name="add_producto")
-     *
+	 *
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function addAction(Request $request)
-    {
-        $this->initialize();
-
-        $producto = new Producto();
+	public function addAction(Request $request)
+	{
+		$this->initialize();
+		
+		$producto = new Producto();
         $form = $this->createForm(ProductoType::class, $producto);
+		$this->params['tipos_producto'] = $this->em->getRepository("AppBundle:TipoProducto")
+				->findAll();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+			
+			$restaurante = $this->em->getRepository("AppBundle:Restaurante")
+				->findOneBy([
+					'id' => $this->getIdRestaurante()
+				]);
+			$producto->setFoto('');
+			$this->addTiposProducto($request, $producto);
+			$producto->setRestaurante($restaurante);
+			$restaurante->addProducto($producto);
 
-            $restaurante = $this->em->getRepository('AppBundle:Restaurante')
-                ->findOneBy([
-                    "id" => $this->getIdRestaurante()
-                ]);
-            if($request->request->get("producto-id") != null) {
-                $producto = $this->em->getRepository("AppBundle:Producto")
-                    ->findOneBy([
-                        "id" => $request->request->get('producto-id')
-                    ]);
-            }
-            $producto->setFoto(' ');
-            $this->addTiposProducto($request, $producto);
-            $producto->setRestaurante($restaurante);
-            $restaurante->addProducto($producto);
-            $this->em->persist($producto);
+        	$this->em->persist($producto);
             $this->em->flush();
+			
+			$producto->uploadImg();
+			$this->em->flush();
 
-            return $this->redirectToRoute('gestion_productos');
+			return $this->redirectToRoute('gestion_productos');
         }
-
-        return $this->render('ManageCompanyBundle:Restaurante:producto.html.twig', array(
-            'form'	=> $form->createView()
+		
+		return $this->render('ManageCompanyBundle:Restaurante:producto.html.twig', array(
+            'form' => $form->createView(),
+			'tipos_producto' => $this->params
         ));
-
-    }
-
-    /**
+	}
+	
+	/**
      * @Route("/productos/{id_producto}/edit", name="edit_producto")
-     *
-     * @param  Request $request    [description]
-     * @param  [type]  $id_producto [description]
-     * @return [type]              [description]
-     * Method({POST})
-     */
-    public function updateAction(Request $request, $id_producto)
-    {
-        $this->initialize();
-        $producto = $this->em->getRepository('AppBundle:Producto')
-            ->findOneBy([
-                "id" => $id_producto
-            ]);
-
-        if (!$producto) {
-            throw $this->createNotFoundException(
-                'No se encontró el producto con id '.$request->request->get('producto-id')
-            );
-        }
-        if($this->checkIdRestauranteIdUserLog($producto)) {
-            $form = $this->createForm(ProductoType::class, $producto);
-
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-                $this->addTiposProducto($request, $producto);
-                $this->em->flush();
-                return $this->redirectToRoute('gestion_productos');
-            }
-
-            return $this->render('ManageCompanyBundle:Restaurante:producto.html.twig', array(
-                'producto' => $producto,
-                'form' => $form->createView()
-            ));
-        }
-        return $this->redirectToRoute('gestion_productos');
-    }
-
-    /**
-     * @Route("/productos/{id_producto}/delete", name="delete_producto")
-     *
+     * 
      * @param  Request $request    [description]
      * @param  [type]  $id_producto [description]
      * @return [type]              [description]
      */
-    public function deleteAction(Request $request, $id_producto)
-    {
-        $this->initialize();
-
-        $producto = $this->em->getRepository('AppBundle:Producto')
-            ->findOneBy([
-                "id" => $id_producto,
-            ]);
-
-        if (!$producto) {
-            throw $this->createNotFoundException(
-                'No se encontró el producto con id '.$id_producto
-            );
-        }
-        if($this->checkIdRestauranteIdUserLog($producto)) {
-            $this->em->remove($producto);
-            $this->em->flush();
-        }
-        return $this->redirectToRoute('gestion_productos');
-    }
-
-    /**
-     * @Route("/productos/{id_producto}/{value}", name="activar_producto")
-     *
-     * @param  [type]  $id_trabajador [description]
-     * @return [type]              [description]
-     */
-    public function activarAction($id_producto, $value)
-    {
-        $this->initialize();
-        $producto = $this->em->getRepository('AppBundle:Producto')
-            ->findOneBy([
+	public function updateAction(Request $request, $id_producto)
+	{
+		$this->initialize();
+		
+		$producto = $this->em->getRepository("AppBundle:Producto")
+			->findOneBy([
                 'id' => $id_producto
             ]);
-        if (!$producto) {
-            throw $this->createNotFoundException(
-                'No se encontró el producto con id ' .$id_producto
-            );
-        }
-        if($this->checkIdRestauranteIdUserLog($producto)) {
-            $producto->setDisponible($value);
-            $this->em->persist($producto);
-            $this->em->flush();
-        }
-        return $this->redirectToRoute('gestion_productos');
-    }
+		
+		if (!$producto) {
+			throw $this->createNotFoundException(
+				'No se encontró el producto con id '.$id_producto
+			);
+		}
+		
+		if ($this->checkRestaurante($producto)) {
 
-    /**
+			$form = $this->createForm(ProductoType::class, $producto);
+			$form->handleRequest($request);
+			
+			if ($form->isSubmitted() && $form->isValid()) {
+				$producto->uploadImg();
+				$this->addTiposProducto($request, $producto);
+				$this->em->flush();
+				return $this->redirectToRoute('gestion_productos');
+			}
+			
+			return $this->render('ManageCompanyBundle:Restaurante:producto.html.twig', array(
+				'producto' => $producto,
+				'form' => $form->createView()
+			));
+		}
+		return $this->redirectToRoute('gestion_productos');
+	}
+	
+	/**
+     * @Route("/productos/{id_producto}/delete", name="delete_producto")
+     * 
+     * @param  Request $request    [description]
+     * @param  [type]  $id_producto [description]
+     * @return [type]              [description]
+     */
+	public function deleteAction(Request $request, $id_producto)
+	{
+		$this->initialize();
+		
+		$producto = $this->em->getRepository("AppBundle:Producto")
+			->findOneBy([
+                'id' => $id_producto
+            ]);
+		
+		if (!$producto) {
+			throw $this->createNotFoundException(
+				'No se encontró el producto con id '.$id_producto
+			);
+		}
+		
+		if ($this->checkRestaurante($producto)) {
+			$restaurante = $this->em->getRepository("AppBundle:Restaurante")
+				->findOneBy([
+					'id' => $this->getIdRestaurante()
+				]);
+			$restaurante->removeProducto($producto);
+			
+			$this->em->remove($producto);
+			$this->em->flush();
+		}
+		return $this->redirectToRoute('gestion_productos');
+	}
+	
+	/**
+     * @Route("/productos/{id_producto}/{value}", name="activar_producto")
+     * 
+     * @param  Request $request    [description]
+     * @param  [type]  $id_producto [description]
+	 * @param  [type]  $value [description]
+     * @return [type]              [description]
+     */
+	public function activarAction(Request $request, $id_producto, $value)
+	{
+		$this->initialize();
+		
+		$producto = $this->em->getRepository("AppBundle:Producto")
+			->findOneBy([
+                'id' => $id_producto
+            ]);
+		
+		if (!$producto) {
+			throw $this->createNotFoundException(
+				'No se encontró el producto con id '.$id_producto
+			);
+		}
+		
+		if ($this->checkRestaurante($producto)) {
+			$producto->setDisponible($value);
+			$this->em->flush();
+		}
+		return $this->redirectToRoute('gestion_productos');
+	}
+	
+	/**
      * Obtengo el id del restaurante logeado (Tabla Restaurante)
      *
      * @return mixed
      */
-    private function getIdRestaurante(){
+    private function getIdRestaurante()
+	{
         $user = $this->em->getRepository("AppBundle:Usuario")
             ->findOneBy([
-                "id" => $this->getUser()->getId()
+                'id' => $this->getUser()->getId()
             ]);
-        return  $this->em->getRepository('AppBundle:Restaurante')
+        return  $this->em->getRepository("AppBundle:Restaurante")
             ->findOneBy([
-                'id' => $user->getIdRestaurante()->getId()
+                'usuario' => $user->getId()
             ])->getId();
     }
-
-    /**
+	
+	/**
      * Compruebo que id del usuario logeado sea el id del restaurante con el que estoy trabajando
      *
      * @param $producto
      * @return bool
      */
-    private function checkIdRestauranteIdUserLog($producto){
+    private function checkRestaurante($producto)
+	{
         return $producto->getRestaurante()->getId() == $this->getIdRestaurante();
     }
 
-
-
-    private function initialize(){
+	private function initialize()
+	{
         $this->params = [];
         $this->em = $this->getDoctrine()->getManager();
     }
-
-    /**
-     * @param Request $request
-     * @param $producto
+	
+	/**
+     * @param  Request $request    [description]
+     * @param  [type]  $producto [description]
      */
     public function addTiposProducto(Request $request, $producto)
     {
         $tiposProductos = $producto->getTipoProducto();
-        $repoTiposProductos = $this->em->getRepository('AppBundle:TipoProducto');
-        $tiPro = $request->request->get('hidden-tipo-producto');
-        $tiposProductoArray = explode(',', $tiPro);
-        foreach ($tiposProductoArray as $tc) {
+        $repoTiposProductos = $this->em->getRepository("AppBundle:TipoProducto");
+        $tipoProducto = $request->request->get('hidden-tipo-producto');
+        $tiposProductoArray = explode(',', $tipoProducto);
+        foreach ($tiposProductoArray as $tp) {
             $dbTiposProducto = $repoTiposProductos->findOneBy([
-                'nombre' => $tc,
+                'nombre' => $tp,
             ]);
             if (empty($dbTiposProducto)) {
                 $dbTiposProducto = new \AppBundle\Entity\TipoProducto();
-                $dbTiposProducto->setNombre($tc);
+                $dbTiposProducto->setNombre($tp);
                 $this->em->persist($dbTiposProducto);
             }
             if (!$tiposProductos->contains($dbTiposProducto)) {

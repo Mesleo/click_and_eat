@@ -8,47 +8,30 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class ProductoType extends AbstractType
 {
-	private $em = null;
-    private $params = null;
-
     /**
-     * Genera el formulario de registro
-     * 
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-    	$builder
+        $builder
             ->add('nombre', TextType::class, array(
-                    "required" => true,
-            		"attr" => array('class' => 'form-control')
-            	))
+                'required' => true,
+                "attr" => array('class' => 'form-control')
+            ))
             ->add('descripcion', TextType::class, array(
-            		"attr" => array('class' => 'form-control')
-            	))
+                "attr" => array('class' => 'form-control')
+            ))
             ->add('precio', MoneyType::class, array(
-            		"attr" => array('class' => 'form-control')
-            	))
-            ->add('foto', FileType::class, array('required' => false,
-            		"attr" => array('class' => 'form-control'),
-					'data_class' => null
-            	))
-            ->add('disponible', CheckboxType::class, array(
-                    'label'    => 'Disponible',
-                    'required' => false,
-                    'attr' => array('class' => 'form-control')
-                )
-            )
+                "attr" => array('class' => 'form-control')
+            ))
+            ->add('img', FileType::class, array('required' => false,
+                "attr" => array('class' => 'form-control'),
+                'data_class' => null
+            ))
         ;
     }
 

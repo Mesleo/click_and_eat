@@ -63,18 +63,6 @@ class RestauranteController extends Controller
         return new JsonResponse($toRet);
     }
 
-
-    private function getLocalidad($localidad_id)
-    {
-        $this->initialize();
-        $localidad = $this->em->getRepository('AppBundle:Localidad')
-            ->find($localidad_id);
-        if (!$localidad) {
-            throw $this->createNotFoundException('No se ha podido localizar la localidad.');
-        }
-        return $localidad;
-    }
-
     /**
      * Devuelve todas las provincias
      *
@@ -91,19 +79,6 @@ class RestauranteController extends Controller
             ];
         }
         return $this->params;
-    }
-
-
-    /**
-     * Pagina de prueba
-     *
-     * @Route("/index", name="index")
-     * @Security("has_role('ROLE_EDITOR')")
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function indexAction(){
-        return $this->render("ManageCompanyBundle:Pages:form.html.twig");
     }
 
     private function initialize(){

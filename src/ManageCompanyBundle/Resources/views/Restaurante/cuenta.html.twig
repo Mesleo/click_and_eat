@@ -30,7 +30,7 @@
     			<div class="col-md-8">
     				<div class="form-group">
         				<label class="control-label">Nombre restaurante</label>
-            			<input type="text" class="form-control" name="inputNombre" id="inputNombre" {% if userLog is defined %} value="{{ userLog.name }}" {% endif %} placeholder="Nombre restaurante">
+            			<input type="text" class="form-control" name="inputNombre" id="inputNombre" {% if usuarioRestaurante is defined %} value="{{ usuarioRestaurante.name }}" {% endif %} placeholder="Nombre restaurante">
         			</div>
     			</div>
     			<div class="col-md-4">
@@ -53,7 +53,7 @@
 						<select id="provincias" class="form-control" name="provincia">
 						{% if provincias is defined %}
 							{% for provincia in provincias %}
-								{% if usuarioRestaurante is defined and provincia.id == usuarioRestaurante.provincia.id %}
+								{% if usuarioRestaurante is defined and provincia.id == usuarioRestaurante.provincia_id %}
 									<option value="{{ provincia.id }}" selected>{{ provincia.nombre }}</option>
 								{% else %}
 									<option value="{{ provincia.id }}">{{ provincia.nombre }}</option>
@@ -68,7 +68,7 @@
         				<label class="control-label">Localidad</label>
         				<select class="form-control" name="localidad" id="restaurante_localidad">
 							{% if usuarioRestaurante is defined %}
-								<option value="{{ usuarioRestaurante.localidad.id }}" selected>{{ usuarioRestaurante.localidad.nombre }}</option>
+								<option value="{{ usuarioRestaurante.localidad_id }}" selected>{{ usuarioRestaurante.localidad }}</option>
 							{% endif %}
             			</select>
         			</div>
@@ -85,12 +85,12 @@
     			<div class="col-md-3 {% if usuarioRestaurante is defined and usuarioRestaurante.tipoComida[1] is defined %}align-ceil{% endif %}">
     				<label class="control-label required">Precio envío</label>
     				<input type="text" title="El campo debe contener un número" pattern="^\d*([\.|,]\d)?" class="form-control"
-						   name="inputEnvio" id="inputEnvio" {% if usuarioRestaurante is defined %} value="{{ usuarioRestaurante.precioEnvio }}" {% endif %} placeholder="Precio envio">
+						   name="inputEnvio" id="inputEnvio" {% if usuarioRestaurante is defined %} value="{{ usuarioRestaurante.precio_envio }}" {% endif %} placeholder="Precio envio">
     			</div>
     			<div class="col-md-3 {% if usuarioRestaurante is defined and usuarioRestaurante.tipoComida[1] is defined %}align-ceil{% endif %}">
     				<div class="form-group">
         				<label class="control-label">Teléfono</label>
-            			<input type="text" class="form-control" name="inputTelefono" id="inputTelefono" {% if userLog is defined %} value="{{ userLog.telefono }}" {% endif %} placeholder="Telefono">
+            			<input type="text" class="form-control" name="inputTelefono" id="inputTelefono" {% if usuarioRestaurante is defined %} value="{{ usuarioRestaurante.telefono }}" {% endif %} placeholder="Telefono">
         			</div>
     			</div>
     		</div>
@@ -114,15 +114,9 @@
 	<script src="{{ asset('manage/js/bloodhound.min.js') }}"></script>
 	<script src="{{ asset('manage/js/tagmanager.js') }}"></script>
 	<script src="{{ asset('manage/js/typeahead.js') }}"></script>
-	<script src="{{ asset('manage/js/register.js') }}"></script>
 	<script src="{{ asset('manage/js/bootstrap-timepicker.js') }}"></script>
 	<script>
 		(function(){
-
-			/**
-			 * Gestiona las etiquetas, muestra sugerencias a partir de una consulta
-			 **/
-			{% if usuarioRestaurante is defined %}
 
 			function checkProvinciaSelected(){
 				changeLocalidades($('#provincias').val());
@@ -130,23 +124,26 @@
 
 			function changeLocalidades(b){
 				$("#select-localidades select").empty();
-				$.getJSON('localidad?provincia='+b,function(data){
+				$.getJSON('http://clickandeat.restaurante.local/app_dev.php/restaurante/localidades?provincia='+b,function(data){
 					$.each(data, function(id,value){
 						$("#select-localidades select").append('<option value="'+value[2]+'">'+value[0]+' ('+value[1]+') </option>');
 					});
 				});
 			}
 
+			/**
+			 * Gestiona los tipos de comida, muestra sugerencias a partir de una consulta
+			 **/
 			function tagManager(){
 				var categories = new Bloodhound({
 					datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
 					queryTokenizer: Bloodhound.tokenizers.whitespace,
 					limit: 10,
 					prefetch: {
-						url: '{{ path("tipos_comida_json") }}',
+						url: '{{ path('tipos_comida_json') }}',
 						filter: function (list) {
-							return $.map(list, function (value) {
-								return { name: value };
+							return $.map(list, function (country) {
+								return { name: country };
 							});
 						}
 					}
@@ -154,8 +151,8 @@
 
 				categories.initialize();
 				var tagApi = jQuery(".tm-input.tm-input-typeahead").tagsManager({
-					prefilled: [{% for tipocomida in usuarioRestaurante.tipoComida %}
-						"{{ tipocomida.nombre }}"{% if not loop.last %},{% endif %}
+					prefilled: [{% for tc in tipos_comida %}
+						"{{ tc.nombre }}"{% if not loop.last %},{% endif %}
 						{% endfor %}]
 				});
 				jQuery(".tm-input.tm-input-typeahead").typeahead(null, {
@@ -166,23 +163,22 @@
 					tagApi.tagsManager("pushTag", d.name);
 				});
 			} tagManager();
-			{% endif %}
 
-			$('.timepicker1').timepicker({
-				minuteStep: 10,
-				showMeridian: false,
-				defaultTime: false
-			});
 
 			jQuery.fn.resetear = function () {
 				$(this).each (function() { this.reset(); });
 			};
 
+			$('#provincias').change(function() {
+				changeLocalidades($('#provincias').val());
+			});
+
+
 			$('.button-reset').on('click', function(){
 				$('#form-account').resetear();
 			});
 			$('#restaurante_localidad').bind('click', function(){
-				if($('#restaurante_localidad').val() == {{ usuarioRestaurante.localidad.id }}) {
+				if($('#restaurante_localidad').val() == {{ usuarioRestaurante.localidad_id }}) {
 					checkProvinciaSelected();
 				}
 			});

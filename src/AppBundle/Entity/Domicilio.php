@@ -50,7 +50,7 @@ class Domicilio
     protected $localidad;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="domicilios")
+     * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="domicilios",cascade={"persist"})
      * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=false)
      */
     protected $cliente;

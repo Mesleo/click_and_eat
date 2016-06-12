@@ -27,4 +27,21 @@ class RestauranteRepository extends \Doctrine\ORM\EntityRepository
         $restaurantes = $query->getResult();
         return $restaurantes;
     }
+
+    /**
+     * Obtengo el restaurante con el id pasado (Datos de ambas tablas: Usuario y Restaurante)
+     *
+     * @param $idRestaurante
+     * @return mixed
+     */
+    public function getInfoRestauranteLogConfigAccount($idRestaurante){
+        $stmt = $this->getEntityManager()->getConnection()
+                ->prepare("SELECT u.id as usuario_id, r.id as restaurante_id, u.username, u.email, r.name, r.cif, r.direccion,
+                r.idLocalidad as localidad_id, l.nombre as localidad, r.idProvincia as provincia_id, r.precio_envio,r.telefono
+                FROM usuario u LEFT JOIN restaurante r ON r.idUsuario = u.id LEFT JOIN localidad l ON l.id = r.idLocalidad
+                WHERE r.idUsuario = :idRestaurante");
+        $params = array("idRestaurante" => $idRestaurante);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
 }

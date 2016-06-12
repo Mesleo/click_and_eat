@@ -64,6 +64,12 @@ class Reserva
     protected $restaurante;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="reservas")
+     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=false)
+     */
+    protected $cliente;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Mesa", inversedBy="reservas")
      * @ORM\JoinColumn(name="idMesa", referencedColumnName="id", nullable=false)
      */

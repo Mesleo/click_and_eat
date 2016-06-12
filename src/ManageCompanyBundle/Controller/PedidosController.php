@@ -27,24 +27,26 @@ class PedidosController extends Controller{
         $this->initialize();
 
         $this->params['pedidos'] = $this->em->getRepository('AppBundle:Pedido')
-            ->getGeneralInfoOrders($this->getRestaurante());
+            ->getGeneralInfoOrders($this->getIdRestaurante());
+        $this->params['estados'] = $this->getEstados();
         return $this->render('ManageCompanyBundle:Restaurante:pedidos.html.twig', $this->params);
     }
 
     /**
      * Muestra toda la información de un pedido
      *
-     * @Route("/pedidos/{id_pedido}", name="edit_pedido")
+     * @Route("/pedido/editar/{id_pedido}", name="edit_pedido")
      */
     public function showOrderAction($id_pedido){
         $total = 0;
+
         $this->initialize();
         $pedido = $this->em->getRepository('AppBundle:Pedido')
             ->getInfoOrder($id_pedido);
         $lineasPedido = $this->em->getRepository('AppBundle:Pedido')
             ->getInfoProductOrder($id_pedido);
         $this->params['trabajadores'] = $this->em->getRepository("AppBundle:Trabajador")
-            ->showEmployeesRestaurant($this->getRestaurante());
+            ->showEmployeesRestaurant($this->getIdRestaurante());
 
         for($i = 0; $i < count($lineasPedido); $i++){
             foreach($lineasPedido[$i] as $key => $lp) {
@@ -54,11 +56,7 @@ class PedidosController extends Controller{
             }
         }
         $this->params['total'] = $total;
-
-        $this->params['estados'] = $this->em->getRepository("AppBundle:Estado")
-            ->findAll([],[
-                "estado" => "ASC"
-            ]);
+        $this->params['estados'] = $this->getEstados();
 
         if($lineasPedido[0]['pedido_id'] == $pedido[0]['id'] ){
             $this->params['pedido'] = $pedido[0];
@@ -72,7 +70,7 @@ class PedidosController extends Controller{
     /**
      * Guarda los cambios en el pedido (campos "estado" y "fecha_envio")
      *
-     * @Route("/pedido/guardar}", name="guardar_info_pedido")
+     * @Route("/pedido/guardar", name="guardar_info_pedido")
      */
     public function saveOrderInfoAction(Request $request){
         $this->initialize();
@@ -90,29 +88,123 @@ class PedidosController extends Controller{
             ]);
         $pedido->setEstado($estado);
         $pedido->setTrabajador($trabajador);
-        $fechaSalida = \DateTime::createFromFormat('Y-m-d H:i', $request->request->get('fecha-salida'));
-        $fechaLlegada = \DateTime::createFromFormat('Y-m-d H:i', $request->request->get('fecha-llegada'));
+        if(!$request->request->has('fecha-llegada') or $request->request->get('fecha-salida') == null){
+            $fechaSalida = null;
+        } else $fechaSalida = \DateTime::createFromFormat('d-m-Y H:i', $request->request->get('fecha-salida'));
+        if(!$request->request->has('fecha-llegada') or $request->request->get('fecha-llegada') == ""){
+            $fechaLlegada = null;
+        } else $fechaLlegada = \DateTime::createFromFormat('d-m-Y H:i', $request->request->get('fecha-llegada'));
         $pedido->setFechaHoraSalida($fechaSalida);
         $pedido->setFechaHoraLlegada($fechaLlegada);
         $this->em->persist($pedido);
         $this->em->flush();
-        return $this->redirectToRoute("edit_pedido", array('id_pedido' => $request->request->get("pedido-id")));
+        return $this->redirectToRoute("gestion_pedidos");
     }
 
     /**
-     * Obtengo el restaurante logeado (Tabla Restaurante)
+     * Pone un pedido como "Enviado"
+     *
+     * @Route("/pedido/enviar/{id_pedido}", name="send_pedido")
+     */
+    public function setStateSend($id_pedido){
+        $this->initialize();
+        $pedido = $this->em->getRepository('AppBundle:Pedido')
+            ->findOneBy([
+                "id" => $id_pedido
+            ]);
+        $pedido->setEstado($this->setState(4));
+        $this->em->persist($pedido);
+        $this->em->flush();
+        return $this->redirectToRoute("gestion_pedidos");
+    }
+
+    /**
+     * Cancela un pedido
+     *
+     * @Route("/pedido/cancelar/{id_pedido}", name="cancel_pedido")
+     */
+    public function setStateCancel($id_pedido){
+        $this->initialize();
+        $pedido = $this->em->getRepository('AppBundle:Pedido')
+            ->findOneBy([
+                "id" => $id_pedido
+            ]);
+        $pedido->setEstado($estado = $this->setState(3));
+        $this->em->persist($pedido);
+        $this->em->flush();
+        return $this->redirectToRoute("gestion_pedidos");
+    }
+
+    /**
+     * Pone un pedido como entregado
+     *
+     * @Route("/pedido/entregado/{id_pedido}", name="deliver_pedido")
+     */
+    public function setStateDelivered($id_pedido){
+        $this->initialize();
+        $pedido = $this->em->getRepository('AppBundle:Pedido')
+            ->findOneBy([
+                "id" => $id_pedido
+            ]);
+        $pedido->setEstado($estado = $this->setState(5));
+        $this->em->persist($pedido);
+        $this->em->flush();
+        return $this->redirectToRoute("gestion_pedidos");
+    }
+
+    /**
+     * Muestro los pedidos por estado
+     *
+     * @Route("/pedidos/estado", name="show_orders_state")
+     */
+    public function showOrdersByState(Request $request){
+        $this->initialize();
+        $this->params['pedidos'] = $this->em->getRepository('AppBundle:Pedido')
+            ->getGeneralInfoOrdersByState($this->getIdRestaurante(), $request->query->get("estado"));
+        $this->params['estados'] = $this->getEstados();
+        return $this->render('ManageCompanyBundle:Restaurante:pedidos.html.twig', $this->params);
+    }
+
+    /**
+     * Obtengo el id del restaurante logeado
      *
      * @return mixed
      */
-    private function getRestaurante(){
+    private function getIdRestaurante()
+    {
         $user = $this->em->getRepository("AppBundle:Usuario")
             ->findOneBy([
-                "id" => $this->getUser()->getId()
+                'id' => $this->getUser()->getId()
             ]);
-        return  $this->em->getRepository('AppBundle:Restaurante')
+        return  $this->em->getRepository("AppBundle:Restaurante")
             ->findOneBy([
-                'id' => $user->getIdRestaurante()->getId()
+                'usuario' => $user->getId()
             ])->getId();
+    }
+
+    private function setState($id){
+        return $this->em->getRepository('AppBundle:Estado')
+            ->findOneBy([
+                "id" => $id
+            ]);
+    }
+
+    /**
+     * Compruebo que id del usuario logeado sea el id del restaurante con el que estoy trabajando
+     *
+     * @param $trabajador
+     * @return bool
+     */
+    private function checkRestaurante($trabajador)
+    {
+        return $trabajador->getRestaurante()->getId() == $this->getIdRestaurante();
+    }
+
+    private function getEstados(){
+        return $this->em->getRepository("AppBundle:Estado")
+            ->findAll([],[
+                "estado" => "ASC"
+            ]);
     }
 
     private function initialize(){

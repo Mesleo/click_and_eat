@@ -22,15 +22,18 @@ class CuentaController extends Controller
     private $params = null;
 
     /**
+     * Obtengo los datos del restaurante logeado, de ambas tablas, Usua
+     *
      * @Route("/cuenta", name="cuenta")
      */
     public function configAccoutAction(){
         $this->initialize();
         $this->params['userLog'] = $this->getUserLog();
-        $restaurante = $this->getRestaurante();
+        $restaurante = $this->getRestaurante()[0];
         if($this->checkIdRestauranteIdUserLog($restaurante)) {
             $this->params['usuarioRestaurante'] = $restaurante;
             $this->params['provincias'] = $this->getProvincias();
+            $this->params['tipos_comida'] = $this->getTiposComida($restaurante['restaurante_id']);
             return $this->render("ManageCompanyBundle:Restaurante:cuenta.html.twig", $this->params);
         }
         return $this->render("ManageCompanyBundle:Page:base.htm.twig", $this->params);
@@ -45,27 +48,27 @@ class CuentaController extends Controller
         if($request->request->has('save-account')){
             $this->initialize();
             $this->params['info'] = null;
-            $usuarioRestaurante = $this->em->getRepository('AppBundle:Usuario')
-                ->findOneBy([
-                    "id" => $this->getUser()->getId()
-                ]);
             $this->params['userLog'] = $this->getUserLog();
-            $restaurante = $this->getRestaurante();
+            $usuarioRestaurante = $this->getUserLog();
+            $restaurante = $this->getRestaurante()[0];
             if($this->checkIdRestauranteIdUserLog($restaurante)) {
-                $this->params['usuarioRestaurante'] = $restaurante;
-                $this->params['provincias'] = $this->getProvincias();
+                $restaurante = $this->getRestauranteData();
                 $usuarioRestaurante->setUsername($request->request->get('inputUserName'));
                 if(filter_var($request->request->get('inputEmail'), FILTER_VALIDATE_EMAIL)) {
                     $usuarioRestaurante->setEmail($request->request->get('inputEmail'));
                 }else {
                     $this->params['info'] = "Dirección de correo no válida";
                 }
-                $usuarioRestaurante->setName($request->request->get('inputNombre'));
-                $usuarioRestaurante->setTelefono($request->request->get('inputTelefono'));
+                $restaurante->setName($request->request->get('inputNombre'));
+                $restaurante->setTelefono($request->request->get('inputTelefono'));
                 if(!$this->isValidCif($request->request->get('inputCIF'))){
                     $this->params['info'] = "Formato CIF no válido";
                 }else $restaurante->setCif($request->request->get('inputCIF'));
                 $restaurante->setDireccion($request->request->get('inputDireccion'));
+                if ($request->files->get('foto') != null) {
+                    $restaurante->setImg($request->files->get('foto'));
+                }
+                $restaurante->uploadImg();
                 $provincia = $this->em->getRepository('AppBundle:Provincia')
                     ->findOneBy([
                         "id" => $request->request->get('provincia')
@@ -100,12 +103,17 @@ class CuentaController extends Controller
                         $restaurante->removeTipoComida($tipComida);
                     }
                 }
+                $this->params['usuarioRestaurante'] = $restaurante;
+                $this->params['provincias'] = $this->getProvincias();
                 if($this->params['info'] == null){
                     $this->em->persist($restaurante);
                     $this->em->flush();
                     $this->params['info'] = "Datos actualizados correctamente";
                     $this->params['ok'] = true;
                 }
+                $restaurante = $this->getRestaurante()[0];
+                $this->params['tipos_comida'] = $this->getTiposComida($restaurante['restaurante_id']);
+                $this->params['usuarioRestaurante'] = $restaurante;
             }
         }
         return $this->render('ManageCompanyBundle:Restaurante:cuenta.html.twig', $this->params);
@@ -175,6 +183,22 @@ class CuentaController extends Controller
         return $this->render("ManageCompanyBundle:Restaurante:cuenta.html.twig", $params);
     }
 
+
+    /**
+     * Valido el CIF introducido
+     *
+     * @param $string
+     * @return int
+     */
+    private function isValidCif($string){
+        return preg_match("/^[a|b|c|d|e|f|g|h|j|n|p|q|r|s|u|v|w]{1}\\d{7}[\\d|\\w]{1}$/i", $string);
+    }
+
+    private function getTiposComida($restaurante){
+        return $this->em->getRepository('AppBundle:TipoComida')
+            ->getTiposComidaRestaurante($restaurante);
+    }
+
     /**
      * Obtengo el restaurante logeado (Tabla Usuarios)
      *
@@ -188,24 +212,25 @@ class CuentaController extends Controller
     }
 
     /**
-     * Obtengo el restaurante logeado (Tabla Restaurante)
+     * Obtengo el restaurante logeado (Datos de ambas tablas: Usuario y Restaurante)
      *
      * @return mixed
      */
     private function getRestaurante(){
-        $user = $this->em->getRepository("AppBundle:Usuario")
-            ->findOneBy([
-                "id" => $this->getUser()->getId()
-            ]);
         return  $this->em->getRepository('AppBundle:Restaurante')
-            ->findOneBy([
-                'id' => $user->getIdRestaurante()->getId()
-            ]);
+            ->getInfoRestauranteLogConfigAccount($this->getUser()->getId());
     }
 
-
-    private function isValidCif($string){
-        return preg_match("/^[a|b|c|d|e|f|g|h|j|n|p|q|r|s|u|v|w]{1}\\d{7}[\\d|\\w]{1}$/i", $string);
+    /**
+     * Obtengo los datos del restaurante logeado (Tabla Restaurante)
+     *
+     * @return mixed
+     */
+    private function getRestauranteData(){
+        return $this->em->getRepository("AppBundle:Restaurante")
+            ->findOneBy([
+                "usuario" => $this->getUserLog()->getId()
+            ]);
     }
 
     /**
@@ -215,7 +240,7 @@ class CuentaController extends Controller
      * @return bool
      */
     private function checkIdRestauranteIdUserLog($restaurante){
-        return $restaurante->getId() == $this->getRestaurante()->getId();
+        return $restaurante['usuario_id'] == $this->getUser()->getId();
     }
 
     private function initialize(){

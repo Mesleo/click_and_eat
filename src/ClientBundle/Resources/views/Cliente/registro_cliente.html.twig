@@ -24,7 +24,6 @@
 		{{ form_errors(form) }}
 		
 		{{ form_row(form._token) }}
-		
 		<div class="panel-body col-centered">
 			<div class="panel panel-success">
 				<div class="panel-heading">Datos usuario</div>
@@ -79,9 +78,13 @@
 				<div class="panel panel-body">
 					<div class="panel-group">
 						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-6">
 								<label for="direccion">Dirección</label>
 								<input type="text" class="form-control" name="direccion" id="direccion">
+							</div>
+							<div class="col-md-6">
+								<label for="direccion">Dirección extra</label>
+								<input type="text" class="form-control" name="direccion-extra" id="direccion-extra">
 							</div>
 						</div>
 					</div>

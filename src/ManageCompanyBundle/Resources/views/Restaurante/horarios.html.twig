@@ -27,11 +27,11 @@
 							</div>
 							<div class="col-md-1">
 								<div><label></label>
-								<input type="submit" class="btn btn-primary" name="edit-horario" value="Editar"></div>
+								<input type="submit" class="btn btn-primary" name="edit-horario" value="Guardar"></div>
 							</div>
 							<div class="col-md-1">
 								<div><label></label>
-								<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_horario', {'id_horario': horario.id}) }}" data-target="#confirmDelete" data-title="Eliminar el horario '{{ horario.descripcion }}'" data-message="¿Estás seguro?">
+								<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_horario', {'id_horario': horario.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas eliminar el horario '{{ horario.descripcion }}'?">
 									<i class="glyphicon glyphicon-trash"></i> Eliminar
 								</button>
 							</div>
@@ -63,6 +63,20 @@
 		{% endif %}
     </div>
 {% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('manage/css/bootstrap-timepicker.min.css') }}">
+{% endblock %}
 {% block javascripts %}
 	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+	<script src="{{ asset('manage/js/bootstrap-timepicker.js') }}"></script>
+	<script>
+		(function(){
+			$('.timepicker1').timepicker({
+				minuteStep: 10,
+				showMeridian: false,
+				defaultTime: false
+			})
+		})();
+	</script>
 {% endblock %}

@@ -7,13 +7,12 @@
 			<br />
 			<a href="{{ path('add_mesa') }}" class="btn btn-success">Añadir mesa</a>
         </p>
-        <h3>Mesas</h3>
-        <div class="panel panel-body panel-success">
+        <div class="panel panel-body panel-default">
         <div class="be-panel col-sm-12">
             <table id="mesas-table" class="table display responsive nowrap">
                 <thead>
                 <tr>
-					<th>Cod Mesa</th>
+				    <th>Cod Mesa</th>
                     <th>Nº Personas</th>
                     <th></th>
                 </tr>
@@ -31,8 +30,8 @@
                 </tbody>
             </table>
         </div>
+        </div>
     </div>
-</div>
 {% endblock %}
 {% block javascripts %}
     {{ librerias.datatables_js() }}

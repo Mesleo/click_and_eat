@@ -10,4 +10,21 @@ namespace AppBundle\Repository;
  */
 class TipoComidaRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    /**
+     * Obtengo los tipos de comida de un restaurante
+     *
+     * @param $idRestaurante
+     * @return mixed
+     */
+    public function getTiposComidaRestaurante($idRestaurante){
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT tc.nombre FROM restaurante r
+                LEFT JOIN restaurante_tipo_comida rtc ON rtc.idRestaurante = r.id
+                LEFT JOIN tipo_comida tc ON tc.id = rtc.idTipoComida
+                WHERE r.id = :idRestaurante");
+        $params = array("idRestaurante" => $idRestaurante);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
 }

@@ -61,7 +61,7 @@ class Cliente
     protected $usuario;
 
     /**
-     * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente")
+     * @ORM\OneToMany(targetEntity="Domicilio", mappedBy="cliente",cascade={"persist"})
      */
     protected $domicilios;
 

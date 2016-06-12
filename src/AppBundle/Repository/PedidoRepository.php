@@ -12,7 +12,7 @@ class PedidoRepository extends \Doctrine\ORM\EntityRepository
 {
 
     /**
-     * Muestra una lista con todos los pedidos
+     * Muestra una lista con todos los pedidos de un restaurante
      *
      * @return array
      */
@@ -24,6 +24,25 @@ class PedidoRepository extends \Doctrine\ORM\EntityRepository
             p.id= pp.idPedido LEFT JOIN (select pp.idPedido ,SUM(pp.precio*pp.cantidad) as total FROM pedido_producto as pp group by
             pp.idPedido) AS total ON p.id = total.idPedido WHERE p.idRestaurante = :idRestaurante ORDER BY p.estado_id");
         $stmt->bindParam("idRestaurante", $idRestaurante);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+
+    /**
+     * Muestra una lista con todos los pedidos de un restaurante
+     *
+     * @return array
+     */
+    public function getGeneralInfoOrdersByState($idRestaurante, $idEstado)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT distinct(p.numPedido), p.id, p.nombre as cliente, p.fecha_hora_realizado as realizado, p.estado_id,
+            e.estado, total.total FROM pedido p LEFT JOIN estado AS e ON p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON
+            p.id= pp.idPedido LEFT JOIN (select pp.idPedido ,SUM(pp.precio*pp.cantidad) as total FROM pedido_producto as pp group by
+            pp.idPedido) AS total ON p.id = total.idPedido WHERE p.idRestaurante = :idRestaurante AND p.estado_id = :idEstado");
+        $stmt->bindParam("idRestaurante", $idRestaurante);
+        $stmt->bindParam("idEstado", $idEstado);
         $stmt->execute();
         return $stmt->fetchAll();
     }

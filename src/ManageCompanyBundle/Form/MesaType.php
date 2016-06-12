@@ -11,19 +11,19 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 class MesaType extends AbstractType
 {
     /**
-     *
-     * 
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
     	$builder
-            ->add('codMesa', TextType::class, array(
+			->add('codMesa', TextType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
             ->add('numPersonas', NumberType::class, array(
-            		"attr" => array('class' => 'form-control')
+                    'label' => 'Número de personas',
+            		"attr" => array(
+                        'class' => 'form-control')
             	))
         ;
     }

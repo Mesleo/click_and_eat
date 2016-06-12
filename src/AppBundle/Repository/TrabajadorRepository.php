@@ -1,5 +1,5 @@
 <?php
-
+// src/AppBundle/Repository/TrabajadorRepository.php
 namespace AppBundle\Repository;
 
 /**
@@ -10,8 +10,7 @@ namespace AppBundle\Repository;
  */
 class TrabajadorRepository extends \Doctrine\ORM\EntityRepository
 {
-
-    /**
+	/**
      * Muestra los campos de las tablas usuario y trabajador correspondientes a los trabajadores del restaurante
      *
      * @param $idRestaurante
@@ -21,18 +20,17 @@ class TrabajadorRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()
             ->createQuery(
-                'SELECT u.name, t.apellidos, t.id, u.username, u.email, u.enabled   FROM AppBundle:Trabajador t, AppBundle:Usuario u WHERE t.restaurante = :idRestaurante
-                AND t.id = u.idTrabajador'
+                'SELECT t.name, t.apellidos, t.id, u.username, u.email, u.enabled FROM AppBundle:Trabajador t, AppBundle:Usuario u
+                WHERE t.restaurante = :idRestaurante AND t.usuario = u.id'
             );
         $query->setParameter('idRestaurante',$idRestaurante);
         $trabajadores = $query->getResult();
         return $trabajadores;
     }
-
-    /**
+	
+	/**
      * Borra un registro de la tabla usuario y de la tabla trabajador correspondientes al trabajador del restaurante
      *
-     * @param $idRestaurante
      * @param $idTrabajador
      * @return mixed
      */
@@ -40,8 +38,7 @@ class TrabajadorRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()
             ->createQuery(
-                'DELETE FROM AppBundle:Trabajador t WHERE t.id = :idTrabajador
-                '
+                'DELETE FROM AppBundle:Trabajador t WHERE t.id = :idTrabajador'
             );
         $query->setParameter('idTrabajador',$idTrabajador);
         $trabajador = $query->getResult();

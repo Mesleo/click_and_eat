@@ -10,7 +10,6 @@ client:
     host:     clickandeat.cliente.local
     prefix:   /
 
-
 employee:
     resource: "@EmployeeBundle/Controller/"
     type:     annotation
@@ -49,7 +48,7 @@ client_logout:
     path:  /logout
     defaults: { _controller: FOSUserBundle:Security:logout }
 
-register_restaurante:
+register:
     resource: "@RegisterBundle/Controller/"
     type:     annotation
     host:     clickandeat.restaurante.local

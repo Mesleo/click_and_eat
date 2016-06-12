@@ -6,6 +6,20 @@
 	<div class="container">
 		<h3>Pedidos</h3>
 		<div class="panel panel-body panel-success">
+			<div class="row">
+				<div class="col-md-5">
+					<label for="select-state">Filtrar por</label>
+				</div>
+				<div class="col-md-7">
+					<select class="form-control" name="select-state" id="select-state">
+						<option value="-">- Elige estado -</option>
+						{% for e in estados %}
+							<option value="{{ e.id }}">{{ e.estado }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+			<br>
 			<div class="be-panel col-sm-12">
 				<table id="pedidos-table" class="table display responsive nowrap">
 					<thead>
@@ -27,7 +41,10 @@
 							<td>{{ pedido.realizado|date("d-m-Y H:i:s") }}</td>
 							<td>{{ pedido.estado }}</td>
 							<td>
-								<a href="{{ path('edit_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-primary">Editar</a>
+								<a href="{{ path('edit_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-primary" title="Editar pedido"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+								<a href="{{ path('send_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-warning" title='Cambiar estado a "Enviado"'><i class="fa fa-paper-plane-o" aria-hidden="true"></i></a>
+								<a href="{{ path('deliver_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-success" title='Cambiar estado a "Entregado"'><i class="fa fa-check-circle" aria-hidden="true"></i></a>
+								<a href="{{ path('cancel_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-danger" title="Cancelar pedido"><i class="fa fa-ban" aria-hidden="true"></i></a>
 							</td>
 						</tr>
 					{% endfor %}
@@ -36,6 +53,10 @@
 			</div>
 		</div>
 	</div>
+{% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('fonts/font-awesome-4.6.3/css/font-awesome.css') }}">
 {% endblock %}
 {% block javascripts %}
 	{{ librerias.datatables_js() }}
@@ -53,4 +74,9 @@
 			});
 		});
 	</script>
+	<script>
+		$('#select-state').on('change', function(){
+			window.location = "{{ path('show_orders_state') }}" + "?estado=" + $('#select-state').val();
+		});
+		</script>
 {% endblock %}

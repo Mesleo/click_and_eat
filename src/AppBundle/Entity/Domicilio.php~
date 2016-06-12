@@ -95,6 +95,30 @@ class Domicilio
     }
 
     /**
+     * Set direccion
+     *
+     * @param string $direccion
+     *
+     * @return Domicilio
+     */
+    public function setDireccion($direccion)
+    {
+        $this->direccion = $direccion;
+
+        return $this;
+    }
+
+    /**
+     * Get direccion
+     *
+     * @return string
+     */
+    public function getDireccion()
+    {
+        return $this->direccion;
+    }
+
+    /**
      * Set localidad
      *
      * @param \AppBundle\Entity\Localidad $localidad
