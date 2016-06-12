@@ -38,21 +38,35 @@
 		{{ form_row(form.email) }}
 
    		<h2>Datos empresa</h2>
-		
-    	{{ form_row(form.name) }}
+
+   		{% if info is defined and info != null %}
 		<div class="row">
 			<div class="col-md-12">
-				<label for="cif">CIF (*)</label>
-				<input type="text" class="form-control" name="cif" id="cif" required="required">
+				<p class="alert alert-danger">{{ info }}</p>
+			</div>
+		</div>
+		{% endif %}
+		
+    	<div class="row">
+			<div class="col-md-12">
+				<label for="nombre">Nombre</label>
+				<input type="text" class="form-control" name="nombre">
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<label for="cif">CIF</label>
+				<input type="text" class="form-control" name="cif" id="cif">
 			</div>
     	</div>
 		<div class="row">
     		<div class="col-md-8">
-    			<label for="direccion">Dirección (*)</label>
-				<input type="text" class="form-control" name="direccion" id="direccion" required="required">
+    			<label for="direccion">Dirección</label>
+				<input type="text" class="form-control" name="direccion" id="direccion">
     		</div>
     		<div class="col-md-4">
-    			{{ form_row(form.telefono) }}
+    			<label for="telefono">Teléfono</label>
+				<input type="text" class="form-control" name="telefono" id="telefono">
     		</div>
     	</div>
 		<div class="row">

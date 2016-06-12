@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Cliente
@@ -26,9 +27,39 @@ class Cliente
     /**
      * @var string
      *
+     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu nombre.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=3,
+     *     max=100,
+     *     minMessage="El nombre introducido es demasiado corto.",
+     *     maxMessage="El nombre introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $nombre;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="apellidos", type="string", length=100, nullable=false)
      */
     protected $apellidos;
+
+    /**
+     * @var string
+     * 
+     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu telefono.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=9,
+     *     max=15,
+     *     minMessage="El numero de telefono introducido es demasiado corto.",
+     *     maxMessage="El numero de telefono introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $telefono;
 
     /**
      * @ORM\OneToOne(targetEntity="Usuario")
@@ -104,27 +135,27 @@ class Cliente
     }
 
     /**
-     * Set name
+     * Set nombre
      *
-     * @param string $name
+     * @param string $nombre
      *
      * @return Cliente
      */
-    public function setName($name)
+    public function setNombre($nombre)
     {
-        $this->name = $name;
+        $this->nombre = $nombre;
 
         return $this;
     }
 
     /**
-     * Get name
+     * Get nombre
      *
      * @return string
      */
-    public function getName()
+    public function getNombre()
     {
-        return $this->name;
+        return $this->nombre;
     }
 
     /**
@@ -149,6 +180,30 @@ class Cliente
     public function getApellidos()
     {
         return $this->apellidos;
+    }
+
+    /**
+     * Set telefono
+     *
+     * @param string $telefono
+     *
+     * @return Cliente
+     */
+    public function setTelefono($telefono)
+    {
+        $this->telefono = $telefono;
+
+        return $this;
+    }
+
+    /**
+     * Get telefono
+     *
+     * @return string
+     */
+    public function getTelefono()
+    {
+        return $this->telefono;
     }
 
     /**

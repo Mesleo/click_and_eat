@@ -2,21 +2,43 @@
 {% extends 'ClientBundle:Page:base.html.twig' %}
 
 {% block body %}
+    <script async defer
+            src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCgRHjOa0n38Z2adOjuXwBnmEBFMn4qltc&callback=initialize">
+    </script>
+    <script type="text/javascript">
+        function initialize() {
+            var lat, lng;
+            var direccion = $('#direccion');
+            if ("geolocation" in navigator) {
+                navigator.geolocation.watchPosition(function(position) {
+                    lat = position.coords.latitude; 
+                    lng = position.coords.longitude;
+                    var latlng = new google.maps.LatLng(lat, lng);
+                    var geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ 'location': latlng}, function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            direccion.val(results[0].address_components[6]["long_name"]);
+                        }
+                    });  
+                });  
+            }
+        }
+    </script>
     <header>
         <h1 class="titulo">Pide comida a domicilio online</h1>
         <h3 class="subtitulo">Además reserva mesa en los mejores restaurantes de la zona</h3>
         <div class="container" id="buscar">
-            <form>
+            <form method="post" action="{{ path('show_restaurantes') }}">
                 <div class="row">
-					<div class="col-md-3">
+					<div class="col-md-1 col-sm-1">
 					</div>
-                    <div class="col-md-4">
+                    <div class="col-md-6 col-sm-6">
                         <div class="form-group">
                             <label class="control-label">Código postal</label>
                             <input type="text" class="form-control" name="direccion" id="direccion" placeholder="Código postal">
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4 col-sm-4">
                         <div class="form-group">
                             <br />
                             <input type="submit" class="btn btn-buscar" value="Búscar">
@@ -29,25 +51,25 @@
             <div class="contenido">
                 <span class="glyphicon glyphicon-map-marker" id="icon" aria-hidden="true"></span><br />
                 <p>1. Localización</p>
-                Introduce tu ciudad y tu dirección para encontrar los restaurantes más cercanos.
+                <span>Introduce tu ciudad y tu dirección para encontrar los restaurantes más cercanos.</span>
             </div>
             <div class="contenido">
                 <span class="glyphicon glyphicon-cutlery" id="icon" aria-hidden="true"></span><br />
                 <p>2. Selecciona restaurante</p>
-                Elige entre cientos de menús de comida en miles de restaurantes.
+                <span>Elige entre cientos de menús de comida en miles de restaurantes.</span>
             </div>
             <div class="contenido">
                 <span class="glyphicon glyphicon-credit-card" id="icon" aria-hidden="true"></span><br />
                 <p>3. Paga</p>
-                Paga de forma rápida y segura, a través de tarjeta, en efectivo o PayPal.
+                <span>Paga de forma rápida y segura, a través de tarjeta, en efectivo o PayPal.</span>
             </div>
         </div>
     </header>
     <section id="registro">
 		<div class="container" id="company">
 			<h2>¿Eres propietario/a de un restaurante y te gustaría formar parte de Click & Eat?</h2>
-			<a href="{{ path('registro_restaurante') }}" class="btn btn-register">¡AFILIATE!</a>
-			<span><br />¿Ya trabajas con nosotros? <a href="http://clickandeat.restaurante.local/app_dev.php/login">Gestiona tu restaurante</a></span>
+			<a href="{{ path('registro_restaurante') }}" target="_blank" class="btn btn-register">¡AFILIATE!</a>
+			<span><br />¿Ya trabajas con nosotros? <a href="http://clickandeat.restaurante.local/app_dev.php/login" target="_blank">Gestiona tu restaurante</a></span>
 		</div>
     </section>
 {% endblock %}

@@ -26,27 +26,26 @@
 						<a href="#" class="navbar-brand">Click & Eat</a>
 					</div>
 					<div class="collapse navbar-collapse navbar-ex1-collapse">
-            			<ul class="nav navbar-nav">
-							<li><a href="{{ path('admin_login') }}">Entra o Regístrate</a></li>
-							<li><a href="#">Ayuda</a></li>
-							<li><a href="#">¿Quiénes somos?</a></li>
-							<li><a href="#">Contacto</a></li>
-							{% if user is defined and user.hasRole('ROLE_USER') %}
-								<li class="dropdown">
+            			<ul class="nav navbar-nav navbar-right">
+            				{% if user is defined and user.hasRole('ROLE_USER') %}
+            					<li class="dropdown">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										¡Hola {{ user.username }}! <span class="caret"></span>
+										¡Hola {{ cliente.nombre }}! <span class="caret"></span>
 									</a>
 									<ul class="dropdown-menu">
-										<li><a href="#">Action</a></li>
-										<li><a href="#">Another action</a></li>
-										<li><a href="#">Something else here</a></li>
-										<li role="separator" class="divider"></li>
-										<li><a href="#">Separated link</a></li>
-										<li role="separator" class="divider"></li>
+										<li><a href="#">Información de la cuenta</a></li>
+										<li><a href="#">Pedidos</a></li>
+										<li><a href="#">Reservas</a></li>
+										<li><a href="#">Direcciones de reparto</a></li>
 										<li><a href="{{ path('admin_logout') }}" class="navbar-link">Salir</a></li>
 									</ul>
 								</li>
+							{% else %}
+								<li><a href="{{ path('admin_login') }}">Entra o Regístrate</a></li>
 							{% endif %}
+							<li><a href="#">Ayuda</a></li>
+							<li><a href="#">¿Quiénes somos?</a></li>
+							<li><a href="#">Contacto</a></li>
             			</ul>
         			</div>
 				</nav>

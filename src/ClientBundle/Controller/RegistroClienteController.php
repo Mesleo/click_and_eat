@@ -25,7 +25,7 @@ class RegistroClienteController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('Client:Page:base.html.twig');
+        return $this->render('ClientBundle:Page:base.html.twig');
     }
 
     /**
@@ -54,11 +54,14 @@ class RegistroClienteController extends Controller
 
             $domicilio = new Domicilio();
             $domicilio->setDomicilio($request->request->get('direccion'));
+            $domicilio->setDireccionExtra($request->request->get('direccion-extra'));
             $domicilio->setLocalidad($localidad);
             $domicilio->setCodigoPostal($localidad->getCodigoPostal());
 
             $cliente = new Cliente();
+            $cliente->setNombre($request->request->get('nombre'));
             $cliente->setApellidos($request->request->get('apellidos'));
+            $cliente->setTelefono($request->request->get('telefono'));
             $cliente->addDomicilio($domicilio);
             $domicilio->setCliente($cliente);
 
@@ -70,12 +73,14 @@ class RegistroClienteController extends Controller
             $usuario->setPassword($password);
             $usuario->addRole(3);
             $usuario->setTypeUser(3);
-            $usuario->setCliente($cliente);
+
+            $cliente->setUsuario($usuario);
 
             $this->em->persist($usuario);
             $this->em->flush();
 
-            return $this->redirectToRoute('homepage');
+            $this->sendEmail($usuario->getEmail());
+            return $this->redirectToRoute('admin_login');
         }
 
         return $this->render('ClientBundle:Cliente:registro_cliente.html.twig', array(
@@ -88,7 +93,7 @@ class RegistroClienteController extends Controller
     /**
      * Muestra las localidades a partir de una consulta pasada a JSON
      *
-     * @Route("/localidades", name="localidades_json")
+     * @Route("/localidades", name="localidades_json_cliente")
      *
      * @param  Request $request [description]
      * @return [type]           [description]
@@ -96,12 +101,12 @@ class RegistroClienteController extends Controller
     public function getLocalidades(Request $request)
     {
         $this->initialize();
-        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
+        $this->params['localidades'] = $this->em->getRepository("AppBundle:Localidad")
             ->findBy(
                 array('provincia' => $request->query->get('provincia')),
                 array('nombre' => 'ASC')
             );
-        return $this->render('RegisterBundle:Json:localidades.json.twig', $this->params);
+        return $this->render('ClientBundle:Json:localidades.json.twig', $this->params);
     }
 
     /**
@@ -116,12 +121,12 @@ class RegistroClienteController extends Controller
     {
         $this->initialize();
         $provincia = $request->request->get('idProvincia');
-        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
+        $this->params['localidades'] = $this->em->getRepository("AppBundle:Localidad")
             ->findAll([],[
                 'idProvincia' => $provincia,
                 'nombre' => 'DESC'
             ]);
-        return $this->render('RegisterBundle:Json:localidades.json.twig', $this->params);
+        return $this->render('ClientBundle:Json:localidades.json.twig', $this->params);
     }
 
     private function getProvincias()
@@ -131,6 +136,44 @@ class RegistroClienteController extends Controller
             ->findAll([],[
                 'nombre' => 'ASC'
             ]);
+    }
+
+    private function sendEmail($to)
+    {
+        $message = \Swift_Message::newInstance()
+            ->setSubject('Bienvenido a Click&Eat')
+            ->setFrom('register@clickandeat.com')
+            ->setTo($to)
+            ->setBody(
+                $this->renderView(
+                    // app/Resources/views/Emails/registration.html.twig
+                    'Emails/registration.html.twig',
+                    array('email' => $to)
+                ),
+                'text/html'
+            )
+        ;
+        $this->get('mailer')->send($message);
+    }
+
+    /**
+     * @Route("/{email}/check", name="check_user")
+     *
+     * @param  [type] $email [description]
+     * @return [type]           [description]
+     */
+    public function checkUser($email) 
+    {
+        $this->initialize();
+            
+        $usuario = $this->em->getRepository("AppBundle:Usuario")
+            ->findOneBy([
+                'email' => $email
+            ]);
+
+        $usuario->setEnabled(true);
+        $this->em->flush();
+        return $this->redirectToRoute('admin_login');
     }
 
     private function initialize()

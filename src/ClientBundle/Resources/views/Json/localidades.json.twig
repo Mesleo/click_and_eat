@@ -1,0 +1,7 @@
+[
+    {% for localidad in localidades %}
+        ["{{ localidad.nombre }}",
+        "{{ localidad.codigoPostal }}",
+        "{{ localidad.id }}"]{% if not loop.last %},{% endif %}
+    {%  endfor %}
+]

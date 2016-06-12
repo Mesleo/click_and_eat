@@ -20,6 +20,7 @@ class TrabajadorType extends AbstractType
     {
         $builder
             ->add('username', TextType::class, array(
+                    'label' => 'Usuario',
             		"attr" => array('class' => 'form-control')
             	))
             ->add('password', RepeatedType::class, array(
@@ -31,13 +32,6 @@ class TrabajadorType extends AbstractType
                     	"attr" => array('class' => 'form-control')),
             	))
             ->add('email', EmailType::class, array(
-            		"attr" => array('class' => 'form-control')
-            	))
-            ->add('name', TextType::class, array(
-					'label' => 'Nombre',
-            		"attr" => array('class' => 'form-control')
-            	))
-            ->add('telefono', TextType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
         ;

@@ -34,34 +34,11 @@ class Usuario extends BaseUser
     protected $id;
 
     /**
-	 * @var string
-	 *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
-     * @Assert\NotBlank(message="Por favor introduce tu nombre.", groups={"Registration", "Profile"})
-     * @Assert\Length(
-     *     min=3,
-     *     max=255,
-     *     minMessage="El nombre introducido es demasiado corto.",
-     *     maxMessage="El nombre introducido es demasiado largo.",
-     *     groups={"Registration", "Profile"}
-     * )
+     * @var integer
+     *
+     * @ORM\Column(name="tipo_usuario", type="integer", nullable=false)
      */
-    protected $name;
-
-    /**
-     * @var string
-	 * 
-     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
-     * @Assert\NotBlank(message="Por favor introduce tu telefono.", groups={"Registration", "Profile"})
-     * @Assert\Length(
-     *     min=9,
-     *     max=15,
-     *     minMessage="El numero de telefono introducido es demasiado corto.",
-     *     maxMessage="El numero de telefono introducido es demasiado largo.",
-     *     groups={"Registration", "Profile"}
-     * )
-     */
-    protected $telefono;
+    protected $typeUser;
 
     /**
      * @var \DateTime
@@ -90,7 +67,6 @@ class Usuario extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        $this->addRole("ROLE_ADMIN");
 		
         $this->setCreatedAt(new \DateTime());
         $this->setUpdatedAt(new \DateTime());
@@ -99,51 +75,27 @@ class Usuario extends BaseUser
     }
 
     /**
-     * Set name
+     * Set $typeUser
      *
-     * @param string $name
+     * @param integer $typeUser
      *
      * @return Usuario
      */
-    public function setName($name)
+    public function setTypeUser($typeUser)
     {
-        $this->name = $name;
+        $this->typeUser = $typeUser;
 
         return $this;
     }
 
     /**
-     * Get name
+     * Get $typeUser
      *
-     * @return string
+     * @return integer
      */
-    public function getName()
+    public function getTypeUser()
     {
-        return $this->name;
-    }
-
-    /**
-     * Set telefono
-     *
-     * @param string $telefono
-     *
-     * @return Usuario
-     */
-    public function setTelefono($telefono)
-    {
-        $this->telefono = $telefono;
-
-        return $this;
-    }
-
-    /**
-     * Get telefono
-     *
-     * @return string
-     */
-    public function getTelefono()
-    {
-        return $this->telefono;
+        return $this->$typeUser;
     }
 
     /**

@@ -38,13 +38,6 @@ class UsuarioType extends AbstractType
             ->add('email', EmailType::class, array(
             		"attr" => array('class' => 'form-control')
             	))
-            ->add('name', TextType::class, array(
-					'label' => 'Nombre',
-            		"attr" => array('class' => 'form-control')
-            	))
-            ->add('telefono', TextType::class, array(
-            		"attr" => array('class' => 'form-control')
-            	))
         ;
     }
 
@@ -58,7 +51,7 @@ class UsuarioType extends AbstractType
      */
     public function getName()
     {
-        return 'managecompanybundle_usuariotype';
+        return 'clientbundle_usuariotype';
     }
     
     /**

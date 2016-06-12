@@ -54,36 +54,31 @@
 	<script src="{{ asset('manage/js/typeahead.js') }}"></script>
 	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
 	<script>
-		(function(){
+		(function() {
 
-			var tagApi;
-
+			/**
+			 * Gestiona los tipos de productos, muestra sugerencias a partir de una consulta
+			 **/
 			function tagManager(){
 				var categories = new Bloodhound({
 					datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
 					queryTokenizer: Bloodhound.tokenizers.whitespace,
 					limit: 10,
 					prefetch: {
-						url: '{{ path("tipos_producto_json") }}',
+						url: '{{ path('tipos_producto_json') }}',
 						filter: function (list) {
-							return $.map(list, function (value) {
-								return { name: value };
+							return $.map(list, function (country) {
+								return { name: country };
 							});
 						}
 					}
 				});
-
 				categories.initialize();
-				{% if producto is defined %}
-					tagApi = jQuery(".tm-input.tm-input-typeahead").tagsManager({
-						prefilled: [{% for tipoproducto in producto.tipoProducto %}
-							"{{ tipoproducto.nombre }}"{% if not loop.last %},{% endif %}
-							{% endfor %}]
-					});
-				{% else %}
-					tagApi = null;
-				{% endif %}
-
+				var tagApi = jQuery(".tm-input.tm-input-typeahead").tagsManager({
+					prefilled: {% if producto.tipoProducto is defined %}[{% for tp in producto.tipoProducto %}
+						"{{ tp.nombre }}"{% if not loop.last %},{% endif %}
+						{% endfor %}] {% else %} '' {% endif %}
+				});
 				jQuery(".tm-input.tm-input-typeahead").typeahead(null, {
 					name: 'categories',
 					displayKey: 'name',

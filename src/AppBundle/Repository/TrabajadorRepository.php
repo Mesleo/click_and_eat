@@ -20,7 +20,7 @@ class TrabajadorRepository extends \Doctrine\ORM\EntityRepository
     {
         $query = $this->getEntityManager()
             ->createQuery(
-                'SELECT u.name, t.apellidos, t.id, u.username, u.email, u.enabled FROM AppBundle:Trabajador t, AppBundle:Usuario u 
+                'SELECT t.id, t.nombre, t.apellidos, u.username, u.email, u.enabled FROM AppBundle:Trabajador t, AppBundle:Usuario u 
                 WHERE t.restaurante = :idRestaurante AND t.usuario = u.id'
             );
         $query->setParameter('idRestaurante',$idRestaurante);

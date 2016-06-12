@@ -28,7 +28,7 @@
     			<div class="col-md-8">
     				<div class="form-group">
         				<label class="control-label">Nombre restaurante</label>
-            			<input type="text" class="form-control" name="inputNombre" id="inputNombre" {% if user is defined %} value="{{ user.name }}" {% endif %} placeholder="Nombre restaurante">
+            			<input type="text" class="form-control" name="inputNombre" id="inputNombre" {% if restaurante is defined %} value="{{ restaurante.nombre }}" {% endif %} placeholder="Nombre restaurante">
         			</div>
     			</div>
     			<div class="col-md-4">
@@ -48,7 +48,7 @@
 				<div class="col-md-4">
     				<div class="form-group">
         				<label class="control-label">Teléfono</label>
-            			<input type="text" class="form-control" name="inputTelefono" id="inputTelefono" {% if user is defined %} value="{{ user.telefono }}" {% endif %} placeholder="Telefono">
+            			<input type="text" class="form-control" name="inputTelefono" id="inputTelefono" {% if restaurante is defined %} value="{{ restaurante.telefono }}" {% endif %} placeholder="Telefono">
         			</div>
     			</div>
 			</div>
@@ -136,7 +136,7 @@
 
 			function changeLocalidades(b){
 				$("#select-localidades select").empty();
-				$.getJSON('localidad?provincia='+b,function(data){
+				$.getJSON('localidades?provincia='+b,function(data){
 					$.each(data, function(id,value){
 						$("#select-localidades select").append('<option value="'+value[2]+'">'+value[0]+' ('+value[1]+') </option>');
 					});

@@ -42,6 +42,7 @@ class RegistroRestauranteController extends Controller
         $form->handleRequest($request);
 
         $this->params['provincias'] = $this->getProvincias();
+        $this->params['info'] = null;
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -49,13 +50,24 @@ class RegistroRestauranteController extends Controller
                 ->encodePassword($usuario, $usuario->getPassword());
             $usuario->setPassword($password);
             $usuario->addRole(1);
-
-            $this->em->persist($usuario);
+            $usuario->setTypeUser(1);
 
             $restaurante = new Restaurante();
 
-            $restaurante->setCif($request->request->get('cif'));
+            if (!$this->isValidCif($request->request->get('cif'))) {
+                $this->params['info'] = "Formato CIF no válido.";
+            } else {
+                $restaurante->setCif($request->request->get('cif'));
+            }
+
+            if (strlen($request->request->get('nombre')) < 3) {
+                $this->params['info'] = "El nombre debe tener al menos 3 caracteres.";
+            } else {
+                $restaurante->setNombre($request->request->get('nombre'));
+            }
+
             $restaurante->setDireccion($request->request->get('direccion'));
+            $restaurante->setTelefono($request->request->get('telefono'));
             $restaurante->setCoordenadas($request->request->get('coordenadas'));
             $restaurante->setPrecioEnvio($request->request->get('precioEnvio'));
 
@@ -71,22 +83,28 @@ class RegistroRestauranteController extends Controller
                 ]);
             $restaurante->setProvincia($provincia);
             
-           if ($request->files->get('foto') != null) {
+            if ($request->files->get('foto') != null) {
                 $restaurante->setImg($request->files->get('foto'));
             }
             $restaurante->uploadImg();
 
             $restaurante->setUsuario($usuario);
 
-            $this->em->persist($restaurante);
-            $this->em->flush();
+            if ($this->params['info'] == null) {
 
-            return $this->redirectToRoute('homepage');
+                $this->em->persist($usuario);
+                $this->em->persist($restaurante);
+                $this->em->flush();
+
+                $this->sendEmail($usuario->getEmail());
+                return $this->redirectToRoute('admin_login');
+            }  
         }
 
         return $this->render('RegisterBundle:Web:registro.html.twig', array(
             'usuario' => $usuario,
             'provincias' => $this->params['provincias'],
+            'info' => $this->params['info'],
             'form' => $form->createView(),
         ));
     }
@@ -137,6 +155,49 @@ class RegistroRestauranteController extends Controller
             ->findAll([],[
                 'nombre' => 'ASC'
             ]);
+    }
+
+    private function sendEmail($to)
+    {
+        $message = \Swift_Message::newInstance()
+            ->setSubject('Bienvenido a Click&Eat')
+            ->setFrom('register@clickandeat.com')
+            ->setTo($to)
+            ->setBody(
+                $this->renderView(
+                    // app/Resources/views/Emails/registration.html.twig
+                    'Emails/registration.html.twig',
+                    array('email' => $to)
+                ),
+                'text/html'
+            )
+        ;
+        $this->get('mailer')->send($message);
+    }
+
+    /**
+     * @Route("/{email}/check", name="check_user")
+     *
+     * @param  [type] $email [description]
+     * @return [type]           [description]
+     */
+    public function checkUser($email) 
+    {
+        $this->initialize();
+            
+        $usuario = $this->em->getRepository("AppBundle:Usuario")
+            ->findOneBy([
+                'email' => $email
+            ]);
+
+        $usuario->setEnabled(true);
+        $this->em->flush();
+        return $this->redirectToRoute('admin_login');
+    }
+
+    private function isValidCif($string)
+    {
+        return preg_match("/^[a|b|c|d|e|f|g|h|j|n|p|q|r|s|u|v|w]{1}\\d{7}[\\d|\\w]{1}$/i", $string);
     }
 
     private function initialize()

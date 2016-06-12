@@ -53,12 +53,11 @@ class CuentaController extends Controller
             if ($this->checkRestaurante($restaurante)) {
 				$usuario->setUsername($request->request->get('inputUserName'));
 				$usuario->setEmail($request->request->get('inputEmail'));
-				$usuario->setName($request->request->get('inputNombre'));
-				$usuario->setTelefono($request->request->get('inputTelefono'));
 				
-                //$precioEnvio = 0.00;
                 $restaurante->setCif($request->request->get('inputCIF'));
+                $restaurante->setNombre($request->request->get('inputNombre'));
                 $restaurante->setDireccion($request->request->get('inputDireccion'));
+                $restaurante->setTelefono($request->request->get('inputTelefono'));
                 $provincia = $this->em->getRepository("AppBundle:Provincia")
                     ->findOneBy([
                         'id' => $request->request->get('provincia')
@@ -69,9 +68,6 @@ class CuentaController extends Controller
                     ]);
                 $restaurante->setProvincia($provincia);
                 $restaurante->setLocalidad($localidad);
-                /*if (is_float($request->request->get('inputEnvio'))) {
-                    $precioEnvio = $request->request->get('inputEnvio');
-                }*/
                 $restaurante->setPrecioEnvio($request->request->get('inputEnvio'));
 				if ($request->files->get('foto') != null) {
 					$restaurante->setImg($request->files->get('foto'));

@@ -32,7 +32,8 @@
 					<div class="panel-group">
 						<div class="row">
 							<div class="col-md-6">
-								{{ form_row(form.name) }}
+								<label for="nombre">Nombre</label>
+								<input type="text" class="form-control" name="nombre" id="nombre">
 							</div>
 							<div class="col-md-6">
 								<label for="apellidos">Apellidos</label>
@@ -42,7 +43,8 @@
 					</div>
 					<div class="row">
 						<div class="col-md-6">
-							{{ form_row(form.telefono) }}
+							<label for="telefono">Teléfono</label>
+							<input type="text" class="form-control" name="telefono" id="telefono">
 						</div>
 						<div class="col-md-6">
 							{{ form_row(form.email) }}
@@ -77,9 +79,13 @@
 				<div class="panel panel-body">
 					<div class="panel-group">
 						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-6">
 								<label for="direccion">Dirección</label>
 								<input type="text" class="form-control" name="direccion" id="direccion">
+							</div>
+							<div class="col-md-6">
+								<label for="direccion">Dirección extra</label>
+								<input type="text" class="form-control" name="direccion-extra" id="direccion-extra">
 							</div>
 						</div>
 					</div>
@@ -118,5 +124,34 @@
 	</div>
 {% endblock %}
 {% block javascripts %}
-	<script src="{{ asset('manage/js/register.js') }}"></script>
+	<script>
+		(function(){
+
+			var selectProvincia, selectLocalidad;
+
+			function initVars(){
+				selectProvincia = $('#provincias');
+				selectLocalidad = $('#localidades');
+			}
+
+			function changeLocalidades(b){
+				$("#select-localidades select").empty();
+				$.getJSON('localidades?provincia='+b,function(data){
+					$.each(data, function(id,value){
+						$("#select-localidades select").append('<option value="'+value[2]+'">'+value[0]+' ('+value[1]+') </option>');
+					});
+				});
+			}
+
+			initVars();
+
+			$('#provincias').change(function() {
+				changeLocalidades($('#provincias').val());
+			});
+
+			$('ul').css("padding", "0");
+			$('li:not(.item-not-style)').addClass("alert alert-danger");
+			$('li:not(.item-not-style)').css("listStyle", "none");
+		})();
+	</script>
 {% endblock %}

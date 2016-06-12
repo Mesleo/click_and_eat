@@ -52,6 +52,7 @@ class TrabajadorController extends Controller
                 ->encodePassword($usuario, $usuario->getPassword());
             $usuario->setPassword($password);
             $usuario->addRole(2);
+            $usuario->setTypeUser(2);
 
             $this->em->persist($usuario);
 			
@@ -60,7 +61,9 @@ class TrabajadorController extends Controller
 					'id' => $this->getIdRestaurante()
 				]);
 			$trabajador = new Trabajador();
-			$trabajador->setApellidos($request->request->get("apellidos"));
+			$trabajador->setNombre($request->request->get('nombre'));
+			$trabajador->setApellidos($request->request->get('apellidos'));
+			$trabajador->setTelefono($request->request->get('telefono'));
 			$trabajador->setUsuario($usuario);
 			$trabajador->setRestaurante($restaurante);
 			$restaurante->addTrabajadore($trabajador);
@@ -113,7 +116,9 @@ class TrabajadorController extends Controller
 					->encodePassword($usuario, $usuario->getPassword());
 				$usuario->setPassword($password);
 
-				$trabajador->setApellidos($request->request->get("apellidos"));
+				$trabajador->setNombre($request->request->get('nombre'));
+				$trabajador->setApellidos($request->request->get('apellidos'));
+				$trabajador->setTelefono($request->request->get('telefono'));
 				$trabajador->setUsuario($usuario);
 
 				$this->em->flush();

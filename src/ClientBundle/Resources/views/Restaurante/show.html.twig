@@ -12,21 +12,21 @@
 		<br />
 		<div class="panel panel-body panel-default">
 			{% for restaurante in restaurantes %}
-				{% if restaurante[0].foto %}
-					<img src="{{ asset('uploads/restaurantes/images/' ~ restaurante[0].foto ) }}" width="150px" height="150px" alt="Foto de restaurante" class="img-thumbnail">
+				{% if restaurante.foto %}
+					<img src="{{ asset('uploads/restaurantes/images/' ~ restaurante.foto ) }}" width="150px" height="150px" alt="Foto de restaurante" class="img-thumbnail">
 				{% else %}
 					<img src="{{ asset('uploads/restaurantes/images/image.png' ) }}" width="150px" height="200px" alt="Foto de restaurante" class="img-thumbnail">
 				{% endif %}
 				<div id="view">
-					<h2>{{ restaurante.name }}</h2>
-					<div>{% for tipoComida in restaurante[0].getTipoComida() %}
+					<h2>{{ restaurante.nombre }}</h2>
+					<div>{% for tipoComida in restaurante.getTipoComida() %}
 						<strong>{{ tipoComida.nombre }}{% if not loop.last %},{% endif %}</strong>
 					{% endfor %}</div>
-					<span>{{ restaurante[0].direccion }}, {{ restaurante[0].localidad.nombre }}, {{ restaurante[0].provincia.nombre }}, {{ restaurante[0].localidad.codigoPostal }}</span>
-					<div>Precio envío: {{ restaurante[0].precioEnvio }} €</div>
+					<span>{{ restaurante.direccion }}, {{ restaurante.localidad.nombre }}, {{ restaurante.provincia.nombre }}, {{ restaurante.localidad.codigoPostal }}</span>
+					<div>Precio envío: {{ restaurante.precioEnvio }} €</div>
 				</div>
 				<div id="button">
-					<a href="#" class="btn btn-principal">Ver carta</a>
+					<a href="{{ path('menu_restaurante', {'id_restaurante': restaurante.id}) }}" class="btn btn-principal">Ver carta</a>
 					<a href="#" class="btn btn-principal">Reservar</a>
 				</div>
 				<hr>
