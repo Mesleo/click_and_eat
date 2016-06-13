@@ -25,9 +25,9 @@ class PedidosController extends Controller{
      */
     public function orderAction(){
         $this->initialize();
-
+        $fecha = date('Y-m-d');
         $this->params['pedidos'] = $this->em->getRepository('AppBundle:Pedido')
-            ->getGeneralInfoOrders($this->getIdRestaurante());
+            ->getGeneralInfoOrdersToday($this->getIdRestaurante(), $fecha);
         $this->params['estados'] = $this->getEstados();
         return $this->render('ManageCompanyBundle:Restaurante:pedidos.html.twig', $this->params);
     }
@@ -39,36 +39,47 @@ class PedidosController extends Controller{
      */
     public function showOrderAction($id_pedido){
         $total = 0;
-
+        $totalDescuento = 0;
         $this->initialize();
         $pedido = $this->em->getRepository('AppBundle:Pedido')
             ->getInfoOrder($id_pedido);
-        $lineasPedido = $this->em->getRepository('AppBundle:Pedido')
-            ->getInfoProductOrder($id_pedido);
-        $this->params['trabajadores'] = $this->em->getRepository("AppBundle:Trabajador")
-            ->showEmployeesRestaurant($this->getIdRestaurante());
+        if($pedido and $this->checkRestaurante($pedido[0]['idRestaurante'])) {
+            $lineasPedido = $this->em->getRepository('AppBundle:Pedido')
+                ->getInfoProductOrder($id_pedido);
+            $this->params['restaurante'] = $this->em->getRepository("AppBundle:Restaurante")
+                ->findOneBy([
+                    "id" => $this->getIdRestaurante()
+                ]);
+            $this->params['trabajadores'] = $this->em->getRepository("AppBundle:Trabajador")
+                ->showEmployeesRestaurant($this->getIdRestaurante());
 
-        for($i = 0; $i < count($lineasPedido); $i++){
-            foreach($lineasPedido[$i] as $key => $lp) {
-                if ($key == 'total') {
-                    $total += $lp;
+            for ($i = 0; $i < count($lineasPedido); $i++) {
+                foreach ($lineasPedido[$i] as $key => $lp) {
+                    if ($key == 'total') {
+                        $total += $lp;
+                    }else if ($key == 'totalDescuento'){
+                        $totalDescuento += $lp;
+                    }
                 }
             }
-        }
-        $this->params['total'] = $total;
-        $this->params['estados'] = $this->getEstados();
+            $this->params['total'] = $total;
+            $this->params['totalDescuento'] = $totalDescuento;
+            $this->params['totalPrecioEnvio'] = $totalDescuento+$this->params['restaurante']->getPrecioEnvio();
+            $this->params['estados'] = $this->getEstados();
 
-        if($lineasPedido[0]['pedido_id'] == $pedido[0]['id'] ){
-            $this->params['pedido'] = $pedido[0];
-            $this->params['linea_pedido'] = $lineasPedido;
-            return $this->render('ManageCompanyBundle:Restaurante:pedido.html.twig', $this->params);
-        }else{
-            throw new InvalidResourceException("Pedido no encontrado");
+            if ($lineasPedido[0]['pedido_id'] == $pedido[0]['id']) {
+                $this->params['pedido'] = $pedido[0];
+                $this->params['linea_pedido'] = $lineasPedido;
+                return $this->render('ManageCompanyBundle:Restaurante:pedido.html.twig', $this->params);
+            } else {
+                throw new InvalidResourceException("Pedido no encontrado");
+            }
         }
+        return $this->redirectToRoute("gestion_pedidos");
     }
 
     /**
-     * Guarda los cambios en el pedido (campos "estado" y "fecha_envio")
+     * Guarda los cambios en el pedido (campos "estado", "fecha_salida", ·fecha_llegada)
      *
      * @Route("/pedido/guardar", name="guardar_info_pedido")
      */
@@ -86,19 +97,46 @@ class PedidosController extends Controller{
             ->findOneBy([
                 "id" => $request->request->get("trabajador-id")
             ]);
-        $pedido->setEstado($estado);
-        $pedido->setTrabajador($trabajador);
-        if(!$request->request->has('fecha-llegada') or $request->request->get('fecha-salida') == null){
-            $fechaSalida = null;
-        } else $fechaSalida = \DateTime::createFromFormat('d-m-Y H:i', $request->request->get('fecha-salida'));
-        if(!$request->request->has('fecha-llegada') or $request->request->get('fecha-llegada') == ""){
-            $fechaLlegada = null;
-        } else $fechaLlegada = \DateTime::createFromFormat('d-m-Y H:i', $request->request->get('fecha-llegada'));
-        $pedido->setFechaHoraSalida($fechaSalida);
-        $pedido->setFechaHoraLlegada($fechaLlegada);
-        $this->em->persist($pedido);
-        $this->em->flush();
+        if($pedido and $this->checkRestaurante($pedido->getRestaurante()->getId())) {
+            $pedido->setEstado($estado);
+            $pedido->setNumPedido($request->request->get("num-pedido"));
+            $pedido->setTrabajador($trabajador);
+            if (!$request->request->has('fecha-llegada') or $request->request->get('fecha-salida') == null) {
+                $fechaSalida = null;
+            } else $fechaSalida = \DateTime::createFromFormat('d-m-Y H:i', $request->request->get('fecha-salida'));
+            if (!$request->request->has('fecha-llegada') or $request->request->get('fecha-llegada') == "") {
+                $fechaLlegada = null;
+            } else $fechaLlegada = \DateTime::createFromFormat('d-m-Y H:i', $request->request->get('fecha-llegada'));
+            $pedido->setFechaHoraSalida($fechaSalida);
+            $pedido->setFechaHoraLlegada($fechaLlegada);
+            $this->em->persist($pedido);
+            $this->em->flush();
+        }
         return $this->redirectToRoute("gestion_pedidos");
+    }
+
+    /**
+     * Muestra los pedidos entre fechas
+     *
+     * @Route("/pedidos/entre", name="pedidos_entre_fechas")
+     */
+    public function showOrdersBetweenDates(Request $request){
+        $this->initialize();
+        $this->params['estados'] = $this->getEstados();
+        if($request->request->has("desde")  && $request->request->has('hasta')){
+            $fechaDesde = \DateTime::createFromFormat("Y-m-d", '2000-01-01');
+            $fechaHasta = \DateTime::createFromFormat("Y-m-d", '2100-12-31');
+            if($request->request->get('desde')!= null ) {
+                $fechaDesde = \DateTime::createFromFormat("d-m-Y", $request->request->get('desde'));
+            }
+            if($request->request->get('hasta')!= null){
+                $fechaHasta = \DateTime::createFromFormat("d-m-Y", $request->request->get('hasta'));
+            }
+            $this->params['pedidos'] = $this->em->getRepository('AppBundle:Pedido')
+                ->getGeneralInfoOrdersBetweenDates($this->getIdRestaurante(), $fechaDesde, $fechaHasta);
+            return $this->render('ManageCompanyBundle:Restaurante:pedidos.html.twig', $this->params);
+        }
+        return $this->redirectToRoute('gestion_pedidos');
     }
 
     /**
@@ -195,9 +233,9 @@ class PedidosController extends Controller{
      * @param $trabajador
      * @return bool
      */
-    private function checkRestaurante($trabajador)
+    private function checkRestaurante($pedidoIdRestaurante)
     {
-        return $trabajador->getRestaurante()->getId() == $this->getIdRestaurante();
+        return $pedidoIdRestaurante == $this->getIdRestaurante();
     }
 
     private function getEstados(){

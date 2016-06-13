@@ -25,9 +25,9 @@ class Pedido
     protected $id;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="numPedido", type="integer", nullable=false)
+     * @ORM\Column(name="numPedido", type="string", nullable=true)
      */
     protected $numPedido;
 
@@ -107,7 +107,7 @@ class Pedido
 
     /**
      * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="pedidos")
-     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=true)
      */
     protected $cliente;
 

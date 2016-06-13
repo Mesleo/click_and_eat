@@ -42,6 +42,7 @@
                                 <th>Unidades</th>
                                 <th>Descuento</th>
                                 <th>Total</th>
+                                <th>Total (con descuento)</th>
                             </tr>
                             {% for lp in linea_pedido %}
                                 <tr>
@@ -51,11 +52,18 @@
                                     <td>{{ lp.cantidad}}</td>
                                     <td>{{ lp.descuento }} €</td>
                                     <td>{{ lp.total }} €</td>
+                                    <td>{{ lp.totalDescuento }} €</td>
                                 </tr>
                             {% endfor %}
                             <tr>
                                 <td colspan="5">TOTAL</td>
-                                <td>{{ total }}</td>
+                                <td>{{ total }} €</td>
+                                <td>{{ totalDescuento }} €</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5">Total con envío</td>
+                                <td>{{ restaurante.precioEnvio }} €</td>
+                                <td>{{ totalPrecioEnvio }} €</td>
                             </tr>
                         </table>
                     </div>
@@ -69,7 +77,7 @@
                             <th><label for="estado">Estado</label></th>
                         </tr>
                         <tr>
-                            <td>{{ pedido.id }}
+                            <td><input type="text" class="form-control" name="num-pedido" value="{{ pedido.numPedido }}" >
                                 <input type="text" class="hidden" name="pedido-id" value="{{ pedido.id }}">
                             </td>
                             <td>{{ pedido.fecha_hora_realizado|date("d-m-Y H:i") }}</td>text

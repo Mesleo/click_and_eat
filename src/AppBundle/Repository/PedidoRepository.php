@@ -12,18 +12,43 @@ class PedidoRepository extends \Doctrine\ORM\EntityRepository
 {
 
     /**
-     * Muestra una lista con todos los pedidos de un restaurante
+     * Muestra una lista con los pedidos entre fechas de un restaurante
      *
      * @return array
      */
-    public function getGeneralInfoOrders($idRestaurante)
+    public function getGeneralInfoOrdersBetweenDates($idRestaurante,$fechaDesde, $fechaHasta)
     {
         $stmt = $this->getEntityManager()->getConnection()
-            ->prepare("SELECT distinct(p.numPedido), p.id, p.nombre as cliente, p.fecha_hora_realizado as realizado, p.estado_id,
-            e.estado, total.total FROM pedido p LEFT JOIN estado AS e ON p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON
-            p.id= pp.idPedido LEFT JOIN (select pp.idPedido ,SUM(pp.precio*pp.cantidad) as total FROM pedido_producto as pp group by
-            pp.idPedido) AS total ON p.id = total.idPedido WHERE p.idRestaurante = :idRestaurante ORDER BY p.estado_id");
+            ->prepare("SELECT distinct(p.numPedido), p.id, p.nombre as cliente, p.fecha_hora_realizado as realizado, p.estado_id, e.estado,
+          total.totalDescuento, (total.totalDescuento+r.precio_envio) as totalEnvio FROM restaurante r, pedido p LEFT JOIN estado AS e ON
+          p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON p.id= pp.idPedido LEFT JOIN (select pp.idPedido ,
+          SUM(pp.precio*pp.cantidad-pp.descuento) as totalDescuento FROM pedido_producto as pp group by pp.idPedido) AS total ON
+          p.id = total.idPedido WHERE p.idRestaurante = :idRestaurante AND r.id = :idRestaurante AND p.fecha_hora_realizado < :fechaHasta
+          AND p.fecha_hora_realizado > :fechaDesde ORDER BY p.estado_id");
+        $datefH = $fechaHasta->format('Y-m-d');
+        $datefD = $fechaDesde->format('Y-m-d');
         $stmt->bindParam("idRestaurante", $idRestaurante);
+        $stmt->bindParam("fechaDesde", $datefD);
+        $stmt->bindParam("fechaHasta", $datefH);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Muestra todos los pedidos del día actual
+     *
+     * @return array
+     */
+    public function getGeneralInfoOrdersToday($idRestaurante, $fecha)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT distinct(p.numPedido), p.id, p.nombre as cliente, p.fecha_hora_realizado as realizado, p.estado_id, e.estado,
+          total.totalDescuento, (total.totalDescuento+r.precio_envio) as totalEnvio FROM restaurante r, pedido p LEFT JOIN estado AS e ON
+          p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON p.id= pp.idPedido LEFT JOIN (select pp.idPedido ,
+          SUM(pp.precio*pp.cantidad-pp.descuento) as totalDescuento FROM pedido_producto as pp group by pp.idPedido) AS total ON
+          p.id = total.idPedido WHERE p.idRestaurante = :idRestaurante AND r.id = :idRestaurante AND p.fecha_hora_realizado = :fecha ORDER BY p.estado_id");
+        $stmt->bindParam("idRestaurante", $idRestaurante);
+        $stmt->bindParam("fecha", $fecha);
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -36,13 +61,20 @@ class PedidoRepository extends \Doctrine\ORM\EntityRepository
      */
     public function getGeneralInfoOrdersByState($idRestaurante, $idEstado)
     {
+        $sql = "SELECT distinct(p.numPedido), p.id, p.nombre as cliente, p.fecha_hora_realizado as realizado, p.estado_id, e.estado,
+          total.totalDescuento, (total.totalDescuento+r.precio_envio) as totalEnvio FROM restaurante r, pedido p LEFT JOIN estado AS e ON
+          p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON p.id= pp.idPedido LEFT JOIN (select pp.idPedido ,
+          SUM(pp.precio*pp.cantidad-pp.descuento) as totalDescuento FROM pedido_producto as pp group by pp.idPedido) AS total ON
+          p.id = total.idPedido WHERE p.idRestaurante = :idRestaurante AND r.id = :idRestaurante";
+        if($idEstado != 0 and $idEstado != '-'){
+            $sql .= " AND p.estado_id = :idEstado";
+        }else $sql .= " ORDER BY p.estado_id";
         $stmt = $this->getEntityManager()->getConnection()
-            ->prepare("SELECT distinct(p.numPedido), p.id, p.nombre as cliente, p.fecha_hora_realizado as realizado, p.estado_id,
-            e.estado, total.total FROM pedido p LEFT JOIN estado AS e ON p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON
-            p.id= pp.idPedido LEFT JOIN (select pp.idPedido ,SUM(pp.precio*pp.cantidad) as total FROM pedido_producto as pp group by
-            pp.idPedido) AS total ON p.id = total.idPedido WHERE p.idRestaurante = :idRestaurante AND p.estado_id = :idEstado");
+            ->prepare($sql);
         $stmt->bindParam("idRestaurante", $idRestaurante);
-        $stmt->bindParam("idEstado", $idEstado);
+        if($idEstado != 0 and $idEstado != '-') {
+            $stmt->bindParam("idEstado", $idEstado);
+        }
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -56,8 +88,8 @@ class PedidoRepository extends \Doctrine\ORM\EntityRepository
     public function getInfoProductOrder($idPedido)
     {
         $stmt = $this->getEntityManager()->getConnection()
-            ->prepare("SELECT p.id as pedido_id, pp.cantidad, pp.idProducto, pr.nombre, pp.precio, pp.descuento, (pp.precio*pp.cantidad)
-            as total FROM usuario u, producto pr ,pedido p RIGHT JOIN pedido_producto AS pp ON p.id = pp.idPedido WHERE p.id = :idPedido AND
+            ->prepare("SELECT p.id as pedido_id, pp.cantidad, pp.idProducto, pr.nombre, pp.precio, pp.descuento, (pp.precio*pp.cantidad) as total
+            , (pp.precio*pp.cantidad-pp.descuento) as totalDescuento FROM usuario u, producto pr ,pedido p RIGHT JOIN pedido_producto AS pp ON p.id = pp.idPedido WHERE p.id = :idPedido AND
             pr.id = pp.idProducto GROUP BY p.id, p.fecha_hora_realizado, p.estado_id, pp.cantidad, pp.idProducto, pr.nombre, pp.precio, pp.descuento");
         $stmt->bindParam("idPedido", $idPedido);
         $stmt->execute();

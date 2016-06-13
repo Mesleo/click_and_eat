@@ -9,36 +9,36 @@
 				<br />
 				<a href="{{ path('add_horario') }}" class="btn btn-success">Añadir horario</a>
 			</p>
+			<div class="panel panel-body">
 			<div class="be-panel col-sm-12">
 				{% for horario in horarios %}
-					<form method="post" id="form-horario" action="{{ path('edit_horario', {'id_horario': horario.id}) }}">
-						<div class="row">
-							<div class="col-md-4">
-								<div><label for="horario_descripcion" class="required">Descripcion</label>
-								<input type="text" id="horario_descripcion" name="descripcion{{ horario.id }}" value="{{ horario.descripcion }}" required="required" class="form-control" /></div>
-							</div>
-							<div class="col-md-3">
-								<div><label for="horario_hora_apertura" class="required">Hora apertura</label>
-								<input type="time" id="horario_hora_apertura" name="hora_apertura{{ horario.id }}" value="{{ horario.horaApertura|date('H:i') }}" required="required" class="form-control input-small timepicker1" /></div>
-							</div>
-							<div class="col-md-3">
-								<div><label for="horario_hora_cierre" class="required">Hora cierre</label>
-								<input type="time" id="horario_hora_cierre" name="hora_cierre{{ horario.id }}" value="{{ horario.horaCierre|date('H:i') }}" required="required" class="form-control input-small timepicker1" /></div>
-							</div>
-							<div class="col-md-1">
-								<div><label></label>
-								<input type="submit" class="btn btn-primary" name="edit-horario" value="Guardar"></div>
-							</div>
-							<div class="col-md-1">
-								<div><label></label>
-								<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_horario', {'id_horario': horario.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas eliminar el horario '{{ horario.descripcion }}'?">
-									<i class="glyphicon glyphicon-trash"></i> Eliminar
-								</button>
-							</div>
+				<form method="post" id="form-horario" action="{{ path('edit_horario', {'id_horario': horario.id}) }}">
+					<div class="row">
+						<div class="col-md-4">
+							<label for="horario_descripcion" class="required">Descripcion</label>
+							<input type="text" id="horario_descripcion" name="descripcion{{ horario.id }}" value="{{ horario.descripcion }}" required="required" class="form-control" />
 						</div>
-					</form>
+						<div class="col-md-2">
+							<label for="horario_hora_apertura" class="required">Hora apertura</label>
+							<input type="time" id="horario_hora_apertura" name="hora_apertura{{ horario.id }}" value="{{ horario.horaApertura|date('H:i') }}" required="required" class="form-control input-small timepicker1" />
+						</div>
+						<div class="col-md-2">
+							<label for="horario_hora_cierre" class="required">Hora cierre</label>
+							<input type="time" id="horario_hora_cierre" name="hora_cierre{{ horario.id }}" value="{{ horario.horaCierre|date('H:i') }}" required="required" class="form-control input-small timepicker1" />
+						</div>
+						<div class="col-md-1">
+							<input type="submit" class="btn btn-primary" name="edit-horario" value="Guardar">
+						</div>
+						<div class="col-md-1">
+							<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('delete_horario', {'id_horario': horario.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas eliminar el horario '{{ horario.descripcion }}'?">
+								<i class="glyphicon glyphicon-trash"></i> Eliminar
+							</button>
+						</div>
+					</div>
+				</form>
 				{% endfor %}
 			</div>
+		</div>
 		{% endif %}
 		{% if form is defined %}
 			{{ form_start(form) }}
@@ -73,9 +73,9 @@
 	<script>
 		(function(){
 			$('.timepicker1').timepicker({
-				minuteStep: 10,
+				minuteStep: 15,
 				showMeridian: false,
-				defaultTime: false
+				maxHours: 24
 			})
 		})();
 	</script>

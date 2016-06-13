@@ -82,6 +82,13 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/licencia", name="show_term_licenses")
+     */
+    public function showTermLicensesAction(){
+        return $this->render("RegisterBundle:Licencias:term-license.html.twig");
+    }
+
+    /**
      * Muestra las localidades a partir de una consulta pasada a JSON
      *
      * @Route("/localidad", name="localidades_json")

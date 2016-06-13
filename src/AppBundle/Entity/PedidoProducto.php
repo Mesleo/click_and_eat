@@ -49,9 +49,9 @@ class PedidoProducto
     protected $precio;
 
     /**
-     * @var integer
+     * @var float
      *
-     * @ORM\Column(name="descuento", type="integer", nullable=false)
+     * @ORM\Column(name="descuento", type="float", nullable=false)
      */
     protected $descuento;
 

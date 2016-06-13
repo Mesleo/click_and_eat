@@ -1,0 +1,18 @@
+.container p {
+  padding: 10px;
+  text-align: justify;
+  font-size: 1em;
+}
+.container h4 {
+  border-bottom: 1px solid #808080;
+  margin-top: 15px;
+}
+.container #btn-to-bottom {
+  position: relative;
+  cursor: pointer;
+}
+.container #btn-to-bottom i.to-bottom {
+  position: absolute;
+  background-color: rgba(0,128,0,0.45) !important;
+  border-radius: 5px;
+}

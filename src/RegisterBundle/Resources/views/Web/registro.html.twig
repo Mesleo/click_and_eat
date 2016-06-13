@@ -1,5 +1,8 @@
 {% extends 'RegisterBundle:Base:base.html.twig' %}
-
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('front-end/css/style_register_client.css') }}">
+{% endblock %}
 {% block body %}
 	<script async defer
 			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgRHjOa0n38Z2adOjuXwBnmEBFMn4qltc&callback=initMap">
@@ -21,7 +24,6 @@
     	{{ form_start(form) }}
 		{{ form_errors(form) }}
 
-		{#{{ form_row(form._token) }}#}
     	<h2>Datos usuario</h2>
 		{% if info is defined and info != null %}
 		<div class="row">
@@ -107,12 +109,9 @@
 			</div>
 		</div>
 
-
-
-		<div class="checkbox">
-			<label>
-				<input name="term-license" type="checkbox" required> Acepto los términos y licencias
-			</label>
+		<div>
+			<input id="checkbox-3" class="checkbox-custom" name="checkbox-3" type="checkbox" required>
+			<label for="checkbox-3"class="checkbox-custom-label">Acepto los <a href="{{ path('show_term_licenses') }}" target="_blank"> términos y licencias</a></label>
 		</div>
 
     	<div class="form-group">
@@ -124,6 +123,7 @@
     	{{ form_end(form) }}
     </div>
 {% endblock %}
+
 {% block javascripts %}
 	<script src="{{ asset('manage/js/register.js') }}"></script>
 {% endblock %}
