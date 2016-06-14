@@ -1,4 +1,5 @@
 {# src/ClientBundle/Resources/views/Restaurante/menu.html.twig #}
+{% set sesion = app.session %}
 {% extends 'ClientBundle:Page:base.html.twig' %}
 
 {% block body %}
@@ -17,17 +18,51 @@
 			<span>{{ restaurante.direccion }}, {{ restaurante.localidad.nombre }}, {{ restaurante.provincia.nombre }}, {{ restaurante.localidad.codigoPostal }}</span>
 			<div>Precio envío: {{ restaurante.precioEnvio }} €</div>
 		</div>
+		<div class="menu">
+		<br />
 		<div class="panel panel-body panel-default">
 			{% for tipoProducto in tiposProductos %}
-				<p>{{ tipoProducto }}</p>
+				<p class="product-type">{{ tipoProducto }}</p>
 				{% for producto in productos %}
 					{% if producto.tipoProducto == tipoProducto %}
-						<div><strong>{{ producto.nombre }}</strong></div>
-						<div>{{ producto.descripcion }}</div>
+						<div class="product">
+							<h4 class="product-name">{{ producto.nombre }}</h4>
+							<div class="product-description">{{ producto.descripcion }}</div>
+							<div class="product-price">{{ producto.precio }} €</div>
+							<form method="post" action="{{ path('add_menu', {'id_restaurante': restaurante.id}) }}">
+								<input type="hidden" name="id_producto" value="{{ producto.id }}">
+								<button type="submit" class="btn btn-primary" id="add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+							</form>
+						</div>
 					{% endif %}
 				{% endfor %}
 				<hr>
 			{% endfor %}
 		</div>
+		</div>
+		<div class="shopping-basket">
+			<br />
+			<div class="panel panel-body panel-default">
+				<p class="text-center">Tu pedido</p>
+				{% if sesion|length == 0 %}
+					<div>No hay productos en tu cesta de la compra</div>
+				{% else %}
+					<div>
+						{% for se in sesion %}
+							<div><a href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+							{{ se[0]['nombre'] }}</div>
+							<br />
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+			<button class="btn btn-buscar">Realizar pedido</button>
+		</div>
 	</div>
+{% endblock %}
+{% block javascripts %}
+	<script>
+		(function(){
+		})();
+	</script>
 {% endblock %}

@@ -20,7 +20,7 @@ aside {
 	vertical-align: top;
 }
 
-aside, .cont {
+aside, .restaurants {
 	display: inline-block;
 }
 
@@ -92,11 +92,6 @@ span.twitter-typeahead {
 	width: 50%;
 }
 
-.cont {
-	margin-left: 1em;
-	width: 75%;
-}
-
 .container form> div {
 	margin-bottom: 15px;
 }
@@ -162,6 +157,15 @@ img {
 	padding: 2em;
 }
 
+.menu {
+	margin-right: 1em;
+	width: 70%;
+}
+
+.menu, .shopping-basket {
+	display: inline-block;
+}
+
 .navbar-brand {
 	font-size: 28px;
 	margin-left: 2em;
@@ -193,6 +197,34 @@ p {
 	margin-bottom: 1em;
 }
 
+.product {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.product-description {
+	flex-basis: 80%;
+	order: 4;
+}
+
+.product-name {
+	display: flex;
+	align-items: center;
+	box-flex: 1;
+	flex: 1;
+	flex-basis: 50%;
+}
+
+.product-price {
+	font-weight: 700;
+	margin-right: 1em;
+}
+
+.product-type {
+	color: #689F38;
+}
+
 #registro {
 	padding-top: 2em;
 	padding-bottom: 2em;
@@ -202,13 +234,23 @@ p {
 	content: " (*)";
 }
 
-.titulo, .subtitulo {
-	text-shadow: 1px 1px 1px #FFFFFF;
+.restaurants {
+	margin-left: 1em;
+	width: 75%;
+}
+
+.shopping-basket {
+	width: 25%;
+	vertical-align: top;
 }
 
 .subtitulo {
 	color: #689F38;
 	font-size: 26px;
+}
+
+.titulo, .subtitulo {
+	text-shadow: 1px 1px 1px #FFFFFF;
 }
 
 .table {
@@ -251,9 +293,6 @@ p {
 	#company {
 		width: 100%;
 	}
-	.cont {
-		margin-left: 0;
-	}
 	.contenido {
 		width: 32.9%;
 	}
@@ -269,6 +308,9 @@ p {
 	p {
 		font-size: 18px;
 	}
+	.restaurants {
+		margin-left: 0;
+	}
 	span {
 		font-size: 1em;
 	}
@@ -278,7 +320,7 @@ p {
 }
 
 @media (max-width: 767px) {
-	aside, .cont {
+	aside, .restaurants {
 		display: block;
 		width: 100%;
 	}
@@ -301,9 +343,6 @@ p {
 	#company {
 		width: 100%;
 	}
-	.cont {
-		margin-left: 0;
-	}
 	.contenido {
 		display: block;
 		margin-bottom: 0.5em;
@@ -319,6 +358,9 @@ p {
 		margin-top: 1em;
 		height: 30%;
 		width: 30%;
+	}
+	.restaurants {
+		margin-left: 0;
 	}
 	#view {
 		margin-left: 1em;

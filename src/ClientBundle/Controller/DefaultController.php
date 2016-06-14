@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\Entity\Producto;
 use AppBundle\Entity\TipoProducto;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
@@ -50,7 +51,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/{id_restaurante}/carta", name="menu_restaurante")
+     * @Route("/{id_restaurante}/menu", name="menu_restaurante")
      *
      * @param  [type] $id_restaurante [description]
      * @return [type]           [description]
@@ -58,6 +59,9 @@ class DefaultController extends Controller
     public function menuAction($id_restaurante)
     {
         $this->initialize();
+
+        //print_r($this->get('session')->all());
+        //exit();
 
         $restaurante = $this->em->getRepository("AppBundle:Restaurante")
             ->findOneBy([
@@ -84,6 +88,23 @@ class DefaultController extends Controller
         $this->params['restaurante'] = $restaurante;
 
         return $this->render('ClientBundle:Restaurante:menu.html.twig', $this->params);
+    }
+
+    /**
+     * @Route("/{id_restaurante}/menu/add/", name="add_menu")
+     *
+     * @param  [type] $id_restaurante [description]
+     * @return [type]           [description]
+     */
+    public function addAction(Request $request, $id_restaurante)
+    {
+        $this->initialize();
+        $session = $request->getSession();
+        $producto = $this->em->getRepository("AppBundle:Producto")
+            ->getProducto($request->request->get('id_producto'));
+        $session->set('producto'.count($session->all()), $producto);
+        $this->params['id_restaurante'] = $id_restaurante;
+        return $this->redirectToRoute('menu_restaurante', $this->params);
     }
 
     private function initialize()
