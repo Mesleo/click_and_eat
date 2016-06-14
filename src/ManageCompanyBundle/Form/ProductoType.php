@@ -30,7 +30,8 @@ class ProductoType extends AbstractType
             ))
             ->add('img', FileType::class, array('required' => false,
                 "attr" => array('class' => 'form-control'),
-                'data_class' => null
+                'data_class' => null,
+                'label' => "Imagen"
             ))
         ;
     }

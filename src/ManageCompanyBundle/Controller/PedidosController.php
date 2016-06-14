@@ -126,7 +126,7 @@ class PedidosController extends Controller{
         if($request->request->has("desde")  && $request->request->has('hasta')){
             $fechaDesde = \DateTime::createFromFormat("Y-m-d", '2000-01-01');
             $fechaHasta = \DateTime::createFromFormat("Y-m-d", '2100-12-31');
-            if($request->request->get('desde') == $request->request->get('hasta')){
+            if($request->request->get('desde') != null and $request->request->get('desde') == $request->request->get('hasta')){
                 $fecha = $this->setFormatDate($request->request->get('hasta'));
                 $this->params['pedidos'] = $this->em->getRepository('AppBundle:Pedido')
                     ->getGeneralInfoOrdersToday($this->getIdRestaurante(), $fecha);
