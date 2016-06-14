@@ -18,7 +18,7 @@ class PedidosController extends Controller{
     private $params = null;
 
     /**
-     * Muestra la lista de pedidos
+     * Muestra la lista de pedidos de hoy
      *
      * @Route("/pedidos", name="gestion_pedidos")
      * @Security("has_role('ROLE_MANAGE')")
@@ -126,14 +126,20 @@ class PedidosController extends Controller{
         if($request->request->has("desde")  && $request->request->has('hasta')){
             $fechaDesde = \DateTime::createFromFormat("Y-m-d", '2000-01-01');
             $fechaHasta = \DateTime::createFromFormat("Y-m-d", '2100-12-31');
-            if($request->request->get('desde')!= null ) {
-                $fechaDesde = \DateTime::createFromFormat("d-m-Y", $request->request->get('desde'));
+            if($request->request->get('desde') == $request->request->get('hasta')){
+                $fecha = $this->setFormatDate($request->request->get('hasta'));
+                $this->params['pedidos'] = $this->em->getRepository('AppBundle:Pedido')
+                    ->getGeneralInfoOrdersToday($this->getIdRestaurante(), $fecha);
+            }else {
+                if ($request->request->get('desde') != null) {
+                    $fechaDesde = \DateTime::createFromFormat("d-m-Y H:i:s", $request->request->get('desde') . ' 00:00:00');
+                }
+                if ($request->request->get('hasta') != null) {
+                    $fechaHasta = \DateTime::createFromFormat("d-m-Y H:i:s", $request->request->get('hasta') . ' 23:59:59');
+                }
+                $this->params['pedidos'] = $this->em->getRepository('AppBundle:Pedido')
+                    ->getGeneralInfoOrdersBetweenDates($this->getIdRestaurante(), $fechaDesde, $fechaHasta);
             }
-            if($request->request->get('hasta')!= null){
-                $fechaHasta = \DateTime::createFromFormat("d-m-Y", $request->request->get('hasta'));
-            }
-            $this->params['pedidos'] = $this->em->getRepository('AppBundle:Pedido')
-                ->getGeneralInfoOrdersBetweenDates($this->getIdRestaurante(), $fechaDesde, $fechaHasta);
             return $this->render('ManageCompanyBundle:Restaurante:pedidos.html.twig', $this->params);
         }
         return $this->redirectToRoute('gestion_pedidos');
@@ -167,7 +173,7 @@ class PedidosController extends Controller{
             ->findOneBy([
                 "id" => $id_pedido
             ]);
-        $pedido->setEstado($estado = $this->setState(3));
+        $pedido->setEstado($this->setState(3));
         $this->em->persist($pedido);
         $this->em->flush();
         return $this->redirectToRoute("gestion_pedidos");
@@ -184,9 +190,28 @@ class PedidosController extends Controller{
             ->findOneBy([
                 "id" => $id_pedido
             ]);
-        $pedido->setEstado($estado = $this->setState(5));
+        $pedido->setEstado($this->setState(5));
         $this->em->persist($pedido);
         $this->em->flush();
+        return $this->redirectToRoute("gestion_pedidos");
+    }
+
+    /**
+     * Archiva un pedido
+     *
+     * @Route("/pedido/archivado/{id_pedido}", name="archived_pedido")
+     */
+    public function setStateArchived($id_pedido){
+        $this->initialize();
+        $pedido = $this->em->getRepository('AppBundle:Reserva')
+            ->findOneBy([
+                "id" => $id_pedido
+            ]);
+        if($this->checkRestaurante($pedido->getRestaurante()->getID())) {
+            $pedido->setEstado($this->setState(8));
+            $this->em->persist($pedido);
+            $this->em->flush();
+        }
         return $this->redirectToRoute("gestion_pedidos");
     }
 
@@ -225,6 +250,17 @@ class PedidosController extends Controller{
             ->findOneBy([
                 "id" => $id
             ]);
+    }
+
+    /**
+     * Formatea la fecha pasada a formato americano
+     * @param $string
+     * @return string
+     */
+    private function setFormatDate($string){
+        $arrayDate = explode("-", $string);
+        $fechaFormat = $arrayDate[2].'-'.$arrayDate[1].'-'.$arrayDate[0];
+        return $fechaFormat;
     }
 
     /**

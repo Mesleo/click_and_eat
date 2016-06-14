@@ -3,14 +3,11 @@
 namespace ClientBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use AppBundle\Entity\Producto;
+use AppBundle\Entity\TipoProducto;
+use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use AppBundle\Entity\Domicilio;
-use AppBundle\Entity\Localidad;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class DefaultController extends Controller
 {
@@ -27,7 +24,11 @@ class DefaultController extends Controller
         if(!is_null($this->getUser())){
             $this->params['user'] = $this->em->getRepository("AppBundle:Usuario")
                 ->findOneBy([
-                    "id" => $this->getUser()->getId()
+                    'id' => $this->getUser()->getId()
+                ]);
+            $this->params['cliente'] = $this->em->getRepository("AppBundle:Cliente")
+                ->findOneBy([
+                    'usuario' => $this->getUser()->getId()
                 ]);
         }
         return $this->render('ClientBundle:Page:index.html.twig', $this->params);
@@ -35,30 +36,54 @@ class DefaultController extends Controller
 
     /**
      * @Route("/restaurantes", name="show_restaurantes")
+     *
+     * @param  Request $request [description]
+     * @return [type]           [description]
      */
-    public function showAction()
+    public function showAction(Request $request)
     {
         $this->initialize();
         $this->params['restaurantes'] = $this->em->getRepository("AppBundle:Restaurante")
-                ->showRestaurantes();
+                ->showRestaurantes($request->request->get('direccion'));
 
         return $this->render('ClientBundle:Restaurante:show.html.twig', $this->params);
-
     }
 
     /**
-     * Muestra las localidades a partir de una consulta pasada a JSON
+     * @Route("/{id_restaurante}/carta", name="menu_restaurante")
      *
-     * @Route("/localidad", name="show_restaurantes")
+     * @param  [type] $id_restaurante [description]
+     * @return [type]           [description]
      */
-    public function getLocalidades(Request $request){
+    public function menuAction($id_restaurante)
+    {
         $this->initialize();
-        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
-            ->findBy(
-                array('provincia' => $request->query->get('provincia')),
-                array('nombre' => 'ASC')
+
+        $restaurante = $this->em->getRepository("AppBundle:Restaurante")
+            ->findOneBy([
+                'id' => $id_restaurante
+            ]);
+
+        if (!$restaurante) {
+            throw $this->createNotFoundException(
+                'No se encontró el restaurante con id '.$id_restaurante
             );
-        return $this->render('ClientBundle:FilesJson:localidades_cliente.json.twig', $this->params);
+        }
+
+        $productos = $this->em->getRepository("AppBundle:Restaurante")
+            ->showProductos($id_restaurante);
+        $tiposProductos = array();
+        foreach ($productos as $value) {
+            if (!in_array($value['tipoProducto'], $tiposProductos)) {
+                array_push($tiposProductos, $value['tipoProducto']);
+            }
+        }
+
+        $this->params['productos'] = $productos;
+        $this->params['tiposProductos'] = $tiposProductos;
+        $this->params['restaurante'] = $restaurante;
+
+        return $this->render('ClientBundle:Restaurante:menu.html.twig', $this->params);
     }
 
     private function initialize()

@@ -4,13 +4,13 @@
 {% block body %}
 	{% include 'ManageCompanyBundle:Dialog:confirm_cancel.php.twig' %}
 	<div class="container">
-		<h3>Pedidos</h3>
+		<h3>Reservas</h3>
 		<div class="panel panel-body panel-success">
 			<div class="row">
 				<div class="col-md-2">
-					<input type="submit" class="btn btn-success my-btn" name="orders-today" id="orders-today" value="¿Qué hay hoy?">
+					<input type="submit" class="btn btn-success my-btn" name="reserves-today" id="reserves-today" value="¿Qué hay hoy?">
 				</div>
-				<form action="{{ path('pedidos_entre_fechas') }}" method="post">
+				<form action="{{ path('reservas_entre_fechas') }}" method="post">
 					<div class="col-md-2">
 						<input type="text" class="input-date form-control" id="desde" name="desde" readonly placeholder="Desde...">
 					</div>
@@ -25,7 +25,7 @@
 					<select class="form-control" name="select-state" id="select-state">
 						<option value="-">- Elige estado -</option>
 						<option value="0">Todos</option>
-						{% for e in estados %}
+						{% for e in estados_reservas %}
 							<option value="{{ e.id }}">{{ e.estado }}</option>
 						{% endfor %}
 					</select>
@@ -34,35 +34,36 @@
 			</div>
 			<br>
 			<div class="be-panel col-sm-12">
-				<table id="pedidos-table" class="table display responsive nowrap">
+				<table id="reservas-table" class="table display responsive nowrap">
 					<thead>
 					<tr>
-						<th>Núm pedido</th>
+						<th>Núm reserva</th>
 						<th>Cliente</th>
-						<th>Precio total</th>
 						<th>Realizado</th>
 						<th>Estado</th>
 						<th></th>
 					</tr>
 					</thead>
 					<tbody>
-					{% for pedido in pedidos %}
+					{% for reserva in reservas %}
 						<tr>
-							<td>{{ pedido.numPedido }}</td>
-							<td>{{ pedido.cliente }}</td>
-							<td>{{ pedido.totalEnvio|number_format(2, ",") }} €</td>
-							<td>{{ pedido.realizado|date("d-m-Y H:i:s") }}</td>
-							<td>{{ pedido.estado }}</td>
+							<td>{{ reserva.numReserva }}</td>
+							<td>{{ reserva.cliente }}</td>
+							<td>{{ reserva.realizado|date("d-m-Y H:i:s") }}</td>
+							<td>{% for e in estados_reservas %}
+									{% if e.id == reserva.estado_id %}
+										{{ e.estado }}
+									{% endif %}
+								{% endfor %}
+							</td>
 							<td>
-								<a href="{{ path('edit_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-primary" title="Editar pedido">
+								<a href="{{ path('edit_reserva', {'id_reserva': reserva.id}) }}" class="btn btn-primary" title="Editar reserva">
 									<i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-								<a href="{{ path('send_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-info" title='Cambiar estado a "Enviado"'>
-									<i class="fa fa-paper-plane-o" aria-hidden="true"></i></a>
-								<a href="{{ path('deliver_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-success" title='Cambiar estado a "Entregado"'>
+								<a href="{{ path('confirm_reserva', {'id_reserva': reserva.id}) }}" class="btn btn-success" title='Confirmar reserva'>
 									<i class="fa fa-check-circle" aria-hidden="true"></i></a>
-								<a href="{{ path('archived_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-warning" title='Archivar pedido'>
+								<a href="{{ path('archived_reserva', {'id_reserva': reserva.id}) }}" class="btn btn-warning" title='Archivar reserva'>
 									<i class="fa fa-file" aria-hidden="true"></i></a>
-								<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('cancel_pedido', {'id_pedido': pedido.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas cancelar el pedido '{{ pedido.numPedido }}'?">
+								<button class="btn btn-danger" id="del" type="button" title="Cancelar reserva" data-toggle="modal" data-route="{{ path('cancel_reserva', {'id_reserva': reserva.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas cancelar la reserva '{{ reserva.numReserva }}'?">
 									<i class="fa fa-ban" aria-hidden="true"></i>
 								</button>
 							</td>
@@ -86,11 +87,11 @@
 	{{ librerias.datatables_js() }}
 	<script src="{{ asset('manage/js/bootstrap-datepicker.min.js') }}"></script>
 	<script src="{{ asset('manage/js/datetime-picker.es.js') }}"></script>
-	<script src="{{ asset('node_modules/sweetalert/dist/sweetalert.min.js') }}"></script>
 	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+	<script src="{{ asset('node_modules/sweetalert/dist/sweetalert.min.js') }}"></script>
 	<script>
 		$(document).ready(function() {
-			$('#pedidos-table').DataTable({
+			$('#reservas-table').DataTable({
 				"language": {
 					"url": "//cdn.datatables.net/plug-ins/1.10.10/i18n/Spanish.json",
 					"decimal": ",",
@@ -105,18 +106,16 @@
 	<script>
 		(function(){
 			$('#select-state').on('change', function(){
-				console.log($('#select-state').val());
-				window.location = "{{ path('show_orders_state') }}" + "?estado=" + $('#select-state').val();
+				window.location = "{{ path('show_reserves_state') }}" + "?estado=" + $('#select-state').val();
 			});
 
 			$('#show-info').on('click', function(){
 				swal({
 					title: "INFORMACIÓN",
-					text: '<i class="fa fa-pencil-square-o btn btn-primary" aria-hidden="true"></i> - Editar pedido<br><br>' +
-					'<i class="fa fa-paper-plane-o btn btn-info" aria-hidden="true"></i> - Cambiar estado pedido a "Enviado"<br><br>'+
-					'<i class="fa fa-check-circle btn btn-success" aria-hidden="true"></i> - Cambiar estado pedido a "Entregado"<br><br>'+
-					'<i class="fa fa-file btn btn-warning" aria-hidden="true"></i> - Archivar pedido"<br><br>'+
-					'<i class="fa fa-ban btn btn-danger" aria-hidden="true"></i> - Cancelar pedido<br>',
+					text: '<i class="fa fa-pencil-square-o btn btn-primary" aria-hidden="true"></i> - Editar reserva<br><br>' +
+					'<i class="fa fa-check-circle btn btn-success" aria-hidden="true"></i> - Cambiar estado reserva a "Confirmada"<br><br>'+
+					'<i class="fa fa-file btn btn-warning" aria-hidden="true"></i></i> - Archivar reserva<br><br>'+
+					'<i class="fa fa-ban btn btn-danger" aria-hidden="true"></i> - Cancelar reserva<br>',
 					html: true
 				});
 			});
@@ -131,8 +130,8 @@
 				autoclose: true
 			});
 
-			$('#orders-today').on('click', function(){
-				window.location.href = "{{ path('gestion_pedidos') }}";
+			$('#reserves-today').on('click', function(){
+				window.location.href = "{{ path('gestion_reservas') }}";
 			});
 		})();
 		</script>

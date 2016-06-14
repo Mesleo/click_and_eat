@@ -212,6 +212,11 @@ p {
 	margin-top: 2em;
 }
 
+.table-condensed th, .table-condensed td{
+	padding: 8px !important;
+	cursor: pointer;
+}
+
 #view {
 	display: inline-block;
 	margin-left: 2em;

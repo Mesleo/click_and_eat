@@ -11,5 +11,88 @@ namespace AppBundle\Repository;
 class ReservaRepository extends \Doctrine\ORM\EntityRepository
 {
 
+    /**
+     * Muestra las reservas entre fechas (fecha_realizada)
+     *
+     * @return array
+     */
+    public function getReservesBetweenDates($idRestaurante, $fechaD, $fechaH)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT r.id, r.numReserva, r.numPersonas, r.nombre as cliente, r.fecha_hora, r.fecha_hora_realizada as realizado,
+            r.telefono, r.email, r.estado_id
+            FROM reserva r
+            WHERE r.idRestaurante = :idRestaurante AND r.fecha_hora_realizada >= :fechaD AND r.fecha_hora_realizada <= :fechaH");
+        $stmt->bindParam("idRestaurante", $idRestaurante);
+        $stmt->bindParam("fechaD", $fechaD);
+        $stmt->bindParam("fechaH", $fechaH);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Asigna mesas a una reserva
+     *
+     * @return array
+     */
+    public function setTablesInReserves($idReserva, $idMesa)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("INSERT INTO `mesa_reserva` (`idReserva`, `idMesa`) VALUES (:idReserva, :idMesa)");
+        $stmt->bindParam("idReserva", $idReserva);
+        $stmt->bindParam("idMesa", $idMesa);
+        $stmt->execute();
+    }
+
+    /**
+     * Asigna mesas a una reserva
+     *
+     * @return array
+     */
+    public function deleteTablesInReserves($idReserva)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("DELETE FROM `mesa_reserva` WHERE `mesa_reserva`.`idReserva` = :idReserva");
+        $stmt->bindParam("idReserva", $idReserva);
+        $stmt->execute();
+    }
+
+    /**
+     * Obtiene las mesas asignadas a una reserva
+     *
+     * @return array
+     */
+    public function getTablesInReserves($idReserva)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT mr.idMesa, m.codMesa, mr.idReserva FROM mesa_reserva mr, mesa m WHERE mr.idMesa = m.id AND mr.idReserva = :idReserva");
+        $stmt->bindParam("idReserva", $idReserva);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+
+    /**
+     * Muestra una lista de todas las reservas de un restaurante por estado, si no se especifica se muestran todas
+     *
+     * @return array
+     */
+    public function getReservesByState($idRestaurante, $idEstado)
+    {
+        $sql = "SELECT r.id, r.numReserva, r.numPersonas, r.nombre as cliente, r.fecha_hora, r.fecha_hora_realizada as realizado,
+            r.telefono, r.email, r.estado_id
+            FROM reserva r WHERE r.idRestaurante = :idRestaurante";
+        if($idEstado != 0 and $idEstado != '-'){
+            $sql .= " AND r.estado_id = :idEstado";
+        }else $sql .= " ORDER BY r.estado_id";
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare($sql);
+        $stmt->bindParam("idRestaurante", $idRestaurante);
+        if($idEstado != 0 and $idEstado != '-') {
+            $stmt->bindParam("idEstado", $idEstado);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 
 }

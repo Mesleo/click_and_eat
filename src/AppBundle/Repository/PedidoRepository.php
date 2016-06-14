@@ -23,8 +23,8 @@ class PedidoRepository extends \Doctrine\ORM\EntityRepository
           total.totalDescuento, (total.totalDescuento+r.precio_envio) as totalEnvio FROM restaurante r, pedido p LEFT JOIN estado AS e ON
           p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON p.id= pp.idPedido LEFT JOIN (select pp.idPedido ,
           SUM(pp.precio*pp.cantidad-pp.descuento) as totalDescuento FROM pedido_producto as pp group by pp.idPedido) AS total ON
-          p.id = total.idPedido WHERE p.idRestaurante = :idRestaurante AND r.id = :idRestaurante AND p.fecha_hora_realizado < :fechaHasta
-          AND p.fecha_hora_realizado > :fechaDesde ORDER BY p.estado_id");
+          p.id = total.idPedido WHERE p.idRestaurante = :idRestaurante AND r.id = :idRestaurante AND p.fecha_hora_realizado <= :fechaHasta
+          AND p.fecha_hora_realizado >= :fechaDesde ORDER BY p.estado_id");
         $datefH = $fechaHasta->format('Y-m-d');
         $datefD = $fechaDesde->format('Y-m-d');
         $stmt->bindParam("idRestaurante", $idRestaurante);
@@ -55,7 +55,7 @@ class PedidoRepository extends \Doctrine\ORM\EntityRepository
 
 
     /**
-     * Muestra una lista con todos los pedidos de un restaurante
+     * Muestra una lista con todos los pedidos de un restaurante por estado, si no se especifica se muestran todos
      *
      * @return array
      */
@@ -101,7 +101,6 @@ class PedidoRepository extends \Doctrine\ORM\EntityRepository
      *
      * @param $idPedido
      * @return array
-     * @throws \Doctrine\DBAL\DBALException
      */
     public function getInfoOrder($idPedido){
         $stmt = $this->getEntityManager()->getConnection()

@@ -1,0 +1,33 @@
+{# src/ClientBundle/Resources/views/Restaurante/menu.html.twig #}
+{% extends 'ClientBundle:Page:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+		<br />
+		{% if restaurante.foto %}
+			<img src="{{ asset('uploads/restaurantes/images/' ~ restaurante.foto ) }}" width="150px" height="150px" alt="Foto de restaurante" class="img-thumbnail">
+		{% else %}
+			<img src="{{ asset('uploads/restaurantes/images/image.png' ) }}" width="150px" height="200px" alt="Foto de restaurante" class="img-thumbnail">
+		{% endif %}
+		<div id="view">
+			<h2>{{ restaurante.nombre }}</h2>
+			<div>{% for tipoComida in restaurante.getTipoComida() %}
+				<strong>{{ tipoComida.nombre }}{% if not loop.last %},{% endif %}</strong>
+			{% endfor %}</div>
+			<span>{{ restaurante.direccion }}, {{ restaurante.localidad.nombre }}, {{ restaurante.provincia.nombre }}, {{ restaurante.localidad.codigoPostal }}</span>
+			<div>Precio envío: {{ restaurante.precioEnvio }} €</div>
+		</div>
+		<div class="panel panel-body panel-default">
+			{% for tipoProducto in tiposProductos %}
+				<p>{{ tipoProducto }}</p>
+				{% for producto in productos %}
+					{% if producto.tipoProducto == tipoProducto %}
+						<div><strong>{{ producto.nombre }}</strong></div>
+						<div>{{ producto.descripcion }}</div>
+					{% endif %}
+				{% endfor %}
+				<hr>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

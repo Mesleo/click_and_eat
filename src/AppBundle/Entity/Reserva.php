@@ -23,11 +23,25 @@ class Reserva
     protected $id;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="numReserva", type="string", nullable=true)
+     */
+    protected $numReserva;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="fecha_hora", type="datetime", nullable=false)
      */
     protected $fechaHora;
+
+    /**
+     * @var \Date
+     *
+     * @ORM\Column(name="fecha_hora_realizada", type="date", nullable=false)
+     */
+    protected $fechaHoraRealizada;
 
     /**
      * @var string
@@ -64,10 +78,25 @@ class Reserva
     protected $restaurante;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Mesa", inversedBy="reservas")
-     * @ORM\JoinColumn(name="idMesa", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="reservas")
+     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=true)
+     */
+    protected $cliente;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Mesa", inversedBy="reserva")
+     * @ORM\JoinTable(name="mesa_reserva",
+     *      joinColumns={@ORM\JoinColumn(name="idReserva", referencedColumnName="id", nullable=false)},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="idMesa", referencedColumnName="id", nullable=false)}
+     *      )
      */
     protected $mesa;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="EstadoReserva")
+     * @ORM\JoinColumn(name="estado_id", referencedColumnName="id")
+     */
+    protected $estado;
 
     /**
      * @var \DateTime
@@ -101,30 +130,6 @@ class Reserva
     }
 
     /**
-     * Set fecha
-     *
-     * @param \DateTime $fecha
-     *
-     * @return Reserva
-     */
-    public function setFecha($fecha)
-    {
-        $this->fecha = $fecha;
-
-        return $this;
-    }
-
-    /**
-     * Get fecha
-     *
-     * @return \DateTime
-     */
-    public function getFecha()
-    {
-        return $this->fecha;
-    }
-
-    /**
      * Set nombre
      *
      * @param string $nombre
@@ -146,6 +151,30 @@ class Reserva
     public function getNombre()
     {
         return $this->nombre;
+    }
+
+    /**
+     * Set numReserva
+     *
+     * @param string $numReserva
+     *
+     * @return Reserva
+     */
+    public function setNumReserva($numReserva)
+    {
+        $this->numReserva = $numReserva;
+
+        return $this;
+    }
+
+    /**
+     * Get numReserva
+     *
+     * @return string
+     */
+    public function getNumReserva()
+    {
+        return $this->numReserva;
     }
 
     /**
@@ -317,6 +346,30 @@ class Reserva
     }
 
     /**
+     * Set estado
+     *
+     * @param \AppBundle\Entity\EstadoReserva $estado
+     *
+     * @return Reserva
+     */
+    public function setEstado(\AppBundle\Entity\EstadoReserva $estado = null)
+    {
+        $this->estado = $estado;
+
+        return $this;
+    }
+
+    /**
+     * Get mesa
+     *
+     * @return \AppBundle\Entity\EstadoReserva
+     */
+    public function getEstado()
+    {
+        return $this->estado;
+    }
+
+    /**
      * Set fechaHora
      *
      * @param \DateTime $fechaHora
@@ -338,6 +391,30 @@ class Reserva
     public function getFechaHora()
     {
         return $this->fechaHora;
+    }
+
+    /**
+     * Set fechaHoraRealizada
+     *
+     * @param \DateTime $fechaHoraRealizada
+     *
+     * @return Reserva
+     */
+    public function setFechaHoraRealizada($fechaHoraRealizada)
+    {
+        $this->fechaHoraRealizada = $fechaHoraRealizada;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaHoraRealizada
+     *
+     * @return \DateTime
+     */
+    public function getFechaHoraRealizada()
+    {
+        return $this->fechaHoraRealizada;
     }
 
     /**

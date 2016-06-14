@@ -5,12 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Estado
+ * EstadoReserva
  *
- * @ORM\Table(name="estado")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\EstadoRepository")
+ * @ORM\Table(name="estado_reserva")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\EstadoReservaRepository")
  */
-class Estado
+class EstadoReserva
 {
 
     /**
@@ -30,9 +30,10 @@ class Estado
     private $estado;
 
     /**
-     * @ORM\OneToMany(targetEntity="Pedido", mappedBy="estado")
+     * @ORM\OneToMany(targetEntity="Reserva", mappedBy="estado")
      */
-    private $pedido;
+    private $reserva;
+
     /**
      * Constructor
      */
