@@ -60,6 +60,7 @@ class DefaultController extends Controller
     {
         $this->initialize();
 
+        //$this->get('session')->clear();
         //print_r($this->get('session')->all());
         //exit();
 
@@ -93,16 +94,67 @@ class DefaultController extends Controller
     /**
      * @Route("/{id_restaurante}/menu/add/", name="add_menu")
      *
+     * @param  Request $request    [description]
      * @param  [type] $id_restaurante [description]
      * @return [type]           [description]
      */
     public function addAction(Request $request, $id_restaurante)
     {
         $this->initialize();
+
         $session = $request->getSession();
+
+        $id_producto = $request->request->get('id_producto');
+
         $producto = $this->em->getRepository("AppBundle:Producto")
-            ->getProducto($request->request->get('id_producto'));
-        $session->set('producto'.count($session->all()), $producto);
+            ->getProducto($id_producto);
+        
+        if ($session->has('producto'.$id_producto)) {
+            $producto = $session->get('producto'.$id_producto);
+            $producto[1]['cantidad'] += 1;
+        } else {
+            array_push($producto, array('cantidad' => 1));
+        }
+
+        $session->set('producto'.$id_producto, $producto);
+
+        $session->remove('subtotal');
+        $subtotal = 0.00;
+        foreach ($session->all() as $key => $value) {
+            $subtotal += $value[0]['precio'] * $value[1]['cantidad'];
+        }
+        $session->set('subtotal', array(array('subtotal' => number_format($subtotal,2))));
+
+        $this->params['id_restaurante'] = $id_restaurante;
+        return $this->redirectToRoute('menu_restaurante', $this->params);
+    }
+
+    /**
+     * @Route("/{id_restaurante}/{key}/delete", name="delete_menu")
+     * 
+     * @param  Request $request    [description]
+     * @param  [type]  $id_restaurante [description]
+     * @param  [type]  $key [description]
+     * @return [type]              [description]
+     */
+    public function deleteAction(Request $request, $id_restaurante, $key)
+    {
+        $producto = $this->get('session')->get($key);
+
+        if ($producto[1]['cantidad'] > 1) {
+            $producto[1]['cantidad'] -= 1;
+            $this->get('session')->set($key, $producto);
+        } else {
+            $this->get('session')->remove($key);
+        }
+
+        $this->get('session')->remove('subtotal');
+        $subtotal = 0.00;
+        foreach ($this->get('session')->all() as $key => $value) {
+            $subtotal += $value[0]['precio'] * $value[1]['cantidad'];
+        }
+        $this->get('session')->set('subtotal', array(array('subtotal' => number_format($subtotal,2))));
+
         $this->params['id_restaurante'] = $id_restaurante;
         return $this->redirectToRoute('menu_restaurante', $this->params);
     }

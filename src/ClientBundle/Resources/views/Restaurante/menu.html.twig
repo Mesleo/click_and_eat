@@ -1,5 +1,4 @@
 {# src/ClientBundle/Resources/views/Restaurante/menu.html.twig #}
-{% set sesion = app.session %}
 {% extends 'ClientBundle:Page:base.html.twig' %}
 
 {% block body %}
@@ -44,19 +43,56 @@
 			<br />
 			<div class="panel panel-body panel-default">
 				<p class="text-center">Tu pedido</p>
-				{% if sesion|length == 0 %}
+				{% if app.session|length == 0 %}
 					<div>No hay productos en tu cesta de la compra</div>
 				{% else %}
-					<div>
-						{% for se in sesion %}
-							<div><a href="#" class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
-							{{ se[0]['nombre'] }}</div>
-							<br />
-						{% endfor %}
+					{% for key, sesion in app.session %}
+						{% if key != 'subtotal' and key != '_csrf/pedido' %}
+						<div class="row">
+							<div class="col-md-1">
+								<a href="{{ path('delete_menu', {'id_restaurante': restaurante.id, 'key': key}) }}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+							</div>
+							<div class="col-md-7">
+								{% if sesion[1]['cantidad'] > 1 %}
+									{{ sesion[1]['cantidad'] }} x <strong>{{ sesion[0]['nombre'] }}</strong>
+								{% else %}
+									<strong>{{ sesion[0]['nombre'] }}</strong>
+								{% endif %}
+							</div>
+							<div class="col-md-3">
+								<span>{{ sesion[0]['precio'] }} €</span>
+							</div>
+						</div>
+						{% endif %}
+					{% endfor %}
+					<hr>
+					<div class="row">
+						<div class="col-md-8">
+							<span>Subtotal</span>
+						</div>
+						<div class="col-md-4">
+							<span id="subtotal">{{ app.session.get('subtotal')[0]['subtotal'] }} €</span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-8">
+							<span>Gastos de envío</span>
+						</div>
+						<div class="col-md-4">
+							<span id="precioEnvio">{{ restaurante.precioEnvio }} €</span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-8">
+							<h4>Total</h4>
+						</div>
+						<div class="col-md-4">
+							<h4>{{ (app.session.get('subtotal')[0]['subtotal'] + restaurante.precioEnvio)|number_format(2) }} €</h4>
+						</div>
 					</div>
 				{% endif %}
 			</div>
-			<button class="btn btn-buscar">Realizar pedido</button>
+			<a href="{{ path('add_pedido', {'id_restaurante': restaurante.id}) }}" class="btn btn-buscar">Realizar pedido</a>
 		</div>
 	</div>
 {% endblock %}

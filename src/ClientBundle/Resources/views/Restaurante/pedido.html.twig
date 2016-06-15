@@ -1,0 +1,20 @@
+{# src/ClientBundle/Resources/views/Restaurante/pedido.html.twig #}
+{% extends 'ClientBundle:Page:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+		{{ form_start(form) }}
+
+		{{ form_row(form.nombre) }}
+        {{ form_row(form.domicilio) }}
+        {{ form_row(form.telefono) }}
+        {{ form_row(form.email) }}
+
+        <div class="form-group">
+    		<br />
+    		<button type="submit" class="btn btn-primary">Aceptar</button>
+			<a href="{{ path('menu_restaurante', {'id_restaurante': restaurante}) }}" class="btn btn-danger">Cancelar</a>
+    	</div>
+    	{{ form_end(form) }}
+	</div>
+{% endblock %}

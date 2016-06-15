@@ -1,0 +1,105 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/trabajadores_restaurante.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+{% import '@ManageCompany/Librerias/librerias.html.twig' as librerias %}
+{% block body %}
+	{% include 'ManageCompanyBundle:Dialog:confirm_delete.php.twig' %}
+	<div class="container">
+		<h3>Pedidos</h3>
+		<div class="panel panel-body panel-success">
+			<div class="row">
+				<form action="{{ path('pedidos_entre_fechas') }}" method="post">
+					<div class="col-md-3">
+						<input type="text" class="input-date form-control" id="desde" name="desde" readonly placeholder="Desde...">
+					</div>
+					<div class="col-md-3">
+						<input type="text" class="input-date form-control" id="hasta" name="hasta" readonly placeholder="Hasta...">
+					</div>
+					<div class="col-md-2">
+						<input type="submit" class="btn btn-primary" name="buscar_entre_fechas" id="buscar_entre_fechas" value="Buscar">
+					</div>
+				</form>
+				<div class="col-md-3">
+					<select class="form-control" name="select-state" id="select-state">
+						<option value="-">- Elige estado -</option>
+						<option value="0">Todos</option>
+						{% for e in estados %}
+							<option value="{{ e.id }}">{{ e.estado }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+			<br>
+			<div class="be-panel col-sm-12">
+				<table id="pedidos-table" class="table display responsive nowrap">
+					<thead>
+					<tr>
+						<th>Número pedido</th>
+						<th>Cliente</th>
+						<th>Precio total</th>
+						<th>Realizado</th>
+						<th>Estado</th>
+						<th></th>
+					</tr>
+					</thead>
+					<tbody>
+					{% for pedido in pedidos %}
+						<tr>
+							<td>{{ pedido.numPedido }}</td>
+							<td>{{ pedido.cliente }}</td>
+							<td>{{ pedido.total|number_format(2, ",") }} €</td>
+							<td>{{ pedido.realizado|date("d-m-Y H:i:s") }}</td>
+							<td>{{ pedido.estado }}</td>
+							<td>
+								<a href="{{ path('edit_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-primary" title="Editar pedido"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+								<a href="{{ path('send_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-warning" title='Cambiar estado a "Enviado"'><i class="fa fa-paper-plane-o" aria-hidden="true"></i></a>
+								<a href="{{ path('deliver_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-success" title='Cambiar estado a "Entregado"'><i class="fa fa-check-circle" aria-hidden="true"></i></a>
+								<a href="{{ path('cancel_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-danger" title="Cancelar pedido"><i class="fa fa-ban" aria-hidden="true"></i></a>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('fonts/font-awesome-4.6.3/css/font-awesome.css') }}">
+{% endblock %}
+{% block javascripts %}
+	{{ librerias.datatables_js() }}
+	<script src="{{ asset('manage/js/bootstrap-datepicker.min.js') }}"></script>
+	<script>
+		$(document).ready(function() {
+			$('#pedidos-table').DataTable({
+				"language": {
+					"url": "//cdn.datatables.net/plug-ins/1.10.10/i18n/Spanish.json",
+					"decimal": ",",
+					"thousands": "."
+				},
+				"scrollY":        "600px",
+				"scrollCollapse": true,
+				"lengthMenu": [[5,10, 15, 20, -1], [5,10, 15, 20, "Todos"]]
+			});
+		});
+	</script>
+	<script>
+		(function(){
+			$('#select-state').on('change', function(){
+				window.location = "{{ path('show_orders_state') }}" + "?estado=" + $('#select-state').val();
+			});
+
+			$('.input-date').datepicker({
+				format: "dd-mm-yyyy",
+				startView: 2,
+				maxViewMode: 0,
+				todayBtn: true,
+				language: "es",
+				multidateSeparator: "-",
+				forceParse: false,
+				autoclose: true
+			});
+		})();
+		</script>
+{% endblock %}
