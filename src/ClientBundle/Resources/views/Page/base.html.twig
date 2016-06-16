@@ -23,7 +23,7 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a href="#" class="navbar-brand">Click & Eat</a>
+						<a href="{{ path('home_client') }}" class="navbar-brand">Click & Eat</a>
 					</div>
 					<div class="collapse navbar-collapse navbar-ex1-collapse">
             			<ul class="nav navbar-nav navbar-right">
@@ -33,10 +33,8 @@
 										¡Hola {{ cliente.nombre }}! <span class="caret"></span>
 									</a>
 									<ul class="dropdown-menu">
-										<li><a href="#">Información de la cuenta</a></li>
-										<li><a href="#">Pedidos</a></li>
-										<li><a href="#">Reservas</a></li>
-										<li><a href="#">Direcciones de reparto</a></li>
+										<li><a href="{{ path('cuenta_info') }}">Información de la cuenta</a></li>
+										<li><a href="{{ path('cuenta_direcciones') }}">Direcciones de reparto</a></li>
 										<li><a href="{{ path('admin_logout') }}" class="navbar-link">Salir</a></li>
 									</ul>
 								</li>

@@ -1,0 +1,59 @@
+{# src/ClientBundle/Resources/views/Cliente/cuenta.html.twig #}
+{% extends 'ClientBundle:Page:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+		<br />
+		<h3>Cuenta</h3>
+		{% if info is defined and info != null %}
+		<div class="row">
+			<div class="col-md-12">
+				<div class="alert alert-danger">{{ info }}</div>
+			</div>
+		</div>
+		{% endif %}
+		<br />
+		<form method="post" id="form-account" action="{{ path('cuenta_info_guardar') }}">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+        				<label class="control-label">Usuario</label>
+            			<input type="text" class="form-control" name="inputUserName" id="inputUserName" {% if user is defined %} value="{{ user.username }}" {% endif %} placeholder="Usuario">
+    				</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+        				<label class="control-label">Email</label>
+            			<input type="email" class="form-control" name="inputEmail" id="inputEmail" {% if user is defined %} value="{{ user.email }}" {% endif %} placeholder="Email">
+    				</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4">
+    				<div class="form-group">
+        				<label class="control-label">Nombre</label>
+            			<input type="text" class="form-control" name="inputNombre" id="inputNombre" {% if cliente is defined %} value="{{ cliente.nombre }}" {% endif %} placeholder="Nombre">
+        			</div>
+    			</div>
+    			<div class="col-md-4">
+    				<div class="form-group">
+        				<label class="control-label">Apellidos</label>
+            			<input type="text" class="form-control" name="inputApellidos" id="inputApellidos" {% if cliente is defined %} value="{{ cliente.apellidos }}" {% endif %} placeholder="Apellidos">
+        			</div>
+    			</div>
+    			<div class="col-md-4">
+    				<div class="form-group">
+        				<label class="control-label">Teléfono</label>
+            			<input type="text" class="form-control" name="inputTelefono" id="inputTelefono" {% if cliente is defined %} value="{{ cliente.telefono }}" {% endif %} placeholder="Telefono">
+        			</div>
+    			</div>
+			</div>
+			<div><a href="#">Cambiar contraseña</a></div>
+			<div class="form-group">
+	        	<input type="submit" class="btn btn-account" name="save-account" value="Guardar cambios">
+        	</div>
+        </form>
+        <div>¿Deseas eliminar tu cuenta en Click&Eat? <a href="#">Eliminar cuenta</a></div>
+        <br />
+	</div>
+{% endblock %}

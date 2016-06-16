@@ -18,7 +18,7 @@ class CuentaController extends Controller
     /**
      * @Route("/cuenta", name="cuenta")
      */
-    public function configAccoutAction()
+    public function configAccountAction()
 	{
         $this->initialize();
         $this->params['user'] = $this->em->getRepository("AppBundle:Usuario")

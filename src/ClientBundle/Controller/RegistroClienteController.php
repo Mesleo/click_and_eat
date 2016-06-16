@@ -106,7 +106,7 @@ class RegistroClienteController extends Controller
                 array('provincia' => $request->query->get('provincia')),
                 array('nombre' => 'ASC')
             );
-        return $this->render('ClientBundle:Json:localidades.json.twig', $this->params);
+        return $this->render('ClientBundle:FilesJson:localidades_cliente.json.twig', $this->params);
     }
 
     /**
@@ -126,7 +126,7 @@ class RegistroClienteController extends Controller
                 'idProvincia' => $provincia,
                 'nombre' => 'DESC'
             ]);
-        return $this->render('ClientBundle:Json:localidades.json.twig', $this->params);
+        return $this->render('ClientBundle:FilesJson:localidades_cliente.json.twig', $this->params);
     }
 
     private function getProvincias()

@@ -1,0 +1,41 @@
+{# src/ClientBundle/Resources/views/Cliente/direcciones.html.twig #}
+{% extends 'ClientBundle:Page:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+		<br />
+		<h3>Direcciones de reparto</h3>
+		<p>
+			<br />
+			<a href="{{ path('cuenta_direcciones_add') }}" class="btn btn-success">Añadir direccion</a>
+		</p>
+		<div class="panel panel-body panel-default">
+		<div class="be-panel col-sm-12">
+            <table id="direcciones-table" class="table display responsive nowrap">
+                <thead>
+                <tr>
+					<th>Dirección</th>
+					<th>Provincia</th>
+                    <th>Localidad</th>
+					<th>Código Postal</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for direccion in cliente.getDomicilios() %}
+					<tr>
+                        <td>{{ direccion.domicilio }}</td>
+                        <td>{{ direccion.localidad.provincia.nombre }}</td>
+						<td>{{ direccion.localidad.nombre }}</td>
+						<td>{{ direccion.localidad.codigoPostal }}</td>
+                        <td>
+                            <a href="{{ path('cuenta_direcciones_guardar', {'id_direccion': direccion.id}) }}" class="btn btn-primary">Editar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        </div>
+	</div>
+{% endblock %}

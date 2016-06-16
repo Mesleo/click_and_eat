@@ -15,6 +15,7 @@
 				<strong>{{ tipoComida.nombre }}{% if not loop.last %},{% endif %}</strong>
 			{% endfor %}</div>
 			<span>{{ restaurante.direccion }}, {{ restaurante.localidad.nombre }}, {{ restaurante.provincia.nombre }}, {{ restaurante.localidad.codigoPostal }}</span>
+			<div>{{ restaurante.telefono }}</div>
 			<div>Precio envío: {{ restaurante.precioEnvio }} €</div>
 		</div>
 		<div class="menu">
@@ -44,10 +45,10 @@
 			<div class="panel panel-body panel-default">
 				<p class="text-center">Tu pedido</p>
 				{% if app.session|length == 0 %}
-					<div>No hay productos en tu cesta de la compra</div>
+					<div>No hay productos en tu cesta de la compra.</div>
 				{% else %}
 					{% for key, sesion in app.session %}
-						{% if key != 'subtotal' and key != '_csrf/pedido' %}
+						{% if key!='subtotal' and key!='_csrf/pedido' and key!='_csrf/authenticate' and key!='_security_gestion' %}
 						<div class="row">
 							<div class="col-md-1">
 								<a href="{{ path('delete_menu', {'id_restaurante': restaurante.id, 'key': key}) }}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
@@ -71,7 +72,11 @@
 							<span>Subtotal</span>
 						</div>
 						<div class="col-md-4">
-							<span id="subtotal">{{ app.session.get('subtotal')[0]['subtotal'] }} €</span>
+							{% if app.session.get('subtotal') %}
+								{% if app.session.get('subtotal')[0]['subtotal'] != 0.00  %}
+									<span id="subtotal">{{ app.session.get('subtotal')[0]['subtotal'] }} €</span>
+								{% endif %}
+							{% endif %}
 						</div>
 					</div>
 					<div class="row">
@@ -87,7 +92,11 @@
 							<h4>Total</h4>
 						</div>
 						<div class="col-md-4">
-							<h4>{{ (app.session.get('subtotal')[0]['subtotal'] + restaurante.precioEnvio)|number_format(2) }} €</h4>
+							{% if app.session.get('subtotal') %}
+								{% if app.session.get('subtotal')[0]['subtotal'] != 0.00  %}
+									<h4>{{ (app.session.get('subtotal')[0]['subtotal'] + restaurante.precioEnvio)|number_format(2) }} €</h4>
+								{% endif %}
+							{% endif %}
 						</div>
 					</div>
 				{% endif %}
@@ -95,10 +104,4 @@
 			<a href="{{ path('add_pedido', {'id_restaurante': restaurante.id}) }}" class="btn btn-buscar">Realizar pedido</a>
 		</div>
 	</div>
-{% endblock %}
-{% block javascripts %}
-	<script>
-		(function(){
-		})();
-	</script>
 {% endblock %}

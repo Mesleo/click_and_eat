@@ -39,11 +39,16 @@ span.twitter-typeahead {
 	width: 20%;
 }
 
-.btn-buscar {
+.btn-buscar, .btn-account {
 	background: #689F38;
 	color: #FFFFFF;
 	padding: 0.8em 2em;
 	width: 100%;
+}
+
+.btn-account {
+	text-align: center;
+	width: 25%;
 }
 
 .btn-custom1 {
@@ -120,16 +125,13 @@ span.twitter-typeahead {
 	text-align: center;
 }
 
-h1, h3 {
-	text-align: center;
-}
-
 h1 {
 	color: #689F38;
 	font-size: 54px;
 	font-weight: bold;
 	margin: 0;
 	padding-top: 1em;
+	text-align: center;
 }
 
 header {
@@ -250,6 +252,7 @@ p {
 }
 
 .titulo, .subtitulo {
+	text-align: center;
 	text-shadow: 1px 1px 1px #FFFFFF;
 }
 

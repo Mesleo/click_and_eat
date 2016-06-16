@@ -27,11 +27,25 @@ class PedidoController extends Controller
         $this->initialize();
 
         $session = $request->getSession();
- 
+
         $pedido = new Pedido();
         $form = $this->createForm(PedidoType::class, $pedido);
 
         $form->handleRequest($request);
+
+        if ($this->getUser()) {
+            $cliente = $this->em->getRepository("AppBundle:Cliente")
+                ->findOneBy([
+                    'usuario' => $this->getUser()->getId()
+                ]);
+        } else {
+            $cliente = null;
+        }
+
+        $restaurante = $this->em->getRepository("AppBundle:Restaurante")
+            ->findOneBy([
+                'id' => $id_restaurante
+            ]);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -45,18 +59,23 @@ class PedidoController extends Controller
             $pedido->setEstado($estado);
             $estado->addPedido($pedido);
 
-            $restaurante = $this->em->getRepository("AppBundle:Restaurante")
-                ->findOneBy([
-                    'id' => $id_restaurante
-                ]);
             $pedido->setRestaurante($restaurante);
             $restaurante->addPedido($pedido);
 
             $this->em->persist($pedido);
+
+            $ticket = new \AppBundle\Entity\Ticket();
+
+            $ticket->setFecha(new \DateTime());
+            $ticket->setFormaPago('efectivo');
+            $ticket->setPedido($pedido);
+            $pedido->setTicket($ticket);
+
+            $this->em->persist($ticket);
             $this->em->flush();
 
             foreach ($session->all() as $key => $value) {
-            	if ($key != 'subtotal' && $key != '_csrf/pedido') {
+            	if ($key != 'subtotal' && $key != '_csrf/pedido' && $key != '_csrf/authenticate' && $key != '_security_gestion') {
             		$pedidoProducto = new \AppBundle\Entity\PedidoProducto();
             		$pedidoProducto->setCantidad($value[1]['cantidad']);
             		$pedidoProducto->setPrecio($value[0]['precio']);
@@ -80,7 +99,8 @@ class PedidoController extends Controller
         }
         
         return $this->render('ClientBundle:Restaurante:pedido.html.twig', array(
-        	'restaurante' => $id_restaurante,
+        	'restaurante' => $restaurante,
+            'cliente' => $cliente,
             'form' => $form->createView()
         ));
     }

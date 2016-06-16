@@ -22,16 +22,7 @@ class DefaultController extends Controller
     public function indexAction()
     {
         $this->initialize();
-        if(!is_null($this->getUser())){
-            $this->params['user'] = $this->em->getRepository("AppBundle:Usuario")
-                ->findOneBy([
-                    'id' => $this->getUser()->getId()
-                ]);
-            $this->params['cliente'] = $this->em->getRepository("AppBundle:Cliente")
-                ->findOneBy([
-                    'usuario' => $this->getUser()->getId()
-                ]);
-        }
+        $this->getUsuario();
         return $this->render('ClientBundle:Page:index.html.twig', $this->params);
     }
 
@@ -44,6 +35,7 @@ class DefaultController extends Controller
     public function showAction(Request $request)
     {
         $this->initialize();
+        $this->getUsuario();
         $this->params['restaurantes'] = $this->em->getRepository("AppBundle:Restaurante")
                 ->showRestaurantes($request->request->get('direccion'));
 
@@ -59,6 +51,7 @@ class DefaultController extends Controller
     public function menuAction($id_restaurante)
     {
         $this->initialize();
+        $this->getUsuario();
 
         //$this->get('session')->clear();
         //print_r($this->get('session')->all());
@@ -101,6 +94,7 @@ class DefaultController extends Controller
     public function addAction(Request $request, $id_restaurante)
     {
         $this->initialize();
+        $this->getUsuario();
 
         $session = $request->getSession();
 
@@ -121,7 +115,9 @@ class DefaultController extends Controller
         $session->remove('subtotal');
         $subtotal = 0.00;
         foreach ($session->all() as $key => $value) {
-            $subtotal += $value[0]['precio'] * $value[1]['cantidad'];
+            if ($key != '_csrf/pedido' && $key != '_csrf/authenticate' && $key != '_security_gestion') {
+                $subtotal += $value[0]['precio'] * $value[1]['cantidad'];
+            }
         }
         $session->set('subtotal', array(array('subtotal' => number_format($subtotal,2))));
 
@@ -139,6 +135,9 @@ class DefaultController extends Controller
      */
     public function deleteAction(Request $request, $id_restaurante, $key)
     {
+        $this->initialize();
+        $this->getUsuario();
+
         $producto = $this->get('session')->get($key);
 
         if ($producto[1]['cantidad'] > 1) {
@@ -149,14 +148,33 @@ class DefaultController extends Controller
         }
 
         $this->get('session')->remove('subtotal');
-        $subtotal = 0.00;
-        foreach ($this->get('session')->all() as $key => $value) {
-            $subtotal += $value[0]['precio'] * $value[1]['cantidad'];
+
+        if (count($this->get('session')->all()) != 0) {
+            $subtotal = 0.00;
+            foreach ($this->get('session')->all() as $key => $value) {
+                if ($key != '_csrf/pedido' && $key != '_csrf/authenticate' && $key != '_security_gestion') {
+                    $subtotal += $value[0]['precio'] * $value[1]['cantidad'];
+                }
+            }
+            $this->get('session')->set('subtotal', array(array('subtotal' => number_format($subtotal,2))));
         }
-        $this->get('session')->set('subtotal', array(array('subtotal' => number_format($subtotal,2))));
 
         $this->params['id_restaurante'] = $id_restaurante;
         return $this->redirectToRoute('menu_restaurante', $this->params);
+    }
+
+    private function getUsuario()
+    {
+        if (!is_null($this->getUser())) {
+            $this->params['user'] = $this->em->getRepository("AppBundle:Usuario")
+                ->findOneBy([
+                    'id' => $this->getUser()->getId()
+                ]);
+            $this->params['cliente'] = $this->em->getRepository("AppBundle:Cliente")
+                ->findOneBy([
+                    'usuario' => $this->getUser()->getId()
+                ]);
+        }
     }
 
     private function initialize()
