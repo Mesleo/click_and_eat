@@ -15,17 +15,34 @@
 	font-style: normal;
 }
 
-.alert-danger{
-	font-size: 1em;
-}
-
 aside {
 	width: 20%;
 	vertical-align: top;
 }
 
-aside, .cont {
+aside, .restaurants {
 	display: inline-block;
+}
+
+.autentication{
+	padding: 10px 20px;
+	background: linear-gradient(#72a341, rgba(159, 217, 76, 0.84));
+	color: #eaeaea;
+}
+
+.autentication div{
+	display: inline-block;
+	margin-right: 15px;
+}
+
+.autentication div>a{
+	color: #f9f9f9;
+	font-size: 1.1em;
+}
+
+.autentication div>a:hover{
+	color: #d2d2d2;
+	text-decoration: none;
 }
 
 body {
@@ -55,11 +72,18 @@ span.twitter-typeahead {
 	box-shadow: .2rem .1rem .1rem .1rem #a7a7a7, .2rem .1rem .1rem .1rem #a7a7a7;
 }
 
+.btn-cancel{
+	padding: 0.8em 2em;
+	width: 100%;
+	margin: 15px 0px;
+}
+
 .btn-connect {
 	background: #689F38;
 	color: #FFFFFF;
-	margin-left: 42%;
 	padding: 0.8em 2em;
+	width: 100%;
+	margin: 15px 0px;
 }
 
 .btn-principal {
@@ -73,7 +97,7 @@ span.twitter-typeahead {
 .btn-register {
 	background: #689F38;
 	color: #FFFFFF;
-	font-size: 26px;
+	font-size: 1.3rem;
 	margin-top: 1em;
 	margin-bottom: 1em;
 	padding-top: 1em;
@@ -87,14 +111,13 @@ span.twitter-typeahead {
 	padding: 1em 1em;
 }
 
+#buscar {
+	width: 55%;
+}
+
 #company {
 	text-align: center;
 	width: 50%;
-}
-
-.cont {
-	margin-left: 1em;
-	width: 75%;
 }
 
 .container form> div {
@@ -114,6 +137,10 @@ span.twitter-typeahead {
 	margin-top: 4em;
 }
 
+.error {
+	color: #FF0000;
+}
+
 #footer {
 	background: #333333;
 	color: #EEEEEE;
@@ -131,7 +158,6 @@ h1 {
 	font-weight: bold;
 	margin: 0;
 	padding-top: 1em;
-	*text-shadow: 1px 1px 1px #FFFFFF;
 }
 
 header {
@@ -159,14 +185,19 @@ img {
 	padding: 2em;
 }
 
-.my-btn{
-	margin-bottom: 15px;
+.menu {
+	margin-right: 1em;
+	width: 70%;
+}
+
+.menu, .shopping-basket {
+	display: inline-block;
 }
 
 .navbar-brand {
 	font-size: 28px;
 	margin-left: 2em;
-	text-decoration: none; 
+	text-decoration: none;
 }
 
 .navbar-default {
@@ -177,12 +208,49 @@ img {
 
 .navbar-default a {
 	color: #EEEEEE !important;
-	text-shadow: 1px 1px 0px  #800400;
+	text-shadow: 1px 1px 0px #800400;
+}
+
+.dropdown-menu a {
+	color: #333333 !important;
+	text-shadow: 0px 0px 0px;
+}
+
+.navbar-right {
+	margin-right: 4em;
 }
 
 p {
 	font-size: 22px;
 	margin-bottom: 1em;
+}
+
+.product {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.product-description {
+	flex-basis: 80%;
+	order: 4;
+}
+
+.product-name {
+	display: flex;
+	align-items: center;
+	box-flex: 1;
+	flex: 1;
+	flex-basis: 50%;
+}
+
+.product-price {
+	font-weight: 700;
+	margin-right: 1em;
+}
+
+.product-type {
+	color: #689F38;
 }
 
 #registro {
@@ -194,27 +262,27 @@ p {
 	content: " (*)";
 }
 
-.sweet-alert p{
-	text-align: justify !important;
-	padding: 15px !important;
+.restaurants {
+	margin-left: 1em;
+	width: 75%;
+}
+
+.shopping-basket {
+	width: 25%;
+	vertical-align: top;
+}
+
+.subtitulo {
+	color: #689F38;
+	font-size: 26px;
 }
 
 .titulo, .subtitulo {
 	text-shadow: 1px 1px 1px #FFFFFF;
 }
 
-.subtitulo {
-	color: #689F38;
-	font-size: 40px;
-}
-
 .table {
 	margin-top: 2em;
-}
-
-.table-condensed th, .table-condensed td{
-	padding: 8px !important;
-	cursor: pointer;
 }
 
 #view {
@@ -234,7 +302,7 @@ p {
 	.btn-principal {
 		display: inline-block;
 	}
-} 
+}
 
 @media (max-width: 991px) {
 	#button {
@@ -244,12 +312,54 @@ p {
 		margin-left: 0;
 		width: 100%;
 	}
+	#buscar, #wrap {
+		width: 95%;
+	}
 	.btn-principal {
 		display: inline-block;
 	}
-	.cont {
-		margin-left: 0;
+
+	#company {
+		width: 100%;
 	}
+	.contenido {
+		width: 32.9%;
+	}
+
+	div.container{
+		padding: 20px !important;
+	}
+
+	div.product-shop{
+		margin-bottom: 15px;
+	}
+
+	div.menu-shopping-user{
+		width: 100% !important;
+	}
+
+	div.menu-shopping-user>div{
+		width: 100% !important;
+	}
+
+	div.menu-shopping-user .x-del{
+		width: 8%;
+		display: inline-block;
+		vertical-align: top;
+		margin-left: 5%;
+	}
+
+	.price-product span{
+		display: flex;
+		justify-content: flex-end !important;
+		margin-right: 6%;
+	}
+
+	.desc-product{
+		width: 85% !important;
+		display: inline-block !important;
+	}
+
 	img {
 		margin-top: 1em;
 	}
@@ -257,7 +367,16 @@ p {
 		display: none;
 	}
 	#login {
-		margin: 0 2em;
+		margin: 0 .5em;
+	}
+	p {
+		font-size: 18px;
+	}
+	.restaurants {
+		margin-left: 0;
+	}
+	span {
+		font-size: 1em;
 	}
 	#view {
 		width: 60%;
@@ -265,7 +384,7 @@ p {
 }
 
 @media (max-width: 767px) {
-	aside, .cont {
+	aside, .restaurants {
 		display: block;
 		width: 100%;
 	}
@@ -276,22 +395,37 @@ p {
 		margin-left: 0;
 		width: 100%;
 	}
+	#buscar, #wrap {
+		width: 90%;
+	}
 	.btn-connect {
-		margin-left: 40%;
+		display: inline-block;
+		/*margin-left: 40%;*/
 	}
 	.btn-principal {
 		display: inline-block;
 	}
-	.cont {
-		margin-left: 0;
+	#company {
+		width: 100%;
 	}
-	h2 {
+	.contenido {
+		display: block;
+		margin-bottom: 0.5em;
+		width: 100%;
+	}
+	h1 {
+		font-size: 38px;
+	}
+	h2, .subtitulo {
 		font-size: 20px;
 	}
 	img {
 		margin-top: 1em;
 		height: 30%;
 		width: 30%;
+	}
+	.restaurants {
+		margin-left: 0;
 	}
 	#view {
 		margin-left: 1em;

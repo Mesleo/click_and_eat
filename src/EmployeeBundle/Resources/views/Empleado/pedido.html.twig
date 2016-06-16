@@ -1,0 +1,173 @@
+{# @ManageCompanyBundle/Restaurante/pedido.html.twig #}
+{% extends 'EmployeeBundle:Page:base.html.twig' %}
+{% import '@Employee/Librerias/librerias.html.twig' as librerias %}
+{% block body %}
+    {% include 'EmployeeBundle:Dialog:confirm_clean.php.twig' %}
+<div class="row">
+        <div class="container">
+            <div class="panel panel-body">
+            <div class="panel panel-success">
+              <div class="panel-heading">Datos usuario</div>
+                <div class="panel-body">
+                    <table class = "table">
+                        <tr class="row-head">
+                            <th>Cliente</th>
+                            <th>Email</th>
+                        </tr>
+                        <tr>
+                            <td>{{ pedido.cliente }}</td>
+                            <td>{{ pedido.email }}</td>
+                        </tr>
+                        <tr class="row-head">
+                            <th>Dirección de envío</th>
+                            <th>Teléfono</th>
+                        </tr>
+                        <tr>
+                            <td>{{ pedido.domicilio }}</td>
+                            <td>{{ pedido.telefono }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div class="panel-heading">Datos pedido</div>
+                <div class="panel-body">
+                    <div class="panel panel-body">
+                        <div class="panel-heading panel-success"><h4>Artículos</h4></div>
+                        <table class="table">
+                            <tr class="row-head">
+                                <th>Referencia</th>
+                                <th>P. Unidad</th>
+                                <th>Descripción</th>
+                                <th>Unidades</th>
+                                <th>Descuento</th>
+                                <th>Total</th>
+                                <th>Total (con descuento)</th>
+                            </tr>
+                            {% for lp in linea_pedido %}
+                                <tr>
+                                    <td>{{ lp.idProducto }}</td>
+                                    <td>{{ lp.precio }} €</td>
+                                    <td>{{ lp.nombre }}</td>
+                                    <td>{{ lp.cantidad}}</td>
+                                    <td>{{ lp.descuento }} €</td>
+                                    <td>{{ lp.total|number_format(2, '.', ',')  }} €</td>
+                                    <td>{{ lp.totalDescuento|number_format(2, '.', ',')  }} €</td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td colspan="5">TOTAL</td>
+                                <td>{{ total|number_format(2, '.', ',')  }} €</td>
+                                <td>{{ totalDescuento|number_format(2, '.', ',')  }} €</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5">Total con envío</td>
+                                <td>{{ restaurante.precioEnvio|number_format(2, '.', ',')  }} €</td>
+                                <td>{{ totalPrecioEnvio|number_format(2, '.', ',')  }} €</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <table class="table">
+                        <tr class="row-head">
+                            <th>Identificador</th>
+                            <th>Fecha pedido</th>
+                            {% if pedido.estado_id == 3 %}
+                                <th colspan="2">Cancelado</th>
+                            {% else %}
+                                <th><label for="fecha-envio"><label for="fecha-salida">Fecha/Hora salida</label></label></th>
+                                <th><label for="fecha-envio"><label for="fecha-llegada">Fecha/Hora llegada</label></label></th>
+                            {% endif %}
+                            <th><label for="estado">Estado</label></th>
+                        </tr>
+                        <tr>
+                            <td>{{ pedido.numPedido }}
+                                <input type="text" class="hidden" name="pedido-id" value="{{ pedido.id }}">
+                            </td>
+                            <td>{{ pedido.fecha_hora_realizado|date("d-m-Y H:i") }}</td>
+                            {% if pedido.estado_id == 3 %}
+                                <td class="pos-rel" colspan="2">
+                                    {{ pedido.fecha_hora_salida|date('d-m-Y')}} {{ pedido.fecha_hora_salida|date('H:i') }}
+                                </td>
+                            {% else %}
+                                <td class="pos-rel">
+                                    {% if pedido.fecha_hora_salida != null %}
+                                    {{ pedido.fecha_hora_salida|date('d-m-Y')}} {{ pedido.fecha_hora_salida|date('H:i') }}
+                                    {% endif %}
+                                </td>
+                                <td class="pos-rel">
+                                    {% if pedido.fecha_hora_llegada != null %}
+                                    {{ pedido.fecha_hora_llegada|date('d-m-Y') }}  {{ pedido.fecha_hora_llegada|date('H:i') }}
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            <td><select class="form-control" name="estado" id="estado">
+                                    <option value="-">- Elige un estado -</option>
+                                    {% for estado in estados %}
+                                        <option value="{{ estado.id }}" {% if estado.id == pedido.estado_id %} selected {% endif %}>{{ estado.estado }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                        <div class="row buttons-actions">
+                            <div class="row">
+                                <div class="col-sm-offset-2 cancel col-sm-2 text-center">
+                                    <button type="button" id="cancel" class="btn btn-danger btn-main-action">Cancelar</button>
+                                </div>
+                                <div class="col-sm-offset-1 col-sm-2 text-center">
+                                    <button type="button" class="btn btn-warning btn-main-action" id="del"
+                                            data-toggle="modal" data-route="{{ path('clean_dates', {'id_pedido':pedido.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas eliminar las fechas de salida y llegada el pedido?">Limpiar</button>
+                                </div>
+                                <div class="col-sm-offset-1 col-sm-2 text-center">
+                                    <button id="btn-action" type="button" class="btn btn-success btn-main-action">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('manage/intimidatetime/Intimidatetime.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/orders-reserves-style.css') }}">
+    <link rel="stylesheet" href="{{ asset('manage/css/jquery.editable-select.min.css') }}">
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+    <script src="{{ asset('manage/intimidatetime/Intimidatetime.min.js') }}"></script>
+    <script src="{{ asset('manage/intimidatetime/i18n/Intimidatetime-es.js') }}"></script>
+    <script src="{{ asset('manage/js/jquery.editable-select.min.js') }}"></script>
+    <script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+    <script>
+        (function(){
+            $.intimidatetime.setDefaults($.intimidatetime.i18n['es']);
+            $('.input-datetime').intimidatetime({
+                format: 'dd-MM-yyyy H:m',
+                previewFormat: 'dd-MM-yyyy H:m'
+            });
+
+            $('#btn-action').on('click', function(){
+                switch ($("#estado").val()){
+                    case '4':
+                        window.location.href = "{{ path('employee_send_pedido', {'id_pedido': pedido.id}) }}";7
+                        break;
+                    case '5':
+                        window.location.href = "{{ path('employee_deliver_pedido', {'id_pedido': pedido.id}) }}";
+                        break;
+                    case '3':
+                        window.location.href = "{{ path('employee_cancel_pedido', {'id_pedido': pedido.id}) }}";
+                        break;
+                    default:
+                        window.location.href = "{{ path('empleado_gestion_pedidos_recorrido', {'id_recorrido': pedido.idRecorrido}) }}";
+                        break;
+                }
+            });
+            $('#cancel').on('click', function(){
+                window.location.href = "{{ path('empleado_gestion_pedidos_recorrido', {'id_recorrido': pedido.idRecorrido}) }}";
+            });
+        })();
+    </script>
+{% endblock %}

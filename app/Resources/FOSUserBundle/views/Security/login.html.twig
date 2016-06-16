@@ -5,7 +5,7 @@
 {% block body %}
     {% block content %}
 		{% block fos_user_content %}
-			<div class="container" id="content">
+			<div class="container cont-login" id="content">
 				<div class="row">
 					{% if url(app.request.attributes.get('_route')) == "http://clickandeat.restaurante.local/app_dev.php/login" %}
 					<div class="col-md-6" id="infor">
@@ -42,14 +42,18 @@
 								<input type="password" class="form-control" id="password" name="_password" placeholder="Contraseña">
 							</div>
 							<div class="form-group">
-								<input type="checkbox" name="remember"> Recordar contraseña
 							</div>
 							<div class="form-group">
-								<button type="submit" class="btn btn-connect">Conectar</button>
-								{% if url(app.request.attributes.get('_route')) == "http://clickandeat.cliente.local/app.php/login" %}
-									<div class="text-center"><br />¿Aún no tienes una cuenta en Click & Eat? <a href="{{ path('registro_cliente') }}">Regístrate</a></div>
-								{% endif %}
+								<div class="col-md-6">
+									<button type="submit" class="btn btn-connect">Conectar</button>
+								</div>
+								<div class="col-md-6">
+									<a href="{{ path('home_client') }}"><button type="button" id="btn-cancel" class="btn btn-danger btn-cancel">Cancelar</button></a>
+								</div>
 							</div>
+							{% if url(app.request.attributes.get('_route')) == "http://clickandeat.cliente.local/app_dev.php/login" %}
+								<div class="text-center"><br />¿Aún no tienes cuenta en Click & Eat? <a href="{{ path('registro_cliente') }}">Regístrate</a></div>
+							{% endif %}
 						</form>
 					</div>
 				</div>

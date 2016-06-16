@@ -23,24 +23,37 @@ class Recorrido
     protected $id;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="numRecorrido", type="string", nullable=true)
+     */
+    protected $numRecorrido;
+
+    /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fecha_hora_salida", type="datetime", nullable=false)
+     * @ORM\Column(name="fecha_hora_salida", type="datetime", nullable=true)
      */
     protected $fechaHoraSalida;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fecha_hora_llegada", type="datetime", nullable=false)
+     * @ORM\Column(name="fecha_hora_llegada", type="datetime", nullable=true)
      */
     protected $fechaHoraLlegada;
 
     /**
      * @ORM\ManyToOne(targetEntity="Trabajador", inversedBy="recorridos")
-     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id", nullable=true)
      */
     protected $trabajador;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Restaurante", inversedBy="recorridos")
+     * @ORM\JoinColumn(name="idRestaurante", referencedColumnName="id", nullable=false)
+     */
+    protected $restaurante;
 
     /**
      * @var \DateTime
@@ -69,6 +82,9 @@ class Recorrido
     public function __construct()
     {
         $this->pedidos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+        $this->setTrash(false);
     }
 
     /**
@@ -79,6 +95,30 @@ class Recorrido
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set numRecorrido
+     *
+     * @param \DateTime $numRecorrido
+     *
+     * @return Recorrido
+     */
+    public function setNumRecorrido($numRecorrido)
+    {
+        $this->numRecorrido = $numRecorrido;
+
+        return $this;
+    }
+
+    /**
+     * Get numRecorrido
+     *
+     * @return \DateTime
+     */
+    public function getNumRecorrido()
+    {
+        return $this->numRecorrido;
     }
 
     /**
@@ -151,6 +191,30 @@ class Recorrido
     public function getTrabajador()
     {
         return $this->trabajador;
+    }
+
+    /**
+     * Set restaurante
+     *
+     * @param \AppBundle\Entity\Restaurante $restaurante
+     *
+     * @return Recorrido
+     */
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
+    {
+        $this->restaurante = $restaurante;
+
+        return $this;
+    }
+
+    /**
+     * Get restaurante
+     *
+     * @return \AppBundle\Entity\Restaurante
+     */
+    public function getRestaurante()
+    {
+        return $this->restaurante;
     }
 
     /**

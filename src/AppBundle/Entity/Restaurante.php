@@ -46,7 +46,7 @@ class Restaurante
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @ORM\Column(name="nombre", type="string", length=255, nullable=false)
      * @Assert\NotBlank(message="Por favor introduce tu nombre.", groups={"Registration", "Profile"})
      * @Assert\Length(
      *     min=3,
@@ -56,7 +56,7 @@ class Restaurante
      *     groups={"Registration", "Profile"}
      * )
      */
-    protected $name;
+    protected $nombre;
 
     /**
      * @var string
@@ -121,9 +121,13 @@ class Restaurante
     protected $tipoComida;
 
     /**
-     * @var string
+     * @var decimal
      *
-     * @ORM\Column(name="precio_envio", type="string", nullable=false, options={"default":"0.0"})
+     * @ORM\Column(name="precio_envio", type="decimal", precision=10, scale=2, nullable=false, options={"default":"0.00"})
+     * @Assert\Type(
+     *     type="decimal",
+     *     message="Este valor debe ser un número."
+     * )
      */
     protected $precio_envio;
 
@@ -178,6 +182,11 @@ class Restaurante
     protected $reservas;
 
     /**
+     * @ORM\OneToMany(targetEntity="Recorrido", mappedBy="restaurante")
+     */
+    protected $recorridos;
+
+    /**
      * @ORM\OneToMany(targetEntity="Trabajador", mappedBy="restaurante")
      */
     protected $trabajadores;
@@ -216,6 +225,7 @@ class Restaurante
         $this->productos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
         $this->trabajadores = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->recorridos = new \Doctrine\Common\Collections\ArrayCollection();
 
         $this->setFechaAlta(new \DateTime());
         $this->setCreatedAt(new \DateTime());
@@ -237,13 +247,13 @@ class Restaurante
     /**
      * Set name
      *
-     * @param string $name
+     * @param string $nombre
      *
      * @return Restaurante
      */
-    public function setName($name)
+    public function setNombre($nombre)
     {
-        $this->name = $name;
+        $this->nombre = $nombre;
 
         return $this;
     }
@@ -253,9 +263,9 @@ class Restaurante
      *
      * @return string
      */
-    public function getName()
+    public function getNombre()
     {
-        return $this->name;
+        return $this->nombre;
     }
 
     /**
@@ -893,5 +903,39 @@ class Restaurante
     public function getTrabajadores()
     {
         return $this->trabajadores;
+    }
+
+    /**
+     * Add recorridos
+     *
+     * @param \AppBundle\Entity\Recorrido $recorrido
+     *
+     * @return Restaurante
+     */
+    public function addRecorrido(\AppBundle\Entity\Recorrido $recorrido)
+    {
+        $this->recorridos[] = $recorrido;
+
+        return $this;
+    }
+
+    /**
+     * Remove recorridos
+     *
+     * @param \AppBundle\Entity\Recorrido $recorrido
+     */
+    public function removeRecorrido(\AppBundle\Entity\Recorrido $recorrido)
+    {
+        $this->recorridos->removeElement($recorrido);
+    }
+
+    /**
+     * Get recorridos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTRecorrido()
+    {
+        return $this->recorridos;
     }
 }

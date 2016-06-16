@@ -1,0 +1,114 @@
+{# src/ClientBundle/Resources/views/Restaurante/pedido.html.twig #}
+{% extends 'ClientBundle:Page:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+        <br />
+        {% if restaurante.foto %}
+            <img src="{{ asset('uploads/restaurantes/images/' ~ restaurante.foto ) }}" width="150px" height="150px" alt="Foto de restaurante" class="img-thumbnail">
+        {% else %}
+            <img src="{{ asset('uploads/restaurantes/images/image.png' ) }}" width="150px" height="200px" alt="Foto de restaurante" class="img-thumbnail">
+        {% endif %}
+        <div id="view">
+            <h2>{{ restaurante.nombre }}</h2>
+            <div>{% for tipoComida in restaurante.getTipoComida() %}
+                <strong>{{ tipoComida.nombre }}{% if not loop.last %},{% endif %}</strong>
+            {% endfor %}</div>
+            <span>{{ restaurante.direccion }}, {{ restaurante.localidad.nombre }}, {{ restaurante.provincia.nombre }}, {{ restaurante.localidad.codigoPostal }}</span>
+            <div>{{ restaurante.telefono }}</div>
+            <div>Precio envío: {{ restaurante.precioEnvio }} €</div>
+        </div>
+        <br /><br />
+        <div class="panel panel-body panel-default">
+
+            <h3>Detalles de pedido</h3>
+
+            {% for key, sesion in app.session %}
+                {% if key!='subtotal' and key!='_csrf/pedido' and key!='_csrf/authenticate' and key!='_security_gestion' %}
+                    <div class="row">
+                        <div class="col-md-8">
+                            {% if sesion[1]['cantidad'] > 1 %}
+                                {{ sesion[1]['cantidad'] }} x <strong>{{ sesion[0]['nombre'] }}</strong>
+                            {% else %}
+                                <strong>{{ sesion[0]['nombre'] }}</strong>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <span>{{ sesion[0]['precio'] }} €</span>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <hr>
+            <div class="row">
+                <div class="col-md-8">
+                    <span>Subtotal</span>
+                </div>
+                <div class="col-md-4">
+                    {% if app.session.get('subtotal') %}
+                        {% if app.session.get('subtotal')[0]['subtotal'] != 0.00  %}
+                            <span id="subtotal">{{ app.session.get('subtotal')[0]['subtotal'] }} €</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <span>Gastos de envío</span>
+                </div>
+                <div class="col-md-4">
+                    <span id="precioEnvio">{{ restaurante.precioEnvio }} €</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <h4>Total</h4>
+                </div>
+                <div class="col-md-4">
+                    {% if app.session.get('subtotal') %}
+                        {% if app.session.get('subtotal')[0]['subtotal'] != 0.00  %}
+                            <h4>{{ (app.session.get('subtotal')[0]['subtotal'] + restaurante.precioEnvio)|number_format(2) }} €</h4>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <h3>Datos pedido</h3>
+
+            {{ form_start(form) }}
+
+            {% if cliente != null %}
+                {{ form_row(form.nombre, {'attr': {'value': cliente.nombre}}) }}
+                <div class="row">
+                    <div class="col-md-8">
+                        {% for d in cliente.getDomicilios() %}
+                            {{ form_row(form.domicilio, {'attr': {'value': d.domicilio}}) }}
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.telefono, {'attr': {'value': cliente.telefono}}) }}
+                    </div>
+                </div>
+                {{ form_row(form.email, {'attr': {'value': app.user.email}}) }}
+            {% else %}
+                {{ form_row(form.nombre) }}
+                <div class="row">
+                    <div class="col-md-8">
+                        {{ form_row(form.domicilio) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.telefono) }}
+                    </div>
+                </div>
+                {{ form_row(form.email) }}
+            {% endif %}
+
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+                <a href="{{ path('menu_restaurante', {'id_restaurante': restaurante.id}) }}" class="btn btn-danger">Cancelar</a>
+            </div>
+            {{ form_end(form) }}
+        </div>
+	</div>
+{% endblock %}

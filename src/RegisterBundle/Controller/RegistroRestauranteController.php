@@ -47,7 +47,7 @@ class RegistroRestauranteController extends Controller
             }else $restaurante->setCif($request->request->get('cif'));
             if(strlen($request->request->get('nombre')) < 3){
                 $this->params['info'] = "El nombre debe tener al menos 3 caracteres";
-            }else $restaurante->setName($request->request->get('cif'));
+            }else $restaurante->setNombre($request->request->get('cif'));
             $restaurante->setTelefono($request->request->get("telefono"));
             $restaurante->setCoordenadas($request->request->get("coordenadas"));
             if($request->request->has('precioEnvio')){

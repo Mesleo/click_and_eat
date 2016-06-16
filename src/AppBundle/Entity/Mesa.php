@@ -4,7 +4,6 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -12,11 +11,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity
  * @ORM\Table(name="mesa")
- * 
- * @UniqueEntity(
- *     fields={"codMesa"},
- *     message="Debe asignar un identificador para la mesa."
- * )
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MesaRepository")
  */
 class Mesa
@@ -33,8 +27,15 @@ class Mesa
     /**
      * @var string
      *
-     * @ORM\Column(name="codMesa", type="string", nullable=false)
-     * @Assert\notBlank()
+     * @ORM\Column(name="descripcion", type="string", length=255, nullable=false)
+     */
+    protected $descripcion;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="codMesa", type="string", length=255, nullable=false)
+     * @Assert\NotBlank()
      */
     protected $codMesa;
 
@@ -44,18 +45,11 @@ class Mesa
      * @ORM\Column(name="numPersonas", type="integer", nullable=false)
      * @Assert\Type(
      *     type="integer",
-     *     message="Este valor debe ser un número"
+     *     message="Este valor debe ser un nÃºmero."
      * )
-     * @Assert\notBlank()
+     * @Assert\NotBlank()
      */
     protected $numPersonas;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="descripcion", type="string", nullable=true)
-     */
-    protected $descripcion;
 
     /**
      * @ORM\OneToMany(targetEntity="Reserva", mappedBy="mesa")
@@ -83,18 +77,19 @@ class Mesa
     protected $updated_at;
 
     /**
-     * @var boolean 
+     * @var boolean
      *
      * @ORM\Column(name="trash", type="boolean", options={"default":0})
      */
     protected $trash;
-    
+
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->reservas = new \Doctrine\Common\Collections\ArrayCollection();
+
         $this->setCreatedAt(new \DateTime());
         $this->setUpdatedAt(new \DateTime());
 
@@ -109,6 +104,54 @@ class Mesa
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set descripcion
+     *
+     * @param string $descripcion
+     *
+     * @return Mesa
+     */
+    public function setDescripcion($descripcion)
+    {
+        $this->descripcion = $descripcion;
+
+        return $this;
+    }
+
+    /**
+     * Get descripcion
+     *
+     * @return string
+     */
+    public function getDescripcion()
+    {
+        return $this->descripcion;
+    }
+
+    /**
+     * Set codMesa
+     *
+     * @param string $codMesa
+     *
+     * @return Mesa
+     */
+    public function setCodMesa($codMesa)
+    {
+        $this->codMesa = $codMesa;
+
+        return $this;
+    }
+
+    /**
+     * Get codMesa
+     *
+     * @return string
+     */
+    public function getCodMesa()
+    {
+        return $this->codMesa;
     }
 
     /**
@@ -248,7 +291,7 @@ class Mesa
      *
      * @return Mesa
      */
-    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante = null)
+    public function setRestaurante(\AppBundle\Entity\Restaurante $restaurante)
     {
         $this->restaurante = $restaurante;
 
@@ -263,53 +306,5 @@ class Mesa
     public function getRestaurante()
     {
         return $this->restaurante;
-    }
-
-    /**
-     * Set codMesa
-     *
-     * @param string $codMesa
-     *
-     * @return Mesa
-     */
-    public function setCodMesa($codMesa)
-    {
-        $this->codMesa = $codMesa;
-
-        return $this;
-    }
-
-    /**
-     * Get codMesa
-     *
-     * @return string
-     */
-    public function getCodMesa()
-    {
-        return $this->codMesa;
-    }
-
-    /**
-     * Set descripcion
-     *
-     * @param string $descripcion
-     *
-     * @return Mesa
-     */
-    public function setDescripcion($descripcion)
-    {
-        $this->descripcion = $descripcion;
-
-        return $this;
-    }
-
-    /**
-     * Get descripcion
-     *
-     * @return string
-     */
-    public function getDescripcion()
-    {
-        return $this->descripcion;
     }
 }

@@ -2,7 +2,7 @@
 {% extends 'ManageCompanyBundle:Page:base.html.twig' %}
 {% import '@ManageCompany/Librerias/librerias.html.twig' as librerias %}
 {% block body %}
-	{% include 'ManageCompanyBundle:Dialog:confirm_cancel.php.twig' %}
+	{% include 'ManageCompanyBundle:Dialog:confirm_delete.php.twig' %}
 	<div class="container">
 		<h3>Pedidos</h3>
 		<div class="panel panel-body panel-success">
@@ -42,6 +42,7 @@
 						<th>Precio total</th>
 						<th>Realizado</th>
 						<th>Estado</th>
+						<th>Ttrabajador</th>
 						<th></th>
 					</tr>
 					</thead>
@@ -53,18 +54,16 @@
 							<td>{{ pedido.totalEnvio|number_format(2, ",") }} €</td>
 							<td>{{ pedido.realizado|date("d-m-Y H:i:s") }}</td>
 							<td>{{ pedido.estado }}</td>
+							<td>{% if pedido.trabajador is defined %}{{ pedido.trabajador }}{% endif %}</td>
 							<td>
 								<a href="{{ path('edit_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-primary" title="Editar pedido">
 									<i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-								<a href="{{ path('send_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-info" title='Cambiar estado a "Enviado"'>
+								<a href="{{ path('send_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-info {% if pedido.estado_id == 4 %}active-state{% endif %}" title='Cambiar estado a "Enviado"'>
 									<i class="fa fa-paper-plane-o" aria-hidden="true"></i></a>
-								<a href="{{ path('deliver_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-success" title='Cambiar estado a "Entregado"'>
+								<a href="{{ path('deliver_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-success {% if pedido.estado_id == 5 %}active-state{% endif %}" title='Cambiar estado a "Entregado"'>
 									<i class="fa fa-check-circle" aria-hidden="true"></i></a>
-								<a href="{{ path('archived_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-warning" title='Archivar pedido'>
+								<a href="{{ path('archived_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-warning {% if pedido.estado_id == 8 %}active-state{% endif %}" title='Archivar pedido'>
 									<i class="fa fa-file" aria-hidden="true"></i></a>
-								<button class="btn btn-danger" id="del" type="button" data-toggle="modal" data-route="{{ path('cancel_pedido', {'id_pedido': pedido.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas cancelar el pedido '{{ pedido.numPedido }}'?">
-									<i class="fa fa-ban" aria-hidden="true"></i>
-								</button>
 							</td>
 						</tr>
 					{% endfor %}
@@ -78,6 +77,7 @@
 	{{ parent() }}
 	<link rel="stylesheet" href="{{ asset('fonts/font-awesome-4.6.3/css/font-awesome.css') }}">
 	<link rel="stylesheet" href="{{ asset('node_modules/sweetalert/dist/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('manage/css/style_orders.css') }}">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker-standalone.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css">
 {% endblock %}
@@ -115,8 +115,7 @@
 					text: '<i class="fa fa-pencil-square-o btn btn-primary" aria-hidden="true"></i> - Editar pedido<br><br>' +
 					'<i class="fa fa-paper-plane-o btn btn-info" aria-hidden="true"></i> - Cambiar estado pedido a "Enviado"<br><br>'+
 					'<i class="fa fa-check-circle btn btn-success" aria-hidden="true"></i> - Cambiar estado pedido a "Entregado"<br><br>'+
-					'<i class="fa fa-file btn btn-warning" aria-hidden="true"></i> - Archivar pedido"<br><br>'+
-					'<i class="fa fa-ban btn btn-danger" aria-hidden="true"></i> - Cancelar pedido<br>',
+					'<i class="fa fa-file btn btn-warning" aria-hidden="true"></i> - Archivar pedido',
 					html: true
 				});
 			});

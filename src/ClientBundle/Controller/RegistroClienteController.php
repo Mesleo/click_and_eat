@@ -53,7 +53,7 @@ class RegistroClienteController extends Controller
             $domicilio->setCodigoPostal($localidad->getCodigoPostal());
             $cliente = new Cliente();
             $cliente->addDomicilio($domicilio);
-            $cliente->setName($request->request->get("nombre"));
+            $cliente->setNombre($request->request->get("nombre"));
             $cliente->setApellidos($request->request->get("apellidos"));
             $cliente->setTelefono($request->request->get("telefono"));
             $domicilio->setCliente($cliente);
@@ -76,6 +76,21 @@ class RegistroClienteController extends Controller
             'form'    => $form->createView()
         ));
 
+    }
+
+    /**
+     * Muestra las localidades a partir de una consulta pasada a JSON
+     *
+     * @Route("/localidad", name="show_localidades")
+     */
+    public function getLocalidades(Request $request){
+        $this->initialize();
+        $this->params['localidades'] = $this->em->getRepository('AppBundle:Localidad')
+            ->findBy(
+                array('provincia' => $request->query->get('provincia')),
+                array('nombre' => 'ASC')
+            );
+        return $this->render('ClientBundle:FilesJson:localidades_cliente.json.twig', $this->params);
     }
 
     private function getProvincias(){

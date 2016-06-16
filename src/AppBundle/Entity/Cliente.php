@@ -27,7 +27,7 @@ class Cliente
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     * @ORM\Column(name="nombre", type="string", length=255, nullable=false)
      * @Assert\NotBlank(message="Por favor introduce tu nombre.", groups={"Registration", "Profile"})
      * @Assert\Length(
      *     min=3,
@@ -37,7 +37,7 @@ class Cliente
      *     groups={"Registration", "Profile"}
      * )
      */
-    protected $name;
+    protected $nombre;
 
     /**
      * @var string
@@ -130,13 +130,13 @@ class Cliente
     /**
      * Set name
      *
-     * @param string $name
+     * @param string $nombre
      *
      * @return Cliente
      */
-    public function setName($name)
+    public function setNombre($nombre)
     {
-        $this->name = $name;
+        $this->nombre = $nombre;
 
         return $this;
     }
@@ -146,9 +146,9 @@ class Cliente
      *
      * @return string
      */
-    public function getName()
+    public function getNombre()
     {
-        return $this->name;
+        return $this->nombre;
     }
 
     /**

@@ -23,7 +23,7 @@
                 <tbody>
 				{% for trabajador in trabajadores %}
 					<tr>
-                        {% if trabajador is defined %} <td>{{ trabajador.name }}</td> {% endif %}
+                        {% if trabajador is defined %} <td>{{ trabajador.nombre }}</td> {% endif %}
                         {% if trabajador is defined %} <td>{{ trabajador.apellidos }}</td> {% endif %}
                          {% if trabajador is defined %} <td>{{ trabajador.username }}</td> {% endif %}
                          {% if trabajador is defined %} <td>{{ trabajador.email }}</td> {% endif %}

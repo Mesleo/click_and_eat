@@ -100,8 +100,14 @@ class Pedido
     protected $restaurante;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Recorrido", inversedBy="pedidos")
+     * @ORM\JoinColumn(name="idRecorrido", referencedColumnName="id", nullable=true)
+     */
+    protected $recorrido;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Trabajador", inversedBy="pedidos")
-     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="idTrabajador", referencedColumnName="id", nullable=true)
      */
     protected $trabajador;
 
@@ -147,6 +153,10 @@ class Pedido
     public function __construct()
     {
         $this->pedido_producto = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+        $this->setTrash(false);
+        $this->setPagado(false);
     }
 
     /**
@@ -328,6 +338,30 @@ class Pedido
     }
 
     /**
+     * Set pagado
+     *
+     * @param string $pagado
+     *
+     * @return Pedido
+     */
+    public function setPagado($pagado)
+    {
+        $this->pagado = $pagado;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getPagado()
+    {
+        return $this->pagado;
+    }
+
+    /**
      * Set estado
      *
      * @param string $estado
@@ -496,6 +530,30 @@ class Pedido
     }
 
     /**
+     * Set recorrido
+     *
+     * @param \AppBundle\Entity\Recorrido $recorrido
+     *
+     * @return Pedido
+     */
+    public function setRecorrido(\AppBundle\Entity\Recorrido $recorrido)
+    {
+        $this->recorrido = $recorrido;
+
+        return $this;
+    }
+
+    /**
+     * Get recorrido
+     *
+     * @return \AppBundle\Entity\Recorrido
+     */
+    public function getRecorrido()
+    {
+        return $this->recorrido;
+    }
+
+    /**
      * Add pedidoProducto
      *
      * @param \AppBundle\Entity\PedidoProducto $pedidoProducto
@@ -551,5 +609,29 @@ class Pedido
     public function getTicket()
     {
         return $this->ticket;
+    }
+
+    /**
+     * Set fechaHoraRealizado
+     *
+     * @param \DateTime $fechaHoraRealizado
+     *
+     * @return Pedido
+     */
+    public function setFechaHoraRealizado($fechaHoraRealizado)
+    {
+        $this->fechaHoraRealizado = $fechaHoraRealizado;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaHoraRealizado
+     *
+     * @return \DateTime
+     */
+    public function getFechaHoraRealizado()
+    {
+        return $this->fechaHoraRealizado;
     }
 }

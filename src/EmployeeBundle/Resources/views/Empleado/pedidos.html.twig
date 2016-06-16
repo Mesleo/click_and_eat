@@ -1,0 +1,111 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/trabajadores_restaurante.html.twig #}
+{% extends 'EmployeeBundle:Page:base.html.twig' %}
+{% import '@Employee/Librerias/librerias.html.twig' as librerias %}
+{% block body %}
+	{% include 'EmployeeBundle:Dialog:confirm_cancel.php.twig' %}
+	{#<div class="container">#}
+		<h3>Pedidos</h3>
+		<div class="panel panel-body panel-success">
+			<div class="row">
+				<div class="col-sm-4">
+					<button class="btn btn-info" id="show-info" title="Muestra información sobre el funcionamiento de los botones del panel"><i class="fa fa-info" aria-hidden="true"></i></button>
+				</div>
+			</div>
+			<br>
+			<div class="be-panel col-sm-12">
+				<table id="pedidos-table" class="table display responsive nowrap">
+					<thead>
+					<tr>
+						<th>Núm pedido</th>
+						<th>Domicilio</th>
+						<th>Precio total</th>
+						<th>Realizado</th>
+						<td class="always-visible head"></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for pedido in pedidos %}
+						<tr>
+							<td>{{ pedido.numPedido }}</td>
+							<td>{{ pedido.domicilio }}</td>
+							<td>{{ pedido.totalEnvio|number_format(2, ",") }} €</td>
+							<td>{{ pedido.realizado|date("d-m-Y H:i:s") }}</td>
+							<td class="hidden-mobile">{{ pedido.estado }}</td>
+							<td class="always-visible">
+								<a href="{{ path('employee_edit_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-primary" title="Editar pedido">
+									<i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+								<a href="{{ path('employee_send_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-info {% if pedido.estado_id == 4 %}active-state{% endif %}" title='Cambiar estado a "Enviado"'>
+									<i class="fa fa-paper-plane-o" aria-hidden="true"></i></a>
+								<a href="{{ path('employee_deliver_pedido', {'id_pedido': pedido.id}) }}" class="btn btn-success {% if pedido.estado_id == 5 %}active-state{% endif %}" title='Cambiar estado a "Entregado"'>
+									<i class="fa fa-check-circle" aria-hidden="true"></i></a>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	{#</div>#}
+{% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('fonts/font-awesome-4.6.3/css/font-awesome.css') }}">
+	<link rel="stylesheet" href="{{ asset('node_modules/sweetalert/dist/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/orders-reserves-style.css') }}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker-standalone.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css">
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	{{ librerias.datatables_js() }}
+	<script src="{{ asset('manage/js/bootstrap-datepicker.min.js') }}"></script>
+	<script src="{{ asset('manage/js/datetime-picker.es.js') }}"></script>
+	<script src="{{ asset('node_modules/sweetalert/dist/sweetalert.min.js') }}"></script>
+	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+	<script>
+		$(document).ready(function() {
+			$('#pedidos-table').DataTable({
+				"language": {
+					"url": "//cdn.datatables.net/plug-ins/1.10.10/i18n/Spanish.json",
+					"decimal": ",",
+					"thousands": "."
+				},
+				"scrollY":        "600px",
+				"scrollCollapse": true,
+				"lengthMenu": [[5,10, 15, 20, -1], [5,10, 15, 20, "Todos"]]
+			});
+		});
+	</script>
+	<script>
+		(function(){
+			$('#select-state').on('change', function(){
+				console.log($('#select-state').val());
+				window.location = "{{ path('show_orders_state') }}" + "?estado=" + $('#select-state').val();
+			});
+
+			$('#show-info').on('click', function(){
+				swal({
+					title: "INFORMACIÓN",
+					text: '<i class="fa fa-pencil-square-o btn btn-primary" aria-hidden="true"></i> - Editar pedido<br><br>' +
+					'<i class="fa fa-paper-plane-o btn btn-info" aria-hidden="true"></i> - Cambiar estado pedido a "Enviado"<br><br>'+
+					'<i class="fa fa-check-circle btn btn-success" aria-hidden="true"></i> - Cambiar estado pedido a "Entregado"',
+					html: true
+				});
+			});
+			$('.input-date').datepicker({
+				language: "es",
+				format: "dd-mm-yyyy",
+				startView: 2,
+				maxViewMode: 0,
+				todayBtn: true,
+				multidateSeparator: "-",
+				forceParse: false,
+				autoclose: true
+			});
+
+			$('#orders-today').on('click', function(){
+				window.location.href = "{{ path('empleado_gestion_pedidos') }}";
+			});
+		})();
+		</script>
+{% endblock %}

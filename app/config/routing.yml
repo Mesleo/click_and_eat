@@ -1,19 +1,19 @@
 manage:
     resource: "@ManageCompanyBundle/Controller/"
     type:     annotation
-    host:     clickandeat.restaurante.local
+#    host:     clickandeat.restaurante.local
     prefix:   /gestion
 
 client:
     resource: "@ClientBundle/Controller/"
     type:     annotation
-    host:     clickandeat.cliente.local
+#    host:     clickandeat.cliente.local
     prefix:   /
 
 employee:
     resource: "@EmployeeBundle/Controller/"
     type:     annotation
-    host:     clickandeat.restaurante.local
+#    host:     clickandeat.restaurante.local
     prefix:   /empleados
 
 app:
@@ -51,6 +51,6 @@ client_logout:
 register:
     resource: "@RegisterBundle/Controller/"
     type:     annotation
-    host:     clickandeat.restaurante.local
+#    host:     clickandeat.restaurante.local
     prefix:   /restaurante
 

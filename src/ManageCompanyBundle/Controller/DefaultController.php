@@ -23,8 +23,10 @@ class DefaultController extends Controller
             ->findOneBy([
                 'id' => $this->getUser()->getId()
             ]);
-        return $this->render('ManageCompanyBundle:Page:base.html.twig', $this->params);
+        return $this->redirectToRoute("gestion_pedidos");
     }
+
+
 
 	private function initialize()
 	{

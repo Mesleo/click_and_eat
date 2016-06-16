@@ -68,6 +68,16 @@ class Ticket
     protected $trash;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+        $this->setTrash(false);
+    }
+
+    /**
      * Get id
      *
      * @return integer

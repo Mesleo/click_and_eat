@@ -1,0 +1,112 @@
+
+{% macro ventanasImagenes() %}
+<div class="modal fade" id="wndUpload" tabindex="-1" role="dialog" aria-labelledby="wndUploadTitle">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="wndUploadTitle">Subir imagen</h4>
+			</div>
+			<div class="modal-body">
+				<form id="upload" method="post" action="{{ path('subir_imagen')}}" enctype="multipart/form-data">
+					<input type="hidden" id="lastImage">
+						<div id="drop">Arrastra aquí la imagen
+							<a>o búscala</a>
+							<input type="file" name="upl" multiple />
+						</div>
+					<ul></ul>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary" id="asignarImagen">Continuar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="wndMediaLibrary" tabindex="-1" role="dialog" aria-labelledby="wndMediaLibraryTitle">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="wndMediaLibraryTitle">Biblioteca multimedia</h4>
+			</div>
+			<div class="modal-body">
+				<ul id="listMediaLibrary"></ul>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary" id="seleccionarImagen">Continuar</button>
+			</div>
+	</div>
+</div>
+{% endmacro %}
+
+
+{% macro imagenes_scripts() %}
+    <script src="/js/jquery.knob.js"></script>
+    <script src="/js/jquery.ui.widget.js"></script>
+    <script src="/js/jquery.iframe-transport.js"></script>
+    <script src="/js/jquery.fileupload.js"></script>
+{% endmacro %}
+
+{% macro gestion_imagenes_script() %}
+    var inputImagen = null;
+    var imageList = null;
+
+    $('#asignarImagen').on('click', function(){
+    var u = document.getElementById('lastImage').value;
+    if (u != ""){
+    inputImagen.val(u);
+    imageList = null;
+    }
+    $('#wndUpload').modal('hide');
+    });
+
+    $('#seleccionarImagen').on('click', function(){
+    var u = document.getElementById('lastImage').value;
+    if (u != ""){
+    inputImagen.val(u);
+    }
+    $('#wndMediaLibrary').modal('hide');
+    });
+
+    $('.findImage').on('click', function(e){
+    getImages();
+    $('#wndMediaLibrary').modal('show');
+    inputImagen = $(e.currentTarget).parent().prev();
+    });
+
+    $('.uploadImage').on('click', function(e){
+    $('#wndUpload #upload ul').html('');
+    $('#wndUpload').modal('show');
+    inputImagen = $(e.currentTarget).parents('.input-group').find('input');
+    })
+
+    function getImages(){
+    if (imageList == null){
+    $.ajax({
+    url: "{{ path('listar_imagenes') }}",
+    dataType: 'json'
+    }).done(function(d){
+    if (d.f){
+    imageList = d.f;
+    }
+    showImages();
+    })
+    }
+    };
+
+    function showImages(){
+    $('#listMediaLibrary').html('');
+    var h = "";
+    if (imageList != null){
+    var nI = imageList.length;
+    for (var i = 0; i < nI; i++){
+    h += '<li><img src="' + imageList[i] + '"></li>';
+    }
+    $('#listMediaLibrary').html(h);
+    }
+    }
+{% endmacro %}

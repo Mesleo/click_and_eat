@@ -15,19 +15,97 @@
 				<strong>{{ tipoComida.nombre }}{% if not loop.last %},{% endif %}</strong>
 			{% endfor %}</div>
 			<span>{{ restaurante.direccion }}, {{ restaurante.localidad.nombre }}, {{ restaurante.provincia.nombre }}, {{ restaurante.localidad.codigoPostal }}</span>
+			<div>{{ restaurante.telefono }}</div>
 			<div>Precio envío: {{ restaurante.precioEnvio }} €</div>
 		</div>
-		<div class="panel panel-body panel-default">
-			{% for tipoProducto in tiposProductos %}
-				<p>{{ tipoProducto }}</p>
-				{% for producto in productos %}
-					{% if producto.tipoProducto == tipoProducto %}
-						<div><strong>{{ producto.nombre }}</strong></div>
-						<div>{{ producto.descripcion }}</div>
+		<div class="menu-shopping-user">
+			<div class="shopping-basket">
+				<br />
+				<div class="panel panel-body panel-default">
+					<p class="text-center">Tu pedido</p>
+					{% if app.session|length == 0 %}
+						<div>No hay productos en tu cesta de la compra.</div>
+					{% else %}
+						{% for key, sesion in app.session %}
+							{% if key!='subtotal' and key!='_csrf/pedido' and key!='_csrf/authenticate' and key!='_security_gestion' %}
+								<div class="row product-shop">
+									<div class="x-del">
+										<a href="{{ path('delete_menu', {'id_restaurante': restaurante.id, 'key': key}) }}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+									</div>
+									<div class="col-md-5 desc-product">
+										{% if sesion[1]['cantidad'] > 1 %}
+											{{ sesion[1]['cantidad'] }} x <strong>{{ sesion[0]['nombre'] }}</strong>
+										{% else %}
+											<strong>{{ sesion[0]['nombre'] }}</strong>
+										{% endif %}
+									</div>
+									<div class="col-md-3 price-product">
+										<span>{{ sesion[0]['precio'] }} €</span>
+									</div>
+								</div>
+							{% endif %}
+						{% endfor %}
+						<hr>
+						<div class="row">
+							<div class="col-md-8">
+								<span>Subtotal</span>
+							</div>
+							<div class="col-md-4">
+								{% if app.session.get('subtotal') %}
+									{% if app.session.get('subtotal')[0]['subtotal'] != 0.00  %}
+										<span id="subtotal">{{ app.session.get('subtotal')[0]['subtotal'] }} €</span>
+									{% endif %}
+								{% endif %}
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-8">
+								<span>Gastos de envío</span>
+							</div>
+							<div class="col-md-4">
+								<span id="precioEnvio">{{ restaurante.precioEnvio }} €</span>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-8">
+								<h4>Total</h4>
+							</div>
+							<div class="col-md-4">
+								{% if app.session.get('subtotal') %}
+									{% if app.session.get('subtotal')[0]['subtotal'] != 0.00  %}
+										<h4>{{ (app.session.get('subtotal')[0]['subtotal'] + restaurante.precioEnvio)|number_format(2) }} €</h4>
+									{% endif %}
+								{% endif %}
+							</div>
+						</div>
 					{% endif %}
-				{% endfor %}
-				<hr>
-			{% endfor %}
+				</div>
+				<a href="{{ path('add_pedido', {'id_restaurante': restaurante.id}) }}" class="btn btn-buscar">Realizar pedido</a>
+			</div>
+			<div class="menu">
+				<br />
+				<div class="panel panel-body panel-default">
+					{% for tipoProducto in tiposProductos %}
+						<p class="product-type">{{ tipoProducto }}</p>
+						{% for producto in productos %}
+							{% if producto.tipoProducto == tipoProducto %}
+								<div class="product">
+									<h4 class="product-name">{{ producto.nombre }}</h4>
+									<div class="product-description">{{ producto.descripcion }}</div>
+									<div class="product-price">{{ producto.precio }} €</div>
+									<form method="post" action="{{ path('add_menu', {'id_restaurante': restaurante.id}) }}">
+										<input type="hidden" name="id_producto" value="{{ producto.id }}">
+										<button type="submit" class="btn btn-primary" id="add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+									</form>
+								</div>
+							{% endif %}
+						{% endfor %}
+						<hr>
+					{% endfor %}
+				</div>
+			</div>
 		</div>
+
+
 	</div>
 {% endblock %}

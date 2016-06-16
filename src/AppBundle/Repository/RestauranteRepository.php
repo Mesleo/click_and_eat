@@ -12,20 +12,33 @@ class RestauranteRepository extends \Doctrine\ORM\EntityRepository
 {
 
     /**
-     * Muestra los campos de las tablas usuario y restaurante correspondientes a los restaurantes
+     * Devuelve todos los restaurantes de una misma zona.
      *
-     * @param $idRestaurante
      * @return mixed
      */
-    public function showRestaurantes()
+    public function showRestaurantes($codigo_postal)
     {
+        $codigo_postal = substr($codigo_postal, 0, 3);
         $query = $this->getEntityManager()
             ->createQuery(
-                'SELECT u.name, r FROM AppBundle:Restaurante r, AppBundle:Usuario u
-            	WHERE r.id = u.idRestaurante'
+                "SELECT r FROM AppBundle:Restaurante r, AppBundle:Localidad l WHERE r.localidad = l.id AND l.codigoPostal LIKE '$codigo_postal%'"
             );
         $restaurantes = $query->getResult();
         return $restaurantes;
+    }
+
+    public function showProductos($idRestaurante)
+    {
+        $query = $this->getEntityManager()->getConnection()
+            ->prepare(
+                "SELECT p.id, p.nombre, p.descripcion, p.precio, tp.nombre AS tipoProducto FROM producto p
+                LEFT JOIN producto_tipo_producto ON p.id = producto_tipo_producto.idProducto
+                LEFT JOIN tipo_producto tp ON producto_tipo_producto.idTipoProducto = tp.id
+                WHERE p.idRestaurante = :idRestaurante AND p.disponible = '1' ORDER BY p.nombre ASC"
+            );
+        $query->bindParam('idRestaurante', $idRestaurante);
+        $query->execute();
+        return $query->fetchAll();
     }
 
     /**
@@ -36,7 +49,7 @@ class RestauranteRepository extends \Doctrine\ORM\EntityRepository
      */
     public function getInfoRestauranteLogConfigAccount($idRestaurante){
         $stmt = $this->getEntityManager()->getConnection()
-                ->prepare("SELECT u.id as usuario_id, r.id as restaurante_id, u.username, u.email, r.name, r.cif, r.direccion,
+                ->prepare("SELECT u.id as usuario_id, r.id as restaurante_id, u.username, u.email, r.nombre, r.cif, r.direccion,
                 r.idLocalidad as localidad_id, l.nombre as localidad, r.idProvincia as provincia_id, r.precio_envio,r.telefono
                 FROM usuario u LEFT JOIN restaurante r ON r.idUsuario = u.id LEFT JOIN localidad l ON l.id = r.idLocalidad
                 WHERE r.idUsuario = :idRestaurante");
@@ -44,4 +57,6 @@ class RestauranteRepository extends \Doctrine\ORM\EntityRepository
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
+
+
 }

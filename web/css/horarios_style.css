@@ -1,0 +1,16 @@
+#horario_hora_apertura,
+#horario_hora_cierre {
+  padding: 0;
+  font-size: 1.1em;
+}
+#horario_hora_apertura select,
+#horario_hora_cierre select {
+  height: 32px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: 0;
+}
+#horario_hora_apertura input[type=time],
+#horario_hora_cierre input[type=time] {
+  padding: 5px;
+}

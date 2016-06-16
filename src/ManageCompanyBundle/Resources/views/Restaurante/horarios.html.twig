@@ -18,12 +18,16 @@
 									<input type="text" id="horario_descripcion" name="descripcion{{ horario.id }}" value="{{ horario.descripcion }}" required="required" class="form-control" /></div>
 							</div>
 							<div class="col-md-3">
+								<div id="horario_hora_cierre">
 								<div><label for="horario_hora_apertura" class="required">Hora apertura</label>
 									<input type="time" id="horario_hora_apertura" name="hora_apertura{{ horario.id }}" value="{{ horario.horaApertura|date('H:i') }}" required="required" class="form-control input-small timepicker1" /></div>
+								</div>
 							</div>
 							<div class="col-md-3">
+								<div id="horario_hora_apertura">
 								<div><label for="horario_hora_cierre" class="required">Hora cierre</label>
 									<input type="time" id="horario_hora_cierre" name="hora_cierre{{ horario.id }}" value="{{ horario.horaCierre|date('H:i') }}" required="required" class="form-control input-small timepicker1" /></div>
+								</div>
 							</div>
 							<div class="col-md-1">
 								<div><label></label>
@@ -36,6 +40,7 @@
 									</button>
 								</div>
 							</div>
+						</div>
 					</form>
 				{% endfor %}
 			</div>
@@ -48,10 +53,12 @@
 					{{ form_row(form.descripcion) }}
 				</div>
 				<div class="col-md-3">
-					{{ form_row(form.hora_apertura) }}
+					<label for="">Horario apertura</label>
+						{{ form_row(form.hora_apertura) }}
 				</div>
 				<div class="col-md-3">
-					{{ form_row(form.hora_cierre) }}
+					<label for="">Horario cierre</label>
+						{{ form_row(form.hora_cierre) }}
 				</div>
 			</div>
 			<div class="form-group">
@@ -65,18 +72,10 @@
 {% endblock %}
 {% block stylesheets %}
 	{{ parent() }}
-	<link rel="stylesheet" href="{{ asset('manage/css/bootstrap-timepicker.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('manage/css/bootstrap-datetimepicker.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/horarios_style.css') }}">
 {% endblock %}
 {% block javascripts %}
+	{{ parent() }}
 	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
-	<script src="{{ asset('manage/js/bootstrap-timepicker.js') }}"></script>
-	<script>
-		(function(){
-			$('.timepicker1').timepicker({
-				minuteStep: 10,
-				showMeridian: false,
-				defaultTime: false
-			})
-		})();
-	</script>
 {% endblock %}

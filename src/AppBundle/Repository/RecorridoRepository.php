@@ -10,4 +10,121 @@ namespace AppBundle\Repository;
  */
 class RecorridoRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    /**
+     * Obtengo un recorrido por numRecorrido e idRestaurante
+     *
+     * @return array
+     */
+    public function getRecorrido($idRestaurante, $numRecorrido)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT r.id, r.numRecorrido, r.idRestaurante
+            FROM recorrido r
+            WHERE r.idRestaurante = :idRestaurante AND r.numRecorrido = :numRecorrido AND r.trash = 0");
+        $stmt->bindParam("idRestaurante", $idRestaurante);
+        $stmt->bindParam("numRecorrido", $numRecorrido);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Devuelve toda la información de todos los productos de un pedido de un recorrido
+     *
+     * @param $idPedido
+     * @return array
+     */
+    public function getInfoProductOrderByTravel($idRecorrido)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT p.id as pedido_id, pp.cantidad, pp.idProducto, pr.nombre, pp.precio, pp.descuento, (pp.precio*pp.cantidad) as total
+            , (pp.precio*pp.cantidad-pp.descuento) as totalDescuento FROM usuario u, producto pr ,pedido p RIGHT JOIN pedido_producto AS pp ON p.id = pp.idPedido
+             WHERE p.idRecorrido = :idRecorrido AND
+            pr.id = pp.idProducto GROUP BY p.id, p.fecha_hora_realizado, p.estado_id, pp.cantidad, pp.idProducto, pr.nombre, pp.precio, pp.descuento");
+        $stmt->bindParam("idRecorrido", $idRecorrido);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Cuenta los pedidos de un recorrido
+     *
+     * @param $idRecorrido
+     * @return mixed
+     */
+    public function getCountOrderByTravel($idRecorrido){
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT COUNT(*) FROM pedido p WHERE p.idRecorrido = :idRecorrido");
+        $stmt->bindParam("idRecorrido", $idRecorrido);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * PARA EL TRABAJADOR
+     *
+     * Obtengo los pedidos de un recorrido de un trabajador
+     *
+     * @param $idRecorrido
+     * @return mixed
+     */
+    public function getOrdersByTravel($idRecorrido, $idTrabajador, $trash = 0){
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT DISTINCT(p.id), p.numPedido, p.nombre as cliente, p.telefono, p.domicilio, p.fecha_hora_realizado as realizado,
+            p.fecha_hora_salida, p.fecha_hora_llegada,p.estado_id, e.estado, (total.totalDescuento) as totalEnvio FROM recorrido r, pedido p
+          LEFT JOIN estado AS e ON p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON p.id= pp.idPedido LEFT JOIN (select pp.idPedido,
+          SUM(pp.precio*pp.cantidad-pp.descuento) as totalDescuento FROM pedido_producto as pp group by pp.idPedido) AS total ON p.id =
+          total.idPedido WHERE p.idTrabajador = :idTrabajador AND p.idRecorrido = :idRecorrido AND r.idTrabajador = :idTrabajador AND p.idRecorrido = r.id AND r.trash = :trash ");
+        $stmt->bindParam("idRecorrido", $idRecorrido);
+        $stmt->bindParam("idTrabajador", $idTrabajador);
+        $stmt->bindParam("trash", $trash);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * PARA EL RESTAURANTE
+     *
+     * Obtengo todos los recorridos por estado, si no se especifica muestra los pendientes
+     *
+     * @param $idRecorrido
+     * @return mixed
+     */
+    public function getOrdersAndTravels($idRestaurante, $trash = 0){
+        $sql = "SELECT r.id, r.numRecorrido, r.fecha_hora_salida, r.fecha_hora_llegada, r.idRestaurante, r.trash
+            FROM recorrido r WHERE r.idRestaurante = :idRestaurante";
+        if($trash != '-'){
+            $sql .= " AND r.trash = :trash";
+        }
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare($sql);
+        $stmt->bindParam("idRestaurante", $idRestaurante);
+        if($trash != '-'){
+            $stmt->bindParam("trash", $trash);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * PARA EL RESTAURANTE
+     *
+     * Obtengo los pedidos de un recorrido
+     *
+     * @param $idRecorrido
+     * @return mixed
+     */
+    public function getOrdersByTravelRestaurant($idRestaurante, $idRecorrido){
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT DISTINCT(p.id), p.numPedido, p.nombre as cliente, p.telefono, p.domicilio, p.fecha_hora_realizado as realizado,
+            p.fecha_hora_salida, p.fecha_hora_llegada,p.estado_id, e.estado, (total.totalDescuento) as totalEnvio FROM recorrido r, pedido
+            p LEFT JOIN estado AS e ON p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON p.id= pp.idPedido LEFT JOIN
+          (select pp.idPedido, SUM(pp.precio*pp.cantidad-pp.descuento) as totalDescuento FROM pedido_producto as pp group by pp.idPedido)
+          AS total ON p.id = total.idPedido WHERE p.idRecorrido = :idRecorrido AND r.idRestaurante = :idRestaurante AND p.idRecorrido = r.id");
+        $stmt->bindParam("idRestaurante", $idRestaurante);
+        $stmt->bindParam("idRecorrido", $idRecorrido);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
 }

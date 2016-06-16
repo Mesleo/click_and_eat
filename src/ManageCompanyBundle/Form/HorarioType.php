@@ -24,14 +24,14 @@ class HorarioType extends AbstractType
             		"attr" => array('class' => 'form-control')
             	))
 			->add('hora_apertura', TimeType::class, array(
-					'input'  => 'datetime',
-					'widget' => 'single_text',
-					"attr" => array('class' => 'form-control input-small timepicker1')
+					'label' => false,
+					"attr" => array(
+							'class' => 'form-control input-small')
 				))
 			->add('hora_cierre', TimeType::class, array(
-					'input'  => 'datetime',
-					'widget' => 'single_text',
-					"attr" => array('class' => 'form-control input-small timepicker1')
+					'label' => false,
+					"attr" => array(
+							'class' => 'form-control input-small')
 				))
         ;
     }

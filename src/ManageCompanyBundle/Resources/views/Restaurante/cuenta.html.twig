@@ -30,7 +30,7 @@
     			<div class="col-md-8">
     				<div class="form-group">
         				<label class="control-label">Nombre restaurante</label>
-            			<input type="text" class="form-control" name="inputNombre" id="inputNombre" {% if usuarioRestaurante is defined %} value="{{ usuarioRestaurante.name }}" {% endif %} placeholder="Nombre restaurante">
+            			<input type="text" class="form-control" name="inputNombre" id="inputNombre" {% if usuarioRestaurante is defined %} value="{{ usuarioRestaurante.nombre }}" {% endif %} placeholder="Nombre restaurante">
         			</div>
     			</div>
     			<div class="col-md-4">
@@ -96,8 +96,7 @@
     		</div>
         	<div class="form-group">
 	        	<input type="submit" class="btn btn-primary" name="save-account" value="Enviar">
-				<a href="{{ path('gestion') }}" class="btn btn-warning">Cancelar</a>
-            	<input type="reset" class="btn btn-default button-reset" value="Limpiar">
+				<a href="{{ path('gestion') }}" class="btn btn-danger">Cancelar</a>
         	</div>
 		</form>
 	</div>

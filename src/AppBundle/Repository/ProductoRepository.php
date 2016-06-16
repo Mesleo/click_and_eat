@@ -10,4 +10,20 @@ namespace AppBundle\Repository;
  */
 class ProductoRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * Devuelve un producto segÃºn su identificador
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function getProducto($id)
+    {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'SELECT p.id, p.nombre, p.descripcion, p.precio FROM AppBundle:Producto p WHERE p.id = :id'
+            );
+        $query->setParameter('id',$id);
+        $producto = $query->getResult();
+        return $producto;
+    }
 }

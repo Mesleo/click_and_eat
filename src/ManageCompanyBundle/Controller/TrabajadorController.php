@@ -61,7 +61,7 @@ class TrabajadorController extends Controller
 					'id' => $this->getIdRestaurante()
 				]);
 			$trabajador = new Trabajador();
-			$trabajador->setName($request->request->get("name"));
+			$trabajador->setNombre($request->request->get("name"));
 			$trabajador->setApellidos($request->request->get("apellidos"));
 			$trabajador->setTelefono($request->request->get("telefono"));
 			$trabajador->setUsuario($usuario);
@@ -169,13 +169,12 @@ class TrabajadorController extends Controller
 	
 	/**
      * @Route("/trabajadores/{id_trabajador}/{value}", name="activar_trabajador")
-     * 
-     * @param  Request $request    [description]
+     *
      * @param  [type]  $id_trabajador [description]
 	 * @param  [type]  $value [description]
      * @return [type]              [description]
      */
-	public function activarAction(Request $request, $id_trabajador, $value)
+	public function activarAction($id_trabajador, $value)
 	{
 		$this->initialize();
 		

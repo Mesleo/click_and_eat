@@ -10,19 +10,19 @@ namespace AppBundle\Repository;
  */
 class TrabajadorRepository extends \Doctrine\ORM\EntityRepository
 {
+
 	/**
      * Muestra los campos de las tablas usuario y trabajador correspondientes a los trabajadores del restaurante
      *
      * @param $idRestaurante
      * @return mixed
      */
-    public function showEmployeesRestaurant($idRestaurante)
+    public function showEmployeesRestaurant($idRestaurante, $ex = "")
     {
+        $sql = "SELECT t.nombre, t.apellidos, t.id, u.username, u.email, u.enabled FROM AppBundle:Trabajador t, AppBundle:Usuario u
+                WHERE t.restaurante = :idRestaurante AND t.usuario = u.id".$ex;
         $query = $this->getEntityManager()
-            ->createQuery(
-                'SELECT t.name, t.apellidos, t.id, u.username, u.email, u.enabled FROM AppBundle:Trabajador t, AppBundle:Usuario u
-                WHERE t.restaurante = :idRestaurante AND t.usuario = u.id'
-            );
+            ->createQuery($sql);
         $query->setParameter('idRestaurante',$idRestaurante);
         $trabajadores = $query->getResult();
         return $trabajadores;
@@ -44,4 +44,71 @@ class TrabajadorRepository extends \Doctrine\ORM\EntityRepository
         $trabajador = $query->getResult();
         return $trabajador;
     }
+
+    /**
+     * Muestra una lista con los pedidos del día actual de un restaurante asignados a un trabajador
+     *
+     * @return array
+     */
+    public function getGeneralInfoOrdersTodayByEmployee($idTrabajador, $fechaDesde, $fechaHasta)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT distinct(p.numPedido), p.id, p.nombre as cliente, p.fecha_hora_realizado as realizado, p.estado_id,
+            e.estado, total.totalDescuento, p.idTrabajador, (total.totalDescuento+r.precio_envio) as totalEnvio
+            FROM restaurante r, pedido p LEFT JOIN estado AS e ON p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON
+            p.id= pp.idPedido LEFT JOIN (select pp.idPedido , SUM(pp.precio*pp.cantidad-pp.descuento) as totalDescuento
+            FROM pedido_producto as pp group by pp.idPedido) AS total ON p.id = total.idPedido WHERE p.idTrabajador = :idTrabajador
+            AND p.idRestaurante = r.id AND p.fecha_hora_realizado <= :fechaHasta AND p.fecha_hora_realizado >= :fechaDesde");
+        $stmt->bindParam("idTrabajador", $idTrabajador);
+        $stmt->bindParam("fechaDesde", $fechaDesde);
+        $stmt->bindParam("fechaHasta", $fechaHasta);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Muestra una lista con los pedidos entre fechas de un restaurante asignados a un trabajador
+     *
+     * @return array
+     */
+    public function getGeneralInfoOrdersBetweenByEmployee($idTrabajador, $fechaDesde, $fechaHasta)
+    {
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare("SELECT distinct(p.numPedido), p.id, p.nombre as cliente, p.fecha_hora_realizado as realizado, p.estado_id,
+            e.estado, total.totalDescuento, p.idTrabajador, (total.totalDescuento+r.precio_envio) as totalEnvio
+            FROM restaurante r, pedido p LEFT JOIN estado AS e ON p.estado_id = e.id RIGHT JOIN pedido_producto AS pp ON
+            p.id= pp.idPedido LEFT JOIN (select pp.idPedido , SUM(pp.precio*pp.cantidad-pp.descuento) as totalDescuento
+            FROM pedido_producto as pp group by pp.idPedido) AS total ON p.id = total.idPedido WHERE p.idTrabajador = :idTrabajador
+            AND p.idRestaurante = r.id AND p.fecha_hora_realizado <= :fechaHasta AND p.fecha_hora_realizado >= :fechaDesde");
+        $datefH = $fechaHasta->format('Y-m-d');
+        $datefD = $fechaDesde->format('Y-m-d');
+        $stmt->bindParam("idTrabajador", $idTrabajador);
+        $stmt->bindParam("fechaDesde", $datefD);
+        $stmt->bindParam("fechaHasta", $datefH);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Muestra una lista con los recorridos adjudicados a un trabajador
+     *
+     * @return array
+     */
+    public function getRecorridos($idTrabajador, $trash = 0)
+    {
+        $sql = "SELECT r.id, r.numRecorrido, r.fecha_hora_salida, r.fecha_hora_llegada, r.idRestaurante, r.trash
+            FROM recorrido r WHERE r.idTrabajador = :idTrabajador";
+        if($trash != '-'){
+            $sql .= " AND r.trash = :trash";
+        }
+        $stmt = $this->getEntityManager()->getConnection()
+            ->prepare($sql);
+        $stmt->bindParam("idTrabajador", $idTrabajador);
+        if($trash != '-'){
+            $stmt->bindParam("trash", $trash);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
 }

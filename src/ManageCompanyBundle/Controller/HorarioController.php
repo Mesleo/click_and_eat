@@ -60,7 +60,7 @@ class HorarioController extends Controller
 
         	$this->em->persist($horario);
             $this->em->flush();
-			
+
 			return $this->redirectToRoute('gestion_horarios');
         }
 		

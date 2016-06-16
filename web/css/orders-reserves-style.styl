@@ -1,0 +1,99 @@
+.container
+  padding 0 !important
+  margin 0 !important
+  font-size 1.2em
+  .panel-body
+    padding 2px !important
+
+table td, table th
+  padding 1px 3px !important
+  #estado
+    font-size .8em
+    padding 1px 2px
+
+.buttons-actions
+  display flex
+  flex-direction row
+  padding 0 0 5% 10%
+  >div>div
+    width auto
+    display inline-flex
+    margin 0 !important
+
+.cancel
+  margin-left 3%
+
+a.btn
+    margin 2px !important
+.active-state
+  box-shadow 1px 1px 1px 2px #004180, 1px 1px 1px 2px #001980, -1px -1px 1px 2px #001480 !important
+.my-btn
+  margin-bottom 15px !important
+#show-info
+  margin 15px 0 5px 15px
+
+.showSweetAlert p
+  text-align justify !important
+  margin-left 20px !important
+  font-size .8em
+.datepicker-dropdown
+  padding 3px !important
+  td, th
+    cursor pointer
+    padding 7px !important
+  td.day
+    background-color rgba(17, 69, 20, 0.85) !important
+    color white !important
+    &:hover
+      background-color #b8cc8c !important
+      //border-radius 10px
+  td.new, td.old
+    background-color rgba(40, 181, 51, 0.3) !important
+    color #2a2a2a !important
+    &:hover
+      background-color #b8cc8c !important
+      border-radius 5px
+  th.today
+    display none !important
+
+.hidden-mobile
+  display none
+
+.panel-body
+  font-size .8em
+@media screen and (min-width: 409px)
+  .container
+    padding 50px !important
+    width 100% !important
+    .panel-body
+      padding 10px !important
+      width 100%
+      margin 0 auto
+  table td, table th
+    font-size 1.4em
+    padding 4px 5px !important
+  .buttons-actions
+    display block
+    flex-direction row
+    margin 0 !important
+    padding 0 !important
+    >div
+      width 100%
+      display block
+      >div
+        width 29%
+        justify-content flex-end
+    .cancel
+      margin-left 22%
+
+@media screen and (min-width: 992px)
+  .container
+    font-size 1em
+  #show-info
+    position static
+    margin 0
+  .hidden-mobile
+    display block
+    float right
+  .panel-body, .showSweetAlert p
+    font-size 1.1em

@@ -2,10 +2,6 @@
 
 namespace ManageCompanyBundle\Controller;
 
-//para probar el envio de emails
-error_reporting(E_ALL);
-ini_set('display_errors','On');
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -59,7 +55,7 @@ class CuentaController extends Controller
                 }else {
                     $this->params['info'] = "Dirección de correo no válida";
                 }
-                $restaurante->setName($request->request->get('inputNombre'));
+                $restaurante->setNombre($request->request->get('inputNombre'));
                 $restaurante->setTelefono($request->request->get('inputTelefono'));
                 if(!$this->isValidCif($request->request->get('inputCIF'))){
                     $this->params['info'] = "Formato CIF no válido";

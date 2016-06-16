@@ -27,7 +27,7 @@ class ReservasController extends Controller{
         $this->initialize();
         $fecha = date('Y-m-d');
         $this->params['reservas'] = $this->em->getRepository('AppBundle:Reserva')
-            ->getReservesBetweenDates($this->getIdRestaurante(), $fecha, $fecha);
+            ->getReservesBetweenDates($this->getIdRestaurante(), $fecha, null);
         $this->params['mesas_reserva'] = $this->em->getRepository("AppBundle:Reserva")
             ->findBy([
                 "restaurante" => $this->getIdRestaurante()
@@ -162,7 +162,6 @@ class ReservasController extends Controller{
                 "id" => $id_reserva
             ]);
         if($this->checkRestaurante($reserva->getRestaurante()->getID())) {
-            print_r($reserva->getRestaurante()->getId());
             $reserva->setEstado($estado_reserva = $this->setState(3));
             $this->em->persist($reserva);
             $this->em->flush();
@@ -182,7 +181,6 @@ class ReservasController extends Controller{
                 "id" => $id_reserva
             ]);
         if($this->checkRestaurante($reserva->getRestaurante()->getID())) {
-            print_r($reserva->getRestaurante()->getId());
             $reserva->setEstado($estado_reserva = $this->setState(2));
             $this->em->persist($reserva);
             $this->em->flush();

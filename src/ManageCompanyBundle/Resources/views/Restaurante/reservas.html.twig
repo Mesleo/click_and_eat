@@ -2,7 +2,6 @@
 {% extends 'ManageCompanyBundle:Page:base.html.twig' %}
 {% import '@ManageCompany/Librerias/librerias.html.twig' as librerias %}
 {% block body %}
-	{% include 'ManageCompanyBundle:Dialog:confirm_cancel.php.twig' %}
 	<div class="container">
 		<h3>Reservas</h3>
 		<div class="panel panel-body panel-success">
@@ -59,13 +58,13 @@
 							<td>
 								<a href="{{ path('edit_reserva', {'id_reserva': reserva.id}) }}" class="btn btn-primary" title="Editar reserva">
 									<i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-								<a href="{{ path('confirm_reserva', {'id_reserva': reserva.id}) }}" class="btn btn-success" title='Confirmar reserva'>
+								<a href="{{ path('confirm_reserva', {'id_reserva': reserva.id}) }}" class="btn btn-success {% if reserva.estado_id == 2 %}active-state{% endif %}" title='Confirmar reserva'>
 									<i class="fa fa-check-circle" aria-hidden="true"></i></a>
-								<a href="{{ path('archived_reserva', {'id_reserva': reserva.id}) }}" class="btn btn-warning" title='Archivar reserva'>
+								<a href="{{ path('archived_reserva', {'id_reserva': reserva.id}) }}" class="btn btn-warning {% if reserva.estado_id == 4 %}active-state{% endif %}" title='Archivar reserva'>
 									<i class="fa fa-file" aria-hidden="true"></i></a>
-								<button class="btn btn-danger" id="del" type="button" title="Cancelar reserva" data-toggle="modal" data-route="{{ path('cancel_reserva', {'id_reserva': reserva.id}) }}" data-target="#confirmDelete" data-title="Confirmación" data-message="¿Estás seguro que deseas cancelar la reserva '{{ reserva.numReserva }}'?">
+								<a class="btn btn-danger {% if reserva.estado_id == 3 %}active-state{% endif %}" href="{{ path('cancel_reserva', {'id_reserva': reserva.id}) }}">
 									<i class="fa fa-ban" aria-hidden="true"></i>
-								</button>
+								</a>
 							</td>
 						</tr>
 					{% endfor %}
@@ -79,6 +78,7 @@
 	{{ parent() }}
 	<link rel="stylesheet" href="{{ asset('fonts/font-awesome-4.6.3/css/font-awesome.css') }}">
 	<link rel="stylesheet" href="{{ asset('node_modules/sweetalert/dist/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('manage/css/style_orders.css') }}">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker-standalone.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css">
 {% endblock %}
@@ -87,7 +87,6 @@
 	{{ librerias.datatables_js() }}
 	<script src="{{ asset('manage/js/bootstrap-datepicker.min.js') }}"></script>
 	<script src="{{ asset('manage/js/datetime-picker.es.js') }}"></script>
-	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
 	<script src="{{ asset('node_modules/sweetalert/dist/sweetalert.min.js') }}"></script>
 	<script>
 		$(document).ready(function() {

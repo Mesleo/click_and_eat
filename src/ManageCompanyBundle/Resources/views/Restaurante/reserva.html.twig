@@ -2,6 +2,7 @@
 {% extends 'ManageCompanyBundle:Page:base.html.twig' %}
 {% import '@ManageCompany/Librerias/librerias.html.twig' as librerias %}
 {% block body %}
+{% include 'ManageCompanyBundle:Dialog:confirm_cancel.php.twig' %}
 <div class="row">
         <div class="container">
             <div class="panel panel-body">
@@ -78,10 +79,10 @@
                             <div class="row">
                                 <div class="col-sm-4"></div>
                                 <div class="col-sm-3">
-                                    <button type="submit" class="btn btn-large btn-success btn-main-action">Guardar</button>
+                                    <button type="button" id="btn-cancel" class="btn btn-large btn-danger btn-main-action">Cancelar</button>
                                 </div>
                                 <div class="col-sm-3">
-                                    <button type="button" id="btn-cancel" class="btn btn-large btn-danger btn-main-action">Cancelar</button>
+                                    <button type="submit" class="btn btn-large btn-success btn-main-action">Guardar</button>
                                 </div>
                                 <div class="col-sm-3"></div>
                             </div>
@@ -102,6 +103,7 @@
     <script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
     <script src="{{ asset('manage/intimidatetime/Intimidatetime.min.js') }}"></script>
     <script src="{{ asset('manage/intimidatetime/i18n/Intimidatetime-es.js') }}"></script>
+	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
     <script>
         $.intimidatetime.setDefaults($.intimidatetime.i18n['es']);
         $('.input-datetime').intimidatetime({

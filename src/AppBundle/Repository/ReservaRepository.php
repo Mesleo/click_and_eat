@@ -16,8 +16,12 @@ class ReservaRepository extends \Doctrine\ORM\EntityRepository
      *
      * @return array
      */
-    public function getReservesBetweenDates($idRestaurante, $fechaD, $fechaH)
+    public function getReservesBetweenDates($idRestaurante, $fechaD, $fechaH = null)
     {
+        if($fechaH == null){
+            $fechaD = $fechaD.' 00:00:00';
+            $fechaH = $fechaD.' 23:59:59';
+        }
         $stmt = $this->getEntityManager()->getConnection()
             ->prepare("SELECT r.id, r.numReserva, r.numPersonas, r.nombre as cliente, r.fecha_hora, r.fecha_hora_realizada as realizado,
             r.telefono, r.email, r.estado_id

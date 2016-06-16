@@ -8,7 +8,7 @@
 			<div class="panel panel-body panel-default">
 			</div>
 		</aside>
-		<div class="cont">
+		<div class="restaurants">
 		<br />
 		<div class="panel panel-body panel-default">
 			{% for restaurante in restaurantes %}
@@ -23,6 +23,7 @@
 						<strong>{{ tipoComida.nombre }}{% if not loop.last %},{% endif %}</strong>
 					{% endfor %}</div>
 					<span>{{ restaurante.direccion }}, {{ restaurante.localidad.nombre }}, {{ restaurante.provincia.nombre }}, {{ restaurante.localidad.codigoPostal }}</span>
+					<div>{{ restaurante.telefono }}</div>
 					<div>Precio envío: {{ restaurante.precioEnvio }} €</div>
 				</div>
 				<div id="button">

@@ -1,0 +1,146 @@
+{# src/ManageCompanyBundle/Resources/views/Restaurante/trabajadores_restaurante.html.twig #}
+{% extends 'ManageCompanyBundle:Page:base.html.twig' %}
+{% import '@ManageCompany/Librerias/librerias.html.twig' as librerias %}
+{% block body %}
+	<div class="container">
+		<h3>Recorridos</h3>
+		<div class="panel panel-body panel-success">
+			<div class="row">
+				<div class="col-md-3">
+					<select class="form-control" name="select-state" id="select-state">
+						<option value="-">- Elige estado -</option>
+						<option value="-">Todos</option>
+						<option value="0">Pendientes</option>
+						<option value="1">Archivados</option>
+					</select>
+				</div>
+
+			</div>
+			<br>
+			<div class="be-panel col-sm-12">
+				<table id="pedidos-table" class="table display responsive nowrap">
+					<thead>
+					<tr>
+						<th>Núm recorrido</th>
+						<th>Estado</th>
+						{% if recorridos is defined and recorridos != null %}
+						<th>Fecha/Hora salida</th>
+						<th>Fecha/Hora llegada</th>
+						{% endif %}
+						<th>Pedidos</th>
+						<th>Total</th>
+					</tr>
+					</thead>
+					<tbody>
+					{% for recorrido in recorridos %}
+						<tr>
+							<td><a href="{{ path('gestion_pedidos_recorrido_restaurante', {'id_recorrido': recorrido.id}) }}">{{ recorrido.numRecorrido }}</a></td>
+							<td>{% if recorrido.trash == 0 %} Pendiente {% else %} Archivado {% endif %}</td>
+							{% if recorrido.fecha_hora_salida is defined and recorrido.fecha_hora_salida != null %}
+							<td>
+								{{ recorrido.fecha_hora_salida|date('Y-m-d H:i:s') }}
+							</td>
+							{% else %}
+								<td></td>
+							{% endif %}
+							{% if recorrido.fecha_hora_llegada is defined and recorrido.fecha_hora_llegada != null %}
+								<td>
+									{{ recorrido.fecha_hora_llegada|date('Y-m-d H:i:s') }}
+								</td>
+								{% else %}
+								<td></td>
+							{% endif %}
+							<td>
+								{{ total_pedidos[loop.index0][0]['COUNT(*)'] }}
+							</td>
+							<td>
+								{% set sumTotal = 0 %}
+								{% for t in total_recorrido[loop.index0]%}
+									{% set sumTotal = sumTotal + t['totalDescuento'] %}
+								{% endfor %}{% set sumTotal = sumTotal + restaurante.precioEnvio %}{{ sumTotal|number_format(2, '.', ',') }}  €
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="panel panel-body">
+			<form action="{{ path('add_recorrido') }}" method="post">
+				<div class="row">
+					<div class="col-sm-3">
+						<label for="">Identificador recorrido</label>
+					</div>
+					<div class="col-sm-5">
+						<input type="text" class="form-control" name="num-recorrido" placeholder="Zona norte">
+					</div>
+					<div class="col-sm-3">
+						<button type="submit" class="btn btn-success">Crear</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('fonts/font-awesome-4.6.3/css/font-awesome.css') }}">
+	<link rel="stylesheet" href="{{ asset('node_modules/sweetalert/dist/sweetalert.css') }}">
+	<link rel="stylesheet" href="{{ asset('manage/css/style_orders.css') }}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker-standalone.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css">
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	{{ librerias.datatables_js() }}
+	<script src="{{ asset('manage/js/bootstrap-datepicker.min.js') }}"></script>
+	<script src="{{ asset('manage/js/datetime-picker.es.js') }}"></script>
+	<script src="{{ asset('node_modules/sweetalert/dist/sweetalert.min.js') }}"></script>
+	<script src="{{ asset('manage/js/confirm_delete.js') }}"></script>
+	<script>
+		$(document).ready(function() {
+			$('#pedidos-table').DataTable({
+				"language": {
+					"url": "//cdn.datatables.net/plug-ins/1.10.10/i18n/Spanish.json",
+					"decimal": ",",
+					"thousands": "."
+				},
+				"scrollY":        "600px",
+				"scrollCollapse": true,
+				"lengthMenu": [[5,10, 15, 20, -1], [5,10, 15, 20, "Todos"]]
+			});
+		});
+	</script>
+	<script>
+		(function(){
+			$('#select-state').on('change', function(){
+				window.location = "{{ path('gestion_recorridos_restaurante') }}" + "?estado=" + $(this).val();
+			});
+
+			$('#show-info').on('click', function(){
+				swal({
+					title: "INFORMACIÓN",
+					text: '<i class="fa fa-pencil-square-o btn btn-primary" aria-hidden="true"></i> - Editar pedido<br><br>' +
+					'<i class="fa fa-paper-plane-o btn btn-info" aria-hidden="true"></i> - Cambiar estado pedido a "Enviado"<br><br>'+
+					'<i class="fa fa-check-circle btn btn-success" aria-hidden="true"></i> - Cambiar estado pedido a "Entregado"<br><br>'+
+					'<i class="fa fa-ban btn btn-danger" aria-hidden="true"></i> - Cancelar pedido<br>',
+					html: true
+				});
+			});
+			$('.input-date').datepicker({
+				language: "es",
+				format: "dd-mm-yyyy",
+				startView: 2,
+				maxViewMode: 0,
+				todayBtn: true,
+				multidateSeparator: "-",
+				forceParse: false,
+				autoclose: true
+			});
+
+			$('#orders-today').on('click', function(){
+				{#window.location.href = "{{ path('restaurante_gestion_pedidos') }}";#}
+			});
+		})();
+		</script>
+{% endblock %}

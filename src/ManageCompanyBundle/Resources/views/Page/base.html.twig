@@ -1,4 +1,4 @@
-<!-- src/ManageCompanyBundle/Resources/views/Page/base.html.twig -->
+{#src/ManageCompanyBundle/Resources/views/Page/base.html.twig#}
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -34,7 +34,16 @@
                             <li class="item-not-style"><a href="{{ path('gestion_productos') }}">Productos</a></li>
                             <li class="item-not-style"><a href="{{ path('gestion_mesas') }}">Mesas</a></li>
                             <li class="item-not-style"><a href="{{ path('gestion_trabajadores') }}">Trabajadores</a></li>
-                            <li class="item-not-style"><a href="{{ path('gestion_pedidos') }}">Pedidos</a></li>
+                            <li class="divider item-not-style"></li>
+                            <li role="presentation" class="dropdown item-not-style">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    Domicilio <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="item-not-style"><a href="{{ path('gestion_pedidos') }}">Pedidos</a></li>
+                                    <li class="item-not-style"><a href="{{ path('gestion_recorridos_restaurante') }}">Recorridos</a></li>
+                                </ul>
+                            </li>
                             <li class="item-not-style"><a href="{{ path('gestion_reservas') }}">Reservas</a></li>
                             <li class="divider item-not-style"></li>
                             <li role="presentation" class="dropdown item-not-style">
@@ -47,6 +56,9 @@
 									<li class="item-not-style"><a href="{{ path('admin_logout') }}">Salir</a></li>
                                 </ul>
                             </li>
+                            <li class="item-not-style"><a >{% if app.user %}
+                                        ¡Hola {{ app.user }}!</a>
+                                {% endif %}</li>
                         </ul>
                     </div>
                 </nav>

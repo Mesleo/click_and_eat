@@ -2,19 +2,29 @@
 <html>
 <head>
         <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="HandheldFriendly" content="true">
     {% block stylesheet %}
         <link href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
         <link href="{{ asset('node_modules/bootstrap/dist/css/bootstrap-theme.min.css') }}" type="text/css" rel="stylesheet" />
         <link href="{{ asset('css/estilos.css') }}" type="text/css" rel="stylesheet" />
+        <link href="{{ asset('css/style_form.css') }}" type="text/css" rel="stylesheet" />
     {% endblock %}
 </head>
 <body>
 <div>
     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-        {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
-        <a href="{{ path('fos_user_security_logout') }}">
-            {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-        </a>
+        {#{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |#}
+        <div class="autentication">
+            <div>
+                Usted está autentificado como {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}
+            </div>
+            <div>
+                <a href="{{ path('fos_user_security_logout') }}">
+                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                </a>
+            </div>
+        </div>
     {% else %}
         {#<a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>#}
         {% block navigation %}
