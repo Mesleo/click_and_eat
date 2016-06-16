@@ -27,9 +27,39 @@ class Trabajador
     /**
      * @var string
      *
+     * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu nombre.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=3,
+     *     max=100,
+     *     minMessage="El nombre introducido es demasiado corto.",
+     *     maxMessage="El nombre introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $nombre;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="apellidos", type="string", length=100, nullable=false)
      */
     protected $apellidos;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu telefono.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=9,
+     *     max=15,
+     *     minMessage="El numero de telefono introducido es demasiado corto.",
+     *     maxMessage="El numero de telefono introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $telefono;
 
     /**
      * @ORM\OneToMany(targetEntity="Pedido", mappedBy="trabajador")
@@ -99,27 +129,27 @@ class Trabajador
     }
 
     /**
-     * Set name
+     * Set nombre
      *
-     * @param string $name
+     * @param string $nombre
      *
      * @return Trabajador
      */
-    public function setName($name)
+    public function setNombre($nombre)
     {
-        $this->name = $name;
+        $this->nombre = $nombre;
 
         return $this;
     }
 
     /**
-     * Get name
+     * Get nombre
      *
      * @return string
      */
-    public function getName()
+    public function getNombre()
     {
-        return $this->name;
+        return $this->nombre;
     }
 
     /**

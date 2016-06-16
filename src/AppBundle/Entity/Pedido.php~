@@ -82,7 +82,7 @@ class Pedido
 	/**
      * @var boolean
      *
-     * @ORM\Column(name="pagado", type="boolean", nullable=false, options={"default":false})
+     * @ORM\Column(name="pagado", type="boolean", nullable=false, options={"default":0})
      */
     protected $pagado;
 
@@ -147,6 +147,13 @@ class Pedido
     public function __construct()
     {
         $this->pedido_producto = new \Doctrine\Common\Collections\ArrayCollection();
+
+        $this->setPagado(false);
+
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+        
+        $this->setTrash(false);
     }
 
     /**

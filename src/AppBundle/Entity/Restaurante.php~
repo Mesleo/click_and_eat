@@ -46,9 +46,39 @@ class Restaurante
     /**
      * @var string
      *
+     * @ORM\Column(name="nombre", type="string", length=255, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce el nombre del restaurante.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=3,
+     *     max=255,
+     *     minMessage="El nombre introducido es demasiado corto.",
+     *     maxMessage="El nombre introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $nombre;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="direccion", type="string", length=255, nullable=false)
      */
     protected $direccion;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu telefono.", groups={"Registration", "Profile"})
+     * @Assert\Length(
+     *     min=9,
+     *     max=15,
+     *     minMessage="El numero de telefono introducido es demasiado corto.",
+     *     maxMessage="El numero de telefono introducido es demasiado largo.",
+     *     groups={"Registration", "Profile"}
+     * )
+     */
+    protected $telefono;
 
     /**
      * @var string
@@ -93,7 +123,7 @@ class Restaurante
     /**
      * @var decimal
      *
-     * @ORM\Column(name="precio_envio", type="decimal", nullable=false, options={"default":"0.0"})
+     * @ORM\Column(name="precio_envio", type="decimal", precision=10, scale=2, nullable=false, options={"default":"0.00"})
      * @Assert\Type(
      *     type="decimal",
      *     message="Este valor debe ser un número."
@@ -209,27 +239,27 @@ class Restaurante
     }
 
     /**
-     * Set name
+     * Set nombre
      *
-     * @param string $name
+     * @param string $nombre
      *
      * @return Restaurante
      */
-    public function setName($name)
+    public function setNombre($nombre)
     {
-        $this->name = $name;
+        $this->nombre = $nombre;
 
         return $this;
     }
 
     /**
-     * Get name
+     * Get nombre
      *
      * @return string
      */
-    public function getName()
+    public function getNombre()
     {
-        return $this->name;
+        return $this->nombre;
     }
 
     /**
@@ -281,30 +311,6 @@ class Restaurante
     }
 
     /**
-     * Set coordenadas
-     *
-     * @param string $coordenadas
-     *
-     * @return Restaurante
-     */
-    public function setCoordenadas($coordenadas)
-    {
-        $this->coordenadas = $coordenadas;
-
-        return $this;
-    }
-
-    /**
-     * Get coordenadas
-     *
-     * @return string
-     */
-    public function getCoordenadas()
-    {
-        return $this->coordenadas;
-    }
-
-    /**
      * Set telefono
      *
      * @param string $telefono
@@ -326,6 +332,30 @@ class Restaurante
     public function getTelefono()
     {
         return $this->telefono;
+    }
+
+    /**
+     * Set coordenadas
+     *
+     * @param string $coordenadas
+     *
+     * @return Restaurante
+     */
+    public function setCoordenadas($coordenadas)
+    {
+        $this->coordenadas = $coordenadas;
+
+        return $this;
+    }
+
+    /**
+     * Get coordenadas
+     *
+     * @return string
+     */
+    public function getCoordenadas()
+    {
+        return $this->coordenadas;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Pedido
@@ -55,6 +56,13 @@ class Pedido
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu nombre.")
+     * @Assert\Length(
+     *     min=3,
+     *     max=100,
+     *     minMessage="El nombre introducido es demasiado corto.",
+     *     maxMessage="El nombre introducido es demasiado largo."
+     * )
      */
     protected $nombre;
 
@@ -62,6 +70,13 @@ class Pedido
      * @var string
      *
      * @ORM\Column(name="domicilio", type="string", length=255, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu domicilio.")
+     * @Assert\Length(
+     *     min=3,
+     *     max=255,
+     *     minMessage="El domicilio introducido es demasiado corto.",
+     *     maxMessage="El domicilio introducido es demasiado largo."
+     * )
      */
     protected $domicilio;
 
@@ -69,6 +84,13 @@ class Pedido
      * @var string
      *
      * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu telefono.")
+     * @Assert\Length(
+     *     min=9,
+     *     max=15,
+     *     minMessage="El numero de telefono introducido es demasiado corto.",
+     *     maxMessage="El numero de telefono introducido es demasiado largo."
+     * )
      */
     protected $telefono;
 
@@ -76,6 +98,13 @@ class Pedido
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=100, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu email.")
+     * @Assert\Length(
+     *     min=3,
+     *     max=100,
+     *     minMessage="El email introducido es demasiado corto.",
+     *     maxMessage="El email introducido es demasiado largo."
+     * )
      */
     protected $email;
 	

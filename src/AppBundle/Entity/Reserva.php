@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Reserva
@@ -23,16 +24,38 @@ class Reserva
     protected $id;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="numReserva", type="integer", nullable=true)
+     */
+    protected $numReserva;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="fecha_hora", type="datetime", nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce la fecha de reserva.")
      */
     protected $fechaHora;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fecha_hora_realizada", type="datetime", nullable=false)
+     */
+    protected $fechaHoraRealizada;
 
     /**
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=100, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu nombre.")
+     * @Assert\Length(
+     *     min=3,
+     *     max=100,
+     *     minMessage="El nombre introducido es demasiado corto.",
+     *     maxMessage="El nombre introducido es demasiado largo."
+     * )
      */
     protected $nombre;
 
@@ -40,6 +63,13 @@ class Reserva
      * @var string
      *
      * @ORM\Column(name="telefono", type="string", length=15, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu telefono.")
+     * @Assert\Length(
+     *     min=9,
+     *     max=15,
+     *     minMessage="El numero de telefono introducido es demasiado corto.",
+     *     maxMessage="El numero de telefono introducido es demasiado largo."
+     * )
      */
     protected $telefono;
 
@@ -47,6 +77,13 @@ class Reserva
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=100, nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce tu email.")
+     * @Assert\Length(
+     *     min=3,
+     *     max=100,
+     *     minMessage="El email introducido es demasiado corto.",
+     *     maxMessage="El email introducido es demasiado largo."
+     * )
      */
     protected $email;
 
@@ -54,6 +91,7 @@ class Reserva
      * @var integer
      *
      * @ORM\Column(name="numPersonas", type="integer", nullable=false)
+     * @Assert\NotBlank(message="Por favor introduce el numero de personas.")
      */
     protected $numPersonas;
 
@@ -65,15 +103,24 @@ class Reserva
 
     /**
      * @ORM\ManyToOne(targetEntity="Cliente", inversedBy="reservas")
-     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="idCliente", referencedColumnName="id", nullable=true)
      */
     protected $cliente;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Mesa", inversedBy="reservas")
-     * @ORM\JoinColumn(name="idMesa", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToMany(targetEntity="Mesa", inversedBy="reserva")
+     * @ORM\JoinTable(name="mesa_reserva",
+     *      joinColumns={@ORM\JoinColumn(name="idReserva", referencedColumnName="id", nullable=false)},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="idMesa", referencedColumnName="id", nullable=false)}
+     *      )
      */
     protected $mesa;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="EstadoReserva")
+     * @ORM\JoinColumn(name="estado_id", referencedColumnName="id", nullable=false)
+     */
+    protected $estado;
 
     /**
      * @var \DateTime
@@ -97,6 +144,19 @@ class Reserva
     protected $trash;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->mesa = new \Doctrine\Common\Collections\ArrayCollection();
+
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+        
+        $this->setTrash(false);
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -104,6 +164,30 @@ class Reserva
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set numReserva
+     *
+     * @param integer $numReserva
+     *
+     * @return Reserva
+     */
+    public function setNumReserva($numReserva)
+    {
+        $this->numReserva = $numReserva;
+
+        return $this;
+    }
+
+    /**
+     * Get numReserva
+     *
+     * @return integer
+     */
+    public function getNumReserva()
+    {
+        return $this->numReserva;
     }
 
     /**
@@ -128,6 +212,30 @@ class Reserva
     public function getFechaHora()
     {
         return $this->fechaHora;
+    }
+
+    /**
+     * Set fechaHoraRealizada
+     *
+     * @param \DateTime $fechaHoraRealizada
+     *
+     * @return Reserva
+     */
+    public function setFechaHoraRealizada($fechaHoraRealizada)
+    {
+        $this->fechaHoraRealizada = $fechaHoraRealizada;
+
+        return $this;
+    }
+
+    /**
+     * Get fechaHoraRealizada
+     *
+     * @return \DateTime
+     */
+    public function getFechaHoraRealizada()
+    {
+        return $this->fechaHoraRealizada;
     }
 
     /**
@@ -329,7 +437,7 @@ class Reserva
      *
      * @return Reserva
      */
-    public function setCliente(\AppBundle\Entity\Cliente $cliente)
+    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
     {
         $this->cliente = $cliente;
 
@@ -347,26 +455,60 @@ class Reserva
     }
 
     /**
-     * Set mesa
+     * Add mesa
      *
      * @param \AppBundle\Entity\Mesa $mesa
      *
      * @return Reserva
      */
-    public function setMesa(\AppBundle\Entity\Mesa $mesa)
+    public function addMesa(\AppBundle\Entity\Mesa $mesa)
     {
-        $this->mesa = $mesa;
+        $this->mesa[] = $mesa;
 
         return $this;
     }
 
     /**
+     * Remove mesa
+     *
+     * @param \AppBundle\Entity\Mesa $mesa
+     */
+    public function removeMesa(\AppBundle\Entity\Mesa $mesa)
+    {
+        $this->mesa->removeElement($mesa);
+    }
+
+    /**
      * Get mesa
      *
-     * @return \AppBundle\Entity\Mesa
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getMesa()
     {
         return $this->mesa;
+    }
+
+    /**
+     * Set estado
+     *
+     * @param \AppBundle\Entity\EstadoReserva $estado
+     *
+     * @return Reserva
+     */
+    public function setEstado(\AppBundle\Entity\EstadoReserva $estado)
+    {
+        $this->estado = $estado;
+
+        return $this;
+    }
+
+    /**
+     * Get estado
+     *
+     * @return \AppBundle\Entity\EstadoReserva
+     */
+    public function getEstado()
+    {
+        return $this->estado;
     }
 }

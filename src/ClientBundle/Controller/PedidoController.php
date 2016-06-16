@@ -25,6 +25,7 @@ class PedidoController extends Controller
     public function addAction(Request $request, $id_restaurante)
     {
         $this->initialize();
+        $this->getUsuario();
 
         $session = $request->getSession();
 
@@ -61,6 +62,11 @@ class PedidoController extends Controller
 
             $pedido->setRestaurante($restaurante);
             $restaurante->addPedido($pedido);
+
+            if ($cliente != null) {
+                $pedido->setCliente($cliente);
+                $cliente->addPedido($pedido);
+            }
 
             $this->em->persist($pedido);
 
@@ -101,8 +107,23 @@ class PedidoController extends Controller
         return $this->render('ClientBundle:Restaurante:pedido.html.twig', array(
         	'restaurante' => $restaurante,
             'cliente' => $cliente,
+            'user' => $this->params['user'],
             'form' => $form->createView()
         ));
+    }
+
+    private function getUsuario()
+    {
+        if (!is_null($this->getUser())) {
+            $this->params['user'] = $this->em->getRepository("AppBundle:Usuario")
+                ->findOneBy([
+                    'id' => $this->getUser()->getId()
+                ]);
+            $this->params['cliente'] = $this->em->getRepository("AppBundle:Cliente")
+                ->findOneBy([
+                    'usuario' => $this->getUser()->getId()
+                ]);
+        }
     }
 
     private function initialize()

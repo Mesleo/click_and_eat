@@ -23,6 +23,7 @@ class DefaultController extends Controller
     {
         $this->initialize();
         $this->getUsuario();
+        $this->get('session')->clear();
         return $this->render('ClientBundle:Page:index.html.twig', $this->params);
     }
 
@@ -115,7 +116,7 @@ class DefaultController extends Controller
         $session->remove('subtotal');
         $subtotal = 0.00;
         foreach ($session->all() as $key => $value) {
-            if ($key != '_csrf/pedido' && $key != '_csrf/authenticate' && $key != '_security_gestion') {
+            if ($key != '_csrf/pedido' && $key != '_csrf/reserva' && $key != '_csrf/authenticate' && $key != '_security_gestion') {
                 $subtotal += $value[0]['precio'] * $value[1]['cantidad'];
             }
         }
@@ -152,7 +153,7 @@ class DefaultController extends Controller
         if (count($this->get('session')->all()) != 0) {
             $subtotal = 0.00;
             foreach ($this->get('session')->all() as $key => $value) {
-                if ($key != '_csrf/pedido' && $key != '_csrf/authenticate' && $key != '_security_gestion') {
+                if ($key != '_csrf/pedido' && $key != '_csrf/reserva' && $key != '_csrf/authenticate' && $key != '_security_gestion') {
                     $subtotal += $value[0]['precio'] * $value[1]['cantidad'];
                 }
             }

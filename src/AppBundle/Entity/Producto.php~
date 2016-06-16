@@ -39,9 +39,9 @@ class Producto
     protected $descripcion;
 
     /**
-     * @var float
+     * @var decimal
      *
-     * @ORM\Column(name="precio", type="float", nullable=false)
+     * @ORM\Column(name="precio", type="decimal", precision=10, scale=2, nullable=false, options={"default":"0.00"})
      */
     protected $precio;
 	
@@ -182,7 +182,7 @@ class Producto
     /**
      * Set precio
      *
-     * @param float $precio
+     * @param decimal $precio
      *
      * @return Producto
      */
@@ -196,7 +196,7 @@ class Producto
     /**
      * Get precio
      *
-     * @return float
+     * @return decimal
      */
     public function getPrecio()
     {

@@ -1,0 +1,35 @@
+<?php
+// src/AppBundle/Entity/EstadoReserva.php
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * EstadoReserva
+ *
+ * @ORM\Table(name="estado_reserva")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\EstadoReservaRepository")
+ */
+class EstadoReserva
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="estado", type="string", length=100, nullable=false)
+     */
+    protected $estado;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Reserva", mappedBy="estado")
+     */
+    protected $reservas;
+}

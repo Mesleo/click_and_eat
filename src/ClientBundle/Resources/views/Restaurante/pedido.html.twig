@@ -24,7 +24,7 @@
             <h3>Detalles de pedido</h3>
 
             {% for key, sesion in app.session %}
-                {% if key!='subtotal' and key!='_csrf/pedido' and key!='_csrf/authenticate' and key!='_security_gestion' %}
+                {% if key!='subtotal' and key!='_csrf/pedido' and key != '_csrf/reserva' and key!='_csrf/authenticate' and key!='_security_gestion' %}
                     <div class="row">
                         <div class="col-md-8">
                             {% if sesion[1]['cantidad'] > 1 %}
