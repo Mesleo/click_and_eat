@@ -71,8 +71,10 @@
                         <tr class="row-head">
                             <th>Identificador</th>
                             <th>Fecha pedido</th>
-                            <th><label for="fecha-envio"><label for="fecha-salida">Fecha/Hora salida</label></label></th>
-                            <th><label for="fecha-envio"><label for="fecha-llegada">Fecha/Hora llegada</label></label></th>
+                            {% if  pedido.estado_id != 9 %}
+                                <th><label for="fecha-envio"><label for="fecha-salida">Fecha/Hora salida</label></label></th>
+                                <th><label for="fecha-envio"><label for="fecha-llegada">Fecha/Hora llegada</label></label></th>
+                            {% endif %}
                             <th><label for="estado">Estado</label></th>
                         </tr>
                         <tr>
@@ -80,15 +82,18 @@
                                 <input type="text" class="hidden" name="pedido-id" value="{{ pedido.id }}">
                             </td>
                             <td>{{ pedido.fecha_hora_realizado|date("d-m-Y H:i") }}</td>
-                            <td class="pos-rel">
-                                {% if pedido.fecha_hora_salida != null %}
-                                       {{ pedido.fecha_hora_salida|date('d-m-Y')}} {{ pedido.fecha_hora_salida|date('H:i') }} {% endif %}</td>
-                            <td class="pos-rel">{% if pedido.fecha_hora_llegada != null %}
-                                       {{ pedido.fecha_hora_llegada|date('d-m-Y') }}  {{ pedido.fecha_hora_llegada|date('H:i') }} {% endif %}</td>
-                            <td><select class="form-control" name="estado" id="estado">
-                                    {% for estado in estados %}
-                                        <option value="{{ estado.id }}" {% if estado.id == pedido.estado_id %} selected {% endif %}>{{ estado.estado }}</option>
-                                    {% endfor %}
+                            {% if  pedido.estado_id != 9 %}
+                                <td class="pos-rel">
+                                    {% if pedido.fecha_hora_salida != null %}
+                                           {{ pedido.fecha_hora_salida|date('d-m-Y')}} {{ pedido.fecha_hora_salida|date('H:i') }} {% endif %}</td>
+                                <td class="pos-rel">{% if pedido.fecha_hora_llegada != null %}
+                                           {{ pedido.fecha_hora_llegada|date('d-m-Y') }}  {{ pedido.fecha_hora_llegada|date('H:i') }} {% endif %}</td>
+                            {% endif %}
+                            <td>
+                                <select class="form-control" name="estado" id="estado">
+                                {% for estado in estados %}
+                                    <option value="{{ estado.id }}" {% if estado.id == pedido.estado_id %} selected {% endif %}>{{ estado.estado }}</option>
+                                {% endfor %}
                                 </select>
                             </td>
                         </tr>
@@ -99,6 +104,7 @@
                                 </td>
                             </tr>
                         {% endif %}
+                        {% if  pedido.estado_id != 9 %} %}
                         <tr>
                             <td><label for="recorrido-id">Recorrido: </label></td>
                             <td>
@@ -121,6 +127,7 @@
                                 {% endif %}
                             </td>
                         </tr>
+                        {% endif %}
                     </table>
                         <div class="row">
                             <div class="row">
@@ -151,13 +158,14 @@
     <script src="{{ asset('manage/intimidatetime/i18n/Intimidatetime-es.js') }}"></script>
     <script src="{{ asset('manage/js/jquery.editable-select.min.js') }}"></script>
     <script>
-        (function(){
+//        (function(){
 //            $.intimidatetime.setDefaults($.intimidatetime.i18n['es']);
 //            $('.input-datetime').intimidatetime({
 //                format: 'dd-MM-yyyy H:m',
 //                previewFormat: 'dd-MM-yyyy H:m'
 //            });
 
+            {% if  pedido.estado_id != 9 %} %}
             $('#recorrido-id').editableSelect({
 
                 // enable filter
@@ -176,9 +184,10 @@
                 onSelect: function (element) {}
 
             });
+            {% endif %}
             $('#cancel').on('click', function(){
                 history.back(-1);
             });
-        })();
+//        })();
     </script>
 {% endblock %}

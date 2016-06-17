@@ -24,6 +24,13 @@
             }
         }
     </script>
+    {% if info is defined %}
+    <div class="row">
+        <div class="alert alert-success">
+            <p>{{ info }}</p>
+        </div>
+    </div>
+    {% endif %}
     <header>
         <h1 class="titulo">Pide comida a domicilio online</h1>
         <h3 class="subtitulo">Además reserva mesa en los mejores restaurantes de la zona</h3>

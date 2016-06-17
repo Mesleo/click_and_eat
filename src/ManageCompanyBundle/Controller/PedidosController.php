@@ -96,48 +96,50 @@ class PedidosController extends Controller{
             ->findOneBy([
                 "id" => $request->request->get("estado")
             ]);
-        if($pedido and $this->checkOrderRestaurante($pedido->getRestaurante()->getId())) {
-            if($request->request->has("trabajador-id") and $request->request->get("trabajador-id")!= null){
-                $trabajador = $this->em->getRepository("AppBundle:Trabajador")
-                    ->findOneBy([
-                        "id" => $request->request->get("trabajador-id")
-                    ]);
-            }
-            if($request->request->has("recorrido-id") and strlen(trim($request->request->get("recorrido-id")))>0){
-                $recorrido = $this->em->getRepository("AppBundle:Recorrido")
-                    ->getRecorrido($this->getIdRestaurante(), $request->request->get("recorrido-id"));
-                if($recorrido == null){
-                    $recorrido = new Recorrido();
-                    $recorrido->setNumRecorrido($request->request->get("recorrido-id"));
-                    $recorrido->setRestaurante($this->getRestaurante($this->getIdRestaurante()));
-                } else  {
-                    $recorrido = $this->getRecorrido($recorrido[0]['id']);
-                    if($recorrido->getTrabajador()->getId() != $trabajador->getId()){
-                        return $this->redirectToRoute("guardar_info_pedido", array($this->params['error'] = "Ese recorrido ya ha sido asignado a otro trabajador"));
+        if($pedido->getEstado()->getId() != 9) {
+            if ($pedido and $this->checkOrderRestaurante($pedido->getRestaurante()->getId())) {
+                if ($request->request->has("trabajador-id") and $request->request->get("trabajador-id") != null) {
+                    $trabajador = $this->em->getRepository("AppBundle:Trabajador")
+                        ->findOneBy([
+                            "id" => $request->request->get("trabajador-id")
+                        ]);
+                }
+                if ($request->request->has("recorrido-id") and strlen(trim($request->request->get("recorrido-id"))) > 0) {
+                    $recorrido = $this->em->getRepository("AppBundle:Recorrido")
+                        ->getRecorrido($this->getIdRestaurante(), $request->request->get("recorrido-id"));
+                    if ($recorrido == null) {
+                        $recorrido = new Recorrido();
+                        $recorrido->setNumRecorrido($request->request->get("recorrido-id"));
+                        $recorrido->setRestaurante($this->getRestaurante($this->getIdRestaurante()));
+                    } else {
+                        $recorrido = $this->getRecorrido($recorrido[0]['id']);
+                        if ($recorrido->getTrabajador()->getId() != $trabajador->getId()) {
+                            return $this->redirectToRoute("guardar_info_pedido", array($this->params['error'] = "Ese recorrido ya ha sido asignado a otro trabajador"));
+                        }
+                    }
+                    $pedido->setRecorrido($recorrido);
+                } else return $this->redirectToRoute("guardar_info_pedido", array($this->params['error'] = "Debe añadir un recorrido"));
+                if ($this->checkEmployeeRestaurant($trabajador->getRestaurante()->getId())) {
+                    $pedido->setTrabajador($trabajador);
+                    if ($request->request->has("recorrido-id")) {
+                        $recorrido->setTrabajador($trabajador);
                     }
                 }
-                $pedido->setRecorrido($recorrido);
-            } else return $this->redirectToRoute("guardar_info_pedido", array($this->params['error'] = "Debe añadir un recorrido"));
-            if($this->checkEmployeeRestaurant($trabajador->getRestaurante()->getId())){
-                $pedido->setTrabajador($trabajador);
-                if($request->request->has("recorrido-id")) {
-                    $recorrido->setTrabajador($trabajador);
-                }
+                if (!$request->request->has('fecha-llegada') or $request->request->get('fecha-salida') == null) {
+                    $fechaSalida = null;
+                } else $fechaSalida = \DateTime::createFromFormat('d-m-Y H:i', $request->request->get('fecha-salida'));
+                if (!$request->request->has('fecha-llegada') or $request->request->get('fecha-llegada') == "") {
+                    $fechaLlegada = null;
+                } else $fechaLlegada = \DateTime::createFromFormat('d-m-Y H:i', $request->request->get('fecha-llegada'));
+                $pedido->setFechaHoraSalida($fechaSalida);
+                $pedido->setFechaHoraLlegada($fechaLlegada);
+                $this->em->persist($recorrido);
             }
-            $pedido->setEstado($estado);
+        }
             $pedido->setNumPedido($request->request->get("num-pedido"));
-            if (!$request->request->has('fecha-llegada') or $request->request->get('fecha-salida') == null) {
-                $fechaSalida = null;
-            } else $fechaSalida = \DateTime::createFromFormat('d-m-Y H:i', $request->request->get('fecha-salida'));
-            if (!$request->request->has('fecha-llegada') or $request->request->get('fecha-llegada') == "") {
-                $fechaLlegada = null;
-            } else $fechaLlegada = \DateTime::createFromFormat('d-m-Y H:i', $request->request->get('fecha-llegada'));
-            $pedido->setFechaHoraSalida($fechaSalida);
-            $pedido->setFechaHoraLlegada($fechaLlegada);
-            $this->em->persist($recorrido);
+            $pedido->setEstado($estado);
             $this->em->persist($pedido);
             $this->em->flush();
-        }
         return $this->redirectToRoute("gestion_pedidos");
     }
 

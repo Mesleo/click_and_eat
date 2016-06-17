@@ -28,7 +28,7 @@
 				</div>
 				<div id="button">
 					<a href="{{ path('menu_restaurante', {'id_restaurante': restaurante.id}) }}" class="btn btn-principal">Ver carta</a>
-					<a href="#" class="btn btn-principal">Reservar</a>
+					<a href="{{ path('add_reserva', {'id_restaurante': restaurante.id}) }}" class="btn btn-principal">Reservar</a>
 				</div>
 				<hr>
 			{% endfor %}

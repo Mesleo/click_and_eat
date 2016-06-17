@@ -364,6 +364,7 @@ class Restaurante
         return $this->telefono;
     }
 
+
     /**
      * Set foto
      *

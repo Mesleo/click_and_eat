@@ -96,6 +96,7 @@ class TrabajadorRepository extends \Doctrine\ORM\EntityRepository
      */
     public function getRecorridos($idTrabajador, $trash = 0)
     {
+
         $sql = "SELECT r.id, r.numRecorrido, r.fecha_hora_salida, r.fecha_hora_llegada, r.idRestaurante, r.trash
             FROM recorrido r WHERE r.idTrabajador = :idTrabajador";
         if($trash != '-'){

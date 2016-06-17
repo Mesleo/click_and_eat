@@ -31,7 +31,7 @@ class RecorridosController extends Controller
             $estado = $request->query->get("estado");
         }
          $recorridos = $this->em->getRepository("AppBundle:Trabajador")
-            ->getRecorridos($this->getIdTrabajador(), $estado);
+            ->getRecorridos($this->getIdTrabajador(), $estado = 0);
         $arrayCountOrderTravel = [];
         $restaurante = $this->getRestaurante($this->getTrabajador()->getRestaurante());
         $this->params['restaurante'] = $restaurante;

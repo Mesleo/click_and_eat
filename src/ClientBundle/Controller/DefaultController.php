@@ -19,7 +19,7 @@ class DefaultController extends Controller
     /**
      * @Route("/", name="home_client")
      */
-    public function indexAction()
+    public function indexAction($params=null)
     {
         $this->initialize();
         if(!is_null($this->getUser())){
@@ -31,6 +31,9 @@ class DefaultController extends Controller
                 ->findOneBy([
                     'usuario' => $this->getUser()->getId()
                 ]);
+        }
+        if($params!=null){
+            $this->params['info'] = $params;
         }
         return $this->render('ClientBundle:Page:index.html.twig', $this->params);
     }

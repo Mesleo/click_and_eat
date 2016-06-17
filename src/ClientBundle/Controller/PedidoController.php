@@ -25,6 +25,7 @@ class PedidoController extends Controller
     public function addAction(Request $request, $id_restaurante)
     {
         $this->initialize();
+        $this->getUsuario();
 
         $session = $request->getSession();
 
@@ -52,15 +53,28 @@ class PedidoController extends Controller
             $pedido->setNumPedido(uniqid());
             $pedido->setFechaHoraRealizado(new \DateTime());
 
-            $estado = $this->em->getRepository("AppBundle:Estado")
-                ->findOneBy([
-                    'id' => 2
-                ]);
+            if ($request->request->has('recogida')) {
+                $estado = $this->em->getRepository("AppBundle:Estado")
+                    ->findOneBy([
+                        'estado' => 'Recogida en tienda'
+                    ]);
+            } else {
+                $estado = $this->em->getRepository("AppBundle:Estado")
+                    ->findOneBy([
+                        'estado' => 'Pendiente de confirmación'
+                    ]);
+            }
+
             $pedido->setEstado($estado);
             $estado->addPedido($pedido);
 
             $pedido->setRestaurante($restaurante);
             $restaurante->addPedido($pedido);
+
+            if ($cliente != null) {
+                $pedido->setCliente($cliente);
+                $cliente->addPedido($pedido);
+            }
 
             $this->em->persist($pedido);
 
@@ -94,15 +108,32 @@ class PedidoController extends Controller
         	}
 
         	$session->clear();
-
-            return $this->redirectToRoute('home_client');
+            $this->params['info'] = "Su pedido se ha realizado correctamente";
+            return $this->redirectToRoute('home_client', array("info", $this->params));
         }
         
         return $this->render('ClientBundle:Restaurante:pedido.html.twig', array(
         	'restaurante' => $restaurante,
             'cliente' => $cliente,
+            'user' => $this->params['user'],
             'form' => $form->createView()
         ));
+    }
+
+    private function getUsuario()
+    {
+        if (!is_null($this->getUser())) {
+            $this->params['user'] = $this->em->getRepository("AppBundle:Usuario")
+                ->findOneBy([
+                    'id' => $this->getUser()->getId()
+                ]);
+            $this->params['cliente'] = $this->em->getRepository("AppBundle:Cliente")
+                ->findOneBy([
+                    'usuario' => $this->getUser()->getId()
+                ]);
+        } else {
+            $this->params['user'] = null;
+        }
     }
 
     private function initialize()

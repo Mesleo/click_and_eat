@@ -1,0 +1,88 @@
+{# src/ClientBundle/Resources/views/Restaurante/reserva.html.twig #}
+{% extends 'ClientBundle:Page:base.html.twig' %}
+
+{% block body %}
+	<div class="container">
+        <br />
+        {% if restaurante.foto %}
+            <img src="{{ asset('uploads/restaurantes/images/' ~ restaurante.foto ) }}" width="150px" height="150px" alt="Foto de restaurante" class="img-thumbnail">
+        {% else %}
+            <img src="{{ asset('uploads/restaurantes/images/image.png' ) }}" width="150px" height="200px" alt="Foto de restaurante" class="img-thumbnail">
+        {% endif %}
+        <div id="view">
+            <h2>{{ restaurante.nombre }}</h2>
+            <div>{% for tipoComida in restaurante.getTipoComida() %}
+                <strong>{{ tipoComida.nombre }}{% if not loop.last %},{% endif %}</strong>
+            {% endfor %}</div>
+            <span>{{ restaurante.direccion }}, {{ restaurante.localidad.nombre }}, {{ restaurante.provincia.nombre }}, {{ restaurante.localidad.codigoPostal }}</span>
+            <div>{{ restaurante.telefono }}</div>
+            <div>Precio envío: {{ restaurante.precioEnvio }} €</div>
+        </div>
+        <br /><br />
+        <div class="panel panel-body panel-default">
+            <h3>Datos reserva</h3>
+            {{ form_start(form) }}
+
+            {% if cliente != null %}
+            	<div class="row">
+            		<div class="col-md-8">
+            			{{ form_row(form.nombre, {'attr': {'value': cliente.nombre}}) }}
+            		</div>
+            		<div class="col-md-4">
+                        {{ form_row(form.telefono, {'attr': {'value': cliente.telefono}}) }}
+                    </div>
+                </div>
+                {{ form_row(form.email, {'attr': {'value': app.user.email}}) }}
+            	<div class="row">
+            		<div class="col-md-6">
+            			{{ form_row(form.fechaHora) }}
+            		</div>
+                    <div class="col-md-6">
+                    	{{ form_row(form.numPersonas) }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+            		<div class="col-md-8">
+            			{{ form_row(form.nombre) }}
+            		</div>
+            		<div class="col-md-4">
+                        {{ form_row(form.telefono) }}
+                    </div>
+                </div>
+                {{ form_row(form.email) }}
+            	<div class="row">
+            		<div class="col-md-6">
+            			{{ form_row(form.fechaHora) }}
+            		</div>
+                    <div class="col-md-6">
+                    	{{ form_row(form.numPersonas) }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+                <a href="{{ path('home_client') }}" class="btn btn-danger">Cancelar</a>
+            </div>
+            {{ form_end(form) }}
+        </div>
+	</div>
+{% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css">
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+	<script>
+		(function(){
+			$('.input-date').datetimepicker({
+				locale: 'es',
+				format: 'YYYY-MM-DD hh:mm:ss'
+			});
+		})();
+	</script>
+{% endblock %}
